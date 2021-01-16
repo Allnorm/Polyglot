@@ -5,7 +5,7 @@ import datetime
 from utils import extract_arg, bot
 
 BLOB_TEXT = "not_needed"
-current_log = "googator.log"
+current_log = "polyglot.log"
 key = ""
 
 def write_log(text = BLOB_TEXT, message = None):
