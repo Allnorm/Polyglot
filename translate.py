@@ -25,7 +25,7 @@ def translate_main(message):
         translated = translator.translate(inputtext, lang).text
         if translated == inputtext:
             bot.reply_to(message, "Исходный и итоговый текст совпадают. Возможно, Google Api отклонил запрос. "
-                                  "Если вы уверены, что так быть не должно, повторите ошибку позже")
+                                  "Если вы уверены, что так быть не должно, повторите попытку позже")
             return
         bot.reply_to(message, translated)
 
