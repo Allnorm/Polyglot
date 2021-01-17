@@ -18,7 +18,7 @@ def translate_main(message):
     write_log(inputtext, message)
 
     if lang == None:
-        bot.reply_to(message, "Укажите код страны")
+        bot.reply_to(message, "Укажите код языка/название страны")
         return
 
     try:
@@ -31,7 +31,7 @@ def translate_main(message):
 
     except Exception as e:
         if str(e) in "invalid destination language":
-            bot.reply_to(message, "Указан неверный код страны")
+            bot.reply_to(message, "Указан неверный код языка/название страны")
         else:
             bot.reply_to(message, "Ошибка: " + str(e) + ".\n"
                 "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputtext))
