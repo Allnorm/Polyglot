@@ -2,8 +2,10 @@ import traceback
 import telebot
 from googletrans import Translator
 
-# proxy = {'http':'172.96.172.68:3128'}
+# proxy = {'http':'ip:port'}
 # translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
+# try it if bot was banned in Google Api
+# usually unban happens in about half an hour
 
 translator = Translator(service_urls=['translate.googleapis.com'])
 
