@@ -73,7 +73,7 @@ def download_clear_log(message, down_clear_check):
     else:
         if clear_log():
             bot.send_message(message.chat.id, "Очистка лога успешна")
-            write_log("Log was cleared by user " + str(message.from_user.username) + ". Have fun!")
+            write_log("INFO: log was cleared by user " + str(message.from_user.username) + ". Have fun!")
         else:
             bot.send_message(message.chat.id, "Ошибка очистки лога")
             write_log("ERR: user " + str(message.from_user.username) + " tried to clear log, "
