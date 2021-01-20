@@ -9,7 +9,7 @@ def qwerty_main(message):
 
     text = textparser(message)
     if text == None:
-        write_log(BLOB_TEXT, message)
+        write_log("none", message)
         return
 
     write_log(text, message)

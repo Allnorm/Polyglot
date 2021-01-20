@@ -12,7 +12,7 @@ def translate_main(message):
 
     inputtext = textparser(message)
     if inputtext == None:
-        write_log(BLOB_TEXT, message)
+        write_log("none", message)
         return
 
     write_log(inputtext, message)

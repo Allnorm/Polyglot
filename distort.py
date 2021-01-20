@@ -14,7 +14,7 @@ def distort_main(message):
 
     inputshiz = textparser(message)
     if inputshiz == None:
-        write_log(BLOB_TEXT, message)
+        write_log("none", message)
         return
 
     write_log(inputshiz, message)

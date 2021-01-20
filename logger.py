@@ -61,16 +61,21 @@ def download_clear_log(message, down_clear_check):
         try:
             f = open(current_log, "rb")
             bot.send_document(message.chat.id, f)
+            write_log("INFO: log was downloaded successful by " + str(message.from_user.username))
         except FileNotFoundError:
             bot.send_message(message.chat.id, "Лог-файл не найден!")
+            write_log("INFO: user " + str(message.from_user.username) + " tried to download empty log")
         except Exception:
             bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
+            write_log("ERR: user " + str(message.from_user.username) + " tried to download log, "
+                        "but something went wrong!")
             traceback.print_exc()
     else:
         if clear_log():
             bot.send_message(message.chat.id, "Очистка лога успешна")
         else:
             bot.send_message(message.chat.id, "Ошибка очистки лога")
+        write_log("It's tried by user " + str(message.from_user.username) + ". Have fun!")
 
 
 def key_reader():
