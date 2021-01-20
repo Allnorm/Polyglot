@@ -1,2 +1,5 @@
 token
 key
+/.idea
+/__pycache__
+/venv
