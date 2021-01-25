@@ -1,5 +1,7 @@
 token
 key
+langlist.txt
+polyglot.log
 /.idea
 /__pycache__
 /venv

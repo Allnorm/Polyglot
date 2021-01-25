@@ -50,7 +50,7 @@ def distort_main(message):
 
         randlangs += randlang + "; "
 
-        for iteration in range(2):
+        for iteration in range(2): #three tries
             inputshizchecker = inputshiz
             try:
                 inputshiz = translator.translate(inputshiz, randlang).text
@@ -61,7 +61,7 @@ def distort_main(message):
                 else:
                     bot.edit_message_text("Ошибка: " + str(e) + ".\n"
                         "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputshiz), idc, idm)
-                    write_log("ERR: " + str(e) +"\n")
+                    write_log("ERR: " + str(e))
                     traceback.print_exc()
 
             if iteration == 2:

@@ -1,14 +1,13 @@
-from googletrans import LANGUAGES
-
 from distort import distort_main
 from logger import write_log, clear_log, download_clear_log, key_reader, BLOB_TEXT
 from qwerty import qwerty_main
 from translate import translate_main
-from utils import bot, layouts
+from utils import bot, list_of_langs
 
 clear_log()
-write_log("Polyglot was started")
+write_log("###POLYGLOT WAS STARTED###")
 key_reader()
+list_of_langs()
 
 
 @bot.message_handler(commands=['qwerty', 'q'])
@@ -21,6 +20,7 @@ def qwerty(message):
 def distort(message):
 
     distort_main(message)
+
 
 @bot.message_handler(commands=['translate', 'trans', 't'])
 def translate(message):
@@ -62,17 +62,20 @@ def send_list(message):
 
     write_log(BLOB_TEXT, message)
 
-    output = "`Список всех кодов и соответствующих им языков:\n"
-
-    for key, value in LANGUAGES.items():
-        output = output + key + " - " + value + "\n"
-
-    output = output + "\nСписок всех доступных раскладок клавиатуры: "
-
-    for key, value in layouts.items():
-        output = output + key + " "
-
-    bot.reply_to(message, output + "`", parse_mode="markdown")
+    try:
+        file = open("langlist.txt", "r")
+        bot.send_document(message.chat.id, file, message.id,
+                          "Здесь список всех языков для перевода и раскладок")
+    except FileNotFoundError as e:
+        bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
+                              "отправить команду ещё раз. "
+                              "Если это не сработает, обратитесь к автору бота.")
+        write_log("WARN: Trying to re-create removed langlist file")
+        list_of_langs()
+    except Exception as e:
+        bot.reply_to(message, "Неизвестная ошибка чтения файла с языками")
+        write_log("ERR: langlist isn't available")
+        write_log("ERR: " + str(e))
 
 
 @bot.message_handler(commands=['downloadlog'])

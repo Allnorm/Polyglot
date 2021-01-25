@@ -35,5 +35,5 @@ def translate_main(message):
         else:
             bot.reply_to(message, "Ошибка: " + str(e) + ".\n"
                 "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputtext))
-            write_log("ERR: " + str(e) +"\n")
+            write_log("ERR: " + str(e))
             traceback.print_exc()

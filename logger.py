@@ -59,8 +59,9 @@ def download_clear_log(message, down_clear_check):
 
     if down_clear_check:
         try:
-            f = open(current_log, "rb")
+            f = open(current_log, 'r')
             bot.send_document(message.chat.id, f)
+            f.close()
             write_log("INFO: log was downloaded successful by " + str(message.from_user.username))
         except FileNotFoundError:
             bot.send_message(message.chat.id, "Лог-файл не найден!")

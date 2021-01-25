@@ -39,5 +39,5 @@ def qwerty_main(message):
         bot.reply_to(message, translated_text)
     except Exception as e:
         traceback.print_exc()
-        write_log("ERR: " + str(e) +"\n")
+        write_log("ERR: " + str(e))
         bot.reply_to(message, "Неизвестная ошибка!")

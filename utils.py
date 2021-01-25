@@ -1,6 +1,7 @@
 import traceback
 import telebot
-from googletrans import Translator
+from googletrans import Translator, LANGUAGES
+import logger
 
 # proxy = {'http':'ip:port'}
 # translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
@@ -23,8 +24,8 @@ def current_token():
         token = file.read()
         file.close()
     except Exception as e:
-        print("ERR: Token file not found or not readable! Bot will close!")
-        print(e)
+        logger.write_log("ERR: Token file not found or not readable! Bot will close!")
+        logger.write_log("ERR: " + str(e))
         traceback.print_exc()
         exit(1)
 
@@ -67,3 +68,27 @@ def extract_arg(arg, num):
 def extract_lang(lang):
 
     return translator.detect(lang).lang
+
+def list_of_langs():
+
+    output = "Список всех кодов и соответствующих им языков:\n"
+
+    for key, value in LANGUAGES.items():
+        output = output + key + " - " + value + "\n"
+
+    output = output + "\nСписок всех доступных раскладок клавиатуры: "
+
+    for key, value in layouts.items():
+        output = output + key + " "
+
+    try:
+        file = open("langlist.txt", "w")
+        file.write(output)
+        file.close()
+        logger.write_log("INFO: langlist updated successful")
+    except Exception as e:
+        logger.write_log("ERR: langlist file isn't available")
+        logger.write_log("ERR: " + str(e))
+        traceback.print_exc()
+
+    # bot.reply_to(message, "`" + output + "`", parse_mode="markdown") # old code
