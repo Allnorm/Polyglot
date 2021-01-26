@@ -55,8 +55,7 @@ def distort_main(message):
 
             try:
                 inputshiz = utils.translator.translate(inputshiz, randlang).text
-                if inputshizchecker != inputshiz:
-                    break
+                if inputshizchecker != inputshiz: break
 
             except Exception as e:
                 if str(e) in "invalid destination language":
