@@ -7,13 +7,13 @@ import utils
 
 from googletrans import LANGUAGES
 
+ATTEMPTS = 1000
+COOLDOWN = 10
 
 def distort_main(message):
 
-    cooldown = 10
-
     inputshiz = utils.textparser(message)
-    if inputshiz == None:
+    if inputshiz is None:
         logger.write_log("none", message)
         return
 
@@ -41,7 +41,7 @@ def distort_main(message):
     else:
         endlang = utils.extract_lang(inputshiz)
 
-    tmpmessage = utils.bot.reply_to(message, "Генерация начата, осталось " + str(counter * cooldown) + " секунд")
+    tmpmessage = utils.bot.reply_to(message, "Генерация начата, осталось " + str(counter * COOLDOWN) + " секунд")
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
 
@@ -50,11 +50,13 @@ def distort_main(message):
 
         randlangs += randlang + "; "
 
-        for iteration in range(2): #three tries
+        for iteration in range(ATTEMPTS):  # three tries
             inputshizchecker = inputshiz
+
             try:
                 inputshiz = utils.translator.translate(inputshiz, randlang).text
-                break
+                if inputshizchecker != inputshiz: break
+
             except Exception as e:
                 if str(e) in "invalid destination language":
                     pass
@@ -63,21 +65,17 @@ def distort_main(message):
                         "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputshiz), idc, idm)
                     logger.write_log("ERR: " + str(e))
                     traceback.print_exc()
+                    return
 
-            if iteration == 2:
+            if iteration == ATTEMPTS:
                 utils.bot.edit_message_text("Неизвестная ошибка перевода. Повторите попытку позже.\n"
-                                      "Содержимое переменной inputtext: " + str(inputshiz), idc, idm)
+                    "Возможно, запрос был заблокирован Google Api", idc, idm)
                 return
 
-            if inputshizchecker == inputshiz:
-                utils.bot.edit_message_text("Ошибка обращения к Google Api. Сервис отклонил запрос, "
-                                      "повторите попытку позже", idc, idm)
-                return
-
-        time.sleep(cooldown)
+        time.sleep(COOLDOWN)
 
         outstr = "Готова итерация " + str(i + 1) + "/" + str(counter) + "\n" \
-            "Осталось " + str((counter - i - 1) * cooldown) + " секунд"
+            "Осталось " + str((counter - i - 1) * COOLDOWN) + " секунд"
         utils.bot.edit_message_text(outstr, idc, idm)
 
     try:
