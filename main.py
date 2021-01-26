@@ -1,5 +1,6 @@
 import logger
 import utils
+import threading
 
 from distort import distort_main
 from qwerty import qwerty_main
@@ -18,9 +19,10 @@ def qwerty(message):
 
 
 @utils.bot.message_handler(commands=['d', 'distort'])
-def distort(message):
+def distort1(message):
 
-    distort_main(message)
+    thread1 = threading.Thread(target=distort_main, args=(message,))
+    thread1.start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])

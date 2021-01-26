@@ -7,7 +7,7 @@ import utils
 
 from googletrans import LANGUAGES
 
-ATTEMPTS = 2
+ATTEMPTS = 3
 COOLDOWN = 10
 
 def distort_main(message):
@@ -55,7 +55,8 @@ def distort_main(message):
 
             try:
                 inputshiz = utils.translator.translate(inputshiz, randlang).text
-                if inputshizchecker != inputshiz: break
+                if inputshizchecker != inputshiz:
+                    break
 
             except Exception as e:
                 if str(e) in "invalid destination language":
@@ -67,7 +68,7 @@ def distort_main(message):
                     traceback.print_exc()
                     return
 
-            if iteration == ATTEMPTS:
+            if iteration == ATTEMPTS - 1:
                 utils.bot.edit_message_text("Неизвестная ошибка перевода. Повторите попытку позже.\n"
                     "Возможно, запрос был заблокирован Google Api", idc, idm)
                 return
