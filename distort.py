@@ -7,7 +7,7 @@ import utils
 
 from googletrans import LANGUAGES
 
-ATTEMPTS = 1000
+ATTEMPTS = 2
 COOLDOWN = 10
 
 def distort_main(message):
