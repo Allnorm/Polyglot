@@ -19,10 +19,10 @@ def qwerty(message):
 
 
 @utils.bot.message_handler(commands=['d', 'distort'])
-def distort1(message):
+def distort(message):
 
-    thread1 = threading.Thread(target=distort_main, args=(message,))
-    thread1.start()
+    thread = threading.Thread(target=distort_main, args=(message,))
+    thread.start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])
