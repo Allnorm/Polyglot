@@ -1,38 +1,39 @@
+import logger
+import utils
+
 from distort import distort_main
-from logger import write_log, clear_log, download_clear_log, key_reader, BLOB_TEXT
 from qwerty import qwerty_main
 from translate import translate_main
-from utils import bot, list_of_langs
 
-clear_log()
-write_log("###POLYGLOT WAS STARTED###")
-key_reader()
-list_of_langs()
+logger.clear_log()
+logger.write_log("###POLYGLOT WAS STARTED###")
+logger.key_reader()
+utils.list_of_langs()
 
 
-@bot.message_handler(commands=['qwerty', 'q'])
+@utils.bot.message_handler(commands=['qwerty', 'q'])
 def qwerty(message):
 
     qwerty_main(message)
 
 
-@bot.message_handler(commands=['d', 'distort'])
+@utils.bot.message_handler(commands=['d', 'distort'])
 def distort(message):
 
     distort_main(message)
 
 
-@bot.message_handler(commands=['translate', 'trans', 't'])
+@utils.bot.message_handler(commands=['translate', 'trans', 't'])
 def translate(message):
 
     translate_main(message)
 
 
-@bot.message_handler(commands=['start'])
+@utils.bot.message_handler(commands=['start'])
 def send_welcome(message):
 
-    write_log(BLOB_TEXT, message)
-    bot.reply_to(message, "Привет. Я бот - переводчик. "
+    logger.write_log(logger.BLOB_TEXT, message)
+    utils.bot.reply_to(message, "Привет. Я бот - переводчик. "
                           "Работаю на основе Google Translate API, и могу переводить сообщения в чате на лету.\n\n"
                           "Для этого добавь меня в чат, и при необходимости перевести чьё-то "
                           "сообщение 'Ответь' на него, и напиши команду: /t <код языка>. "
@@ -41,11 +42,11 @@ def send_welcome(message):
                           "Также я могу работать в личных сообщениях, как обычный переводчик.")
 
 
-@bot.message_handler(commands=['help', 'h'])
+@utils.bot.message_handler(commands=['help', 'h'])
 def send_help(message):
 
-    write_log(BLOB_TEXT, message)
-    bot.reply_to(message, "[/t, /trans, /translate] <язык> - перевести сообщение. Исходный язык определяется "
+    logger.write_log(logger.BLOB_TEXT, message)
+    utils.bot.reply_to(message, "[/t, /trans, /translate] <язык> - перевести сообщение. Исходный язык определяется "
                           "автоматически. Коды языков можно узнать с помощью команды /langs или /l\n"
                           "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры\n"
                           "[/d, /distort] <количество итераций> <итоговый язык> - Перевести сообщение на заданное количество "
@@ -57,37 +58,37 @@ def send_help(message):
                           "автоматически. Список доступных раскладок можно посмотреть с помощью команды /langs")
 
 
-@bot.message_handler(commands=['langs', 'l'])
+@utils.bot.message_handler(commands=['langs', 'l'])
 def send_list(message):
 
-    write_log(BLOB_TEXT, message)
+    logger.write_log(logger.BLOB_TEXT, message)
 
     try:
         file = open("langlist.txt", "r")
-        bot.send_document(message.chat.id, file, message.id,
+        utils.bot.send_document(message.chat.id, file, message.id,
                           "Здесь список всех языков для перевода и раскладок")
     except FileNotFoundError as e:
-        bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
+        utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
                               "отправить команду ещё раз. "
                               "Если это не сработает, обратитесь к автору бота.")
-        write_log("WARN: Trying to re-create removed langlist file")
-        list_of_langs()
+        logger.write_log("WARN: Trying to re-create removed langlist file")
+        utils.list_of_langs()
     except Exception as e:
-        bot.reply_to(message, "Неизвестная ошибка чтения файла с языками")
-        write_log("ERR: langlist isn't available")
-        write_log("ERR: " + str(e))
+        utils.bot.reply_to(message, "Неизвестная ошибка чтения файла с языками")
+        logger.write_log("ERR: langlist isn't available")
+        logger.write_log("ERR: " + str(e))
 
 
-@bot.message_handler(commands=['downloadlog'])
+@utils.bot.message_handler(commands=['downloadlog'])
 def download_log(message):
 
-    write_log(BLOB_TEXT, message)
-    download_clear_log(message, True)
+    logger.write_log(logger.BLOB_TEXT, message)
+    logger.download_clear_log(message, True)
 
-@bot.message_handler(commands=['clearlog'])
+@utils.bot.message_handler(commands=['clearlog'])
 def clear_log(message):
 
-    write_log(BLOB_TEXT, message)
-    download_clear_log(message, False)
+    logger.write_log(logger.BLOB_TEXT, message)
+    logger.download_clear_log(message, False)
 
-bot.polling(none_stop=True)
+utils.bot.polling(none_stop=True)
