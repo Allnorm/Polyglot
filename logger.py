@@ -8,12 +8,31 @@ BLOB_TEXT = "not_needed"
 current_log = "polyglot.log"
 key = ""
 
-def write_log(text = BLOB_TEXT, message = None):
 
-    if message != None:
-        log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + str(message.from_user.username) + " sent a command " + str(message.text) + \
-            ". Reply message: " + text
-    else: log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + text
+def username_parser(message):
+    if message.from_user.username is None:
+        if message.from_user.last_name is None:
+            username = str(message.from_user.first_name)
+        else:
+            username = str(message.from_user.first_name) + " " + str(message.from_user.last_name)
+    else:
+        if message.from_user.last_name is None:
+            username = str(message.from_user.first_name) + " (@" + str(message.from_user.username) + ")"
+        else:
+            username = str(message.from_user.first_name) + " " + str(message.from_user.last_name) + \
+                       " (@" + str(message.from_user.username) + ")"
+
+    return username
+
+
+def write_log(text=BLOB_TEXT, message=None):
+
+    if message is not None:
+        log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + username_parser(message) + \
+              " sent a command " + str(message.text) + \
+              ". Reply message: " + text
+    else:
+        log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + text
 
     if key != "": log = log.replace(key, "###SECRET KEY###")
 
@@ -39,7 +58,6 @@ def write_log(text = BLOB_TEXT, message = None):
 
 
 def clear_log():
-
     if os.path.isfile(current_log):
         try:
             os.remove(current_log)
@@ -51,8 +69,8 @@ def clear_log():
 
     return True
 
-def download_clear_log(message, down_clear_check):
 
+def download_clear_log(message, down_clear_check):
     if utils.extract_arg(message.text, 1) != key and key != "":
         utils.bot.reply_to(message, "Неверный ключ доступа")
         return
@@ -69,7 +87,7 @@ def download_clear_log(message, down_clear_check):
         except Exception:
             utils.bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
             write_log("ERR: user " + str(message.from_user.username) + " tried to download log, "
-                        "but something went wrong!")
+                                                                       "but something went wrong!")
             traceback.print_exc()
     else:
         if clear_log():
@@ -78,11 +96,10 @@ def download_clear_log(message, down_clear_check):
         else:
             utils.bot.send_message(message.chat.id, "Ошибка очистки лога")
             write_log("ERR: user " + str(message.from_user.username) + " tried to clear log, "
-                    "but something went wrong!")
+                                                                       "but something went wrong!")
 
 
 def key_reader():
-
     global key
     try:
         file = open("key", 'r')

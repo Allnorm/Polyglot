@@ -43,7 +43,7 @@ def textparser(message):
         inputtext = message.reply_to_message.text
     elif message.reply_to_message.caption is not None:
         inputtext = message.reply_to_message.caption
-    elif hasattr(message.reply_to_message, 'poll'):
+    elif message.reply_to_message.poll is not None:
         inputtext = message.reply_to_message.poll.question + "\n\n"
         for option in message.reply_to_message.poll.options:
             inputtext += "☑️ " + option.text + "\n"
@@ -90,5 +90,3 @@ def list_of_langs():
         logger.write_log("ERR: langlist file isn't available")
         logger.write_log("ERR: " + str(e))
         traceback.print_exc()
-
-    # bot.reply_to(message, "`" + output + "`", parse_mode="markdown") # old code
