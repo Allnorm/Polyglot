@@ -43,7 +43,7 @@ def textparser(message):
         inputtext = message.reply_to_message.text
     elif message.reply_to_message.caption is not None:
         inputtext = message.reply_to_message.caption
-    elif message.reply_to_message.poll is not None:
+    elif hasattr(message.reply_to_message, 'poll'):
         inputtext = message.reply_to_message.poll.question + "\n\n"
         for option in message.reply_to_message.poll.options:
             inputtext += "☑️ " + option.text + "\n"
