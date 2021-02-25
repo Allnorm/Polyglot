@@ -93,4 +93,4 @@ def clear_log(message):
     logger.write_log(logger.BLOB_TEXT, message)
     logger.download_clear_log(message, False)
 
-utils.bot.polling(none_stop=True)
+utils.bot.infinity_polling(True)
