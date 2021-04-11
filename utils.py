@@ -18,6 +18,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
+    logger.clear_log()
     log_key = ""
     token = ""
     try:

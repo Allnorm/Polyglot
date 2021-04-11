@@ -6,7 +6,7 @@ from distort import distort_main
 from qwerty import qwerty_main
 from translate import translate_main
 
-logger.clear_log()
+
 logger.write_log("###POLYGLOT HAS BEEN STARTED###")
 utils.list_of_langs()
 
