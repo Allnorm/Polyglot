@@ -8,7 +8,6 @@ from translate import translate_main
 
 logger.clear_log()
 logger.write_log("###POLYGLOT HAS BEEN STARTED###")
-logger.key_reader()
 utils.list_of_langs()
 
 

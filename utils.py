@@ -16,25 +16,32 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
            'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
 
 
-def current_token():
-
+def config_init():
+    log_key = ""
     token = ""
     try:
-        file = open("token", 'r')
-        token = file.read()
+        file = open("polyglot.conf", 'r')
+        token = file.readline().rstrip()
+        log_key = file.readline().rstrip()
         file.close()
     except Exception as e:
-        logger.write_log("ERR: Token file not found or not readable! Bot will close!")
+        logger.write_log("ERR: Config file was not found or not readable! Bot will close!")
         logger.write_log("ERR: " + str(e))
         traceback.print_exc()
         exit(1)
-
+    if token == "":
+        logger.write_log("ERR: Token is unknown! Bot will close!")
+        exit(1)
+    if log_key == "":
+        logger.write_log("WARN: Key isn't available! Unsafe mode!")
+    logger.key = log_key
     return token
 
-bot = telebot.TeleBot(current_token())
+
+bot = telebot.TeleBot(config_init())
+
 
 def textparser(message):
-
     if message.reply_to_message is None:
         bot.reply_to(message, "Пожалуйста, используйте эту команду как ответ на сообщение")
         return
@@ -59,18 +66,17 @@ def textparser(message):
 
 
 def extract_arg(arg, num):
-
     try:
         return arg.split()[num]
     except Exception:
         pass
 
-def extract_lang(lang):
 
+def extract_lang(lang):
     return translator.detect(lang).lang
 
-def list_of_langs():
 
+def list_of_langs():
     output = "Список всех кодов и соответствующих им языков:\n"
 
     for key, value in LANGUAGES.items():

@@ -2,8 +2,6 @@ import os
 import traceback
 import datetime
 
-import utils
-
 BLOB_TEXT = "not_needed"
 current_log = "polyglot.log"
 key = ""
@@ -26,7 +24,6 @@ def username_parser(message):
 
 
 def write_log(text=BLOB_TEXT, message=None):
-
     if message is not None:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + username_parser(message) + \
               " sent a command " + str(message.text) + \
@@ -71,6 +68,7 @@ def clear_log():
 
 
 def download_clear_log(message, down_clear_check):
+    import utils
     if utils.extract_arg(message.text, 1) != key and key != "":
         utils.bot.reply_to(message, "Неверный ключ доступа")
         return
@@ -97,16 +95,3 @@ def download_clear_log(message, down_clear_check):
             utils.bot.send_message(message.chat.id, "Ошибка очистки лога")
             write_log("ERR: user " + str(message.from_user.username) + " tried to clear log, "
                                                                        "but something went wrong!")
-
-
-def key_reader():
-    global key
-    try:
-        file = open("key", 'r')
-        key = file.read()
-        file.close()
-    except FileNotFoundError as e:
-        write_log("ERR: Key file isn't found! Unsafe log download/clear!")
-    except Exception as e:
-        write_log("ERR: Key file isn't readable! Unsafe log download/clear!")
-        traceback.print_exc()
