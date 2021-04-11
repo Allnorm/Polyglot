@@ -7,4 +7,4 @@ Telegram bot that use Google Api for translate messages
 4. Save config file and run program
 # Dependencies
 1. PyTelegramBotApi https://github.com/eternnoir/pyTelegramBotAPI, GPL-2.0 License
-2. py-googletrans https://github.com/alainrouillon/py-googletrans, MIT License
+2. py-googletrans https://github.com/alainrouillon/py-googletrans, branch "feature/enhance-use-of-direct-api", MIT License
