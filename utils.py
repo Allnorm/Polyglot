@@ -1,3 +1,4 @@
+import sys
 import traceback
 import telebot
 from googletrans import Translator, LANGUAGES
@@ -28,10 +29,10 @@ def config_init():
         logger.write_log("ERR: Config file was not found or not readable! Bot will close!")
         logger.write_log("ERR: " + str(e))
         traceback.print_exc()
-        exit(1)
+        sys.exit(1)
     if token == "":
         logger.write_log("ERR: Token is unknown! Bot will close!")
-        exit(1)
+        sys.exit(1)
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
     logger.key = log_key
