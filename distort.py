@@ -10,6 +10,7 @@ from googletrans import LANGUAGES
 ATTEMPTS = 3
 COOLDOWN = 10
 
+
 def distort_main(message):
 
     inputshiz = utils.textparser(message)
@@ -34,9 +35,9 @@ def distort_main(message):
 
     randlangs = ""
 
-    if utils.extract_arg(message.text, 2) != None and utils.extract_arg(message.text, 3) != None:
+    if utils.extract_arg(message.text, 2) is not None and utils.extract_arg(message.text, 3) is not None:
         endlang = utils.extract_arg(message.text, 2) + " " + utils.extract_arg(message.text, 3)
-    elif utils.extract_arg(message.text, 2) != None:
+    elif utils.extract_arg(message.text, 2) is not None:
         endlang = utils.extract_arg(message.text, 2)
     else:
         endlang = utils.extract_lang(inputshiz)
@@ -55,21 +56,23 @@ def distort_main(message):
 
             try:
                 inputshiz = utils.translator.translate(inputshiz, randlang).text
-                if inputshizchecker != inputshiz: break
+                if inputshizchecker != inputshiz:
+                    break
 
             except Exception as e:
                 if str(e) in "invalid destination language":
                     pass
                 else:
                     utils.bot.edit_message_text("Ошибка: " + str(e) + ".\n"
-                        "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputshiz), idc, idm)
+                                                "Сообщите администратору.\nСодержимое переменной inputtext: "
+                                                + str(inputshiz), idc, idm)
                     logger.write_log("ERR: " + str(e))
                     traceback.print_exc()
                     return
 
             if iteration == ATTEMPTS - 1:
                 utils.bot.edit_message_text("Неизвестная ошибка перевода. Повторите попытку позже.\n"
-                    "Возможно, запрос был заблокирован Google Api", idc, idm)
+                                            "Возможно, запрос был заблокирован Google Api", idc, idm)
                 return
 
         time.sleep(COOLDOWN)

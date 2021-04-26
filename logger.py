@@ -31,7 +31,8 @@ def write_log(text=BLOB_TEXT, message=None):
     else:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + text
 
-    if key != "": log = log.replace(key, "###SECRET KEY###")
+    if key != "":
+        log = log.replace(key, "###SECRET KEY###")
 
     print(log)
 
@@ -39,7 +40,7 @@ def write_log(text=BLOB_TEXT, message=None):
         try:
             f = open(current_log, 'w')
             f.close()
-        except Exception as e:
+        except Exception:
             print("ERR: File " + current_log + " is not writable!")
             traceback.print_exc()
             return
@@ -48,7 +49,7 @@ def write_log(text=BLOB_TEXT, message=None):
         f = open(current_log, 'a')
         f.write(log + "\n")
         f.close()
-    except Exception as e:
+    except Exception:
         print("ERR: File " + current_log + " is not writable!")
         traceback.print_exc()
         return
@@ -59,7 +60,7 @@ def clear_log():
         try:
             os.remove(current_log)
             write_log("INFO: log was cleared successful")
-        except Exception as e:
+        except Exception:
             write_log("ERR: File " + current_log + " wasn't removed")
             traceback.print_exc()
             return False
