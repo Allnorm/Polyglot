@@ -26,8 +26,7 @@ def config_init():
         file.close()
     except Exception as e:
         logger.write_log("ERR: Config file was not found or not readable! Bot will close!")
-        logger.write_log("ERR: " + str(e))
-        traceback.print_exc()
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     if token == "":
         logger.write_log("ERR: Token is unknown! Bot will close!")
@@ -94,5 +93,4 @@ def list_of_langs():
         logger.write_log("INFO: langlist updated successful")
     except Exception as e:
         logger.write_log("ERR: langlist file isn't available")
-        logger.write_log("ERR: " + str(e))
-        traceback.print_exc()
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

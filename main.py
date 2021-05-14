@@ -1,3 +1,5 @@
+import traceback
+
 import logger
 import utils
 import threading
@@ -70,15 +72,16 @@ def send_list(message):
         file = open("langlist.txt", "r")
         utils.bot.send_document(message.chat.id, file, message.id, "Здесь список всех языков для перевода и раскладок")
     except FileNotFoundError:
+        logger.write_log("WARN: Trying to re-create removed langlist file")
         utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
                                     "отправить команду ещё раз. "
-                                    "Если это не сработает, обратитесь к автору бота.")
-        logger.write_log("WARN: Trying to re-create removed langlist file")
+                                    "Если это не сработает, обратитесь к авторам бота.")
         utils.list_of_langs()
     except Exception as e:
-        utils.bot.reply_to(message, "Неизвестная ошибка чтения файла с языками")
         logger.write_log("ERR: langlist isn't available")
-        logger.write_log("ERR: " + str(e))
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        utils.bot.reply_to(message, "Ошибка чтения файла с языками Обратитесь к авторам бота\n"
+                                    "Информация для отладки сохранена в логах бота.")
 
 
 @utils.bot.message_handler(commands=['downloadlog'])

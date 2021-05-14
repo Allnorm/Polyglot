@@ -61,8 +61,7 @@ def clear_log():
             os.remove(current_log)
             write_log("INFO: log was cleared successful")
         except Exception:
-            write_log("ERR: File " + current_log + " wasn't removed")
-            traceback.print_exc()
+            write_log("ERR: File " + current_log + " wasn't removed\n" + traceback.format_exc())
             return False
 
     return True
@@ -81,18 +80,18 @@ def download_clear_log(message, down_clear_check):
             f.close()
             write_log("INFO: log was downloaded successful by " + str(message.from_user.username))
         except FileNotFoundError:
+            write_log("INFO: user " + str(message.from_user.username)
+                      + " tried to download empty log\n" + traceback.format_exc())
             utils.bot.send_message(message.chat.id, "Лог-файл не найден!")
-            write_log("INFO: user " + str(message.from_user.username) + " tried to download empty log")
         except Exception:
+            write_log("ERR: user " + str(message.from_user.username) +
+                      " tried to download log, but something went wrong!\n" + traceback.format_exc())
             utils.bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
-            write_log("ERR: user " + str(message.from_user.username) + " tried to download log, "
-                                                                       "but something went wrong!")
-            traceback.print_exc()
     else:
         if clear_log():
-            utils.bot.send_message(message.chat.id, "Очистка лога успешна")
             write_log("INFO: log was cleared by user " + str(message.from_user.username) + ". Have fun!")
+            utils.bot.send_message(message.chat.id, "Очистка лога успешна")
         else:
+            write_log("ERR: user " + str(message.from_user.username) +
+                      " tried to clear log, but something went wrong\n!")
             utils.bot.send_message(message.chat.id, "Ошибка очистки лога")
-            write_log("ERR: user " + str(message.from_user.username) + " tried to clear log, "
-                                                                       "but something went wrong!")

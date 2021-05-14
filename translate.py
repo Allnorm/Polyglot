@@ -33,7 +33,6 @@ def translate_main(message):
         if str(e) in "invalid destination language":
             utils.bot.reply_to(message, "Указан неверный код языка/название страны")
         else:
-            utils.bot.reply_to(message, "Ошибка: " + str(e) + ".\n"
-                                        "Сообщите администратору.\nСодержимое переменной inputtext: " + str(inputtext))
-            logger.write_log("ERR: " + str(e))
-            traceback.print_exc()
+            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            utils.bot.reply_to(message, "Ошибка перевода. Обратитесь к авторам бота\n"
+                                        "Информация для отладки сохранена в логах бота.")

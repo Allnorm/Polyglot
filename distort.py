@@ -63,11 +63,9 @@ def distort_main(message):
                 if str(e) in "invalid destination language":
                     pass
                 else:
-                    utils.bot.edit_message_text("Ошибка: " + str(e) + ".\n"
-                                                "Сообщите администратору.\nСодержимое переменной inputtext: "
-                                                + str(inputshiz), idc, idm)
-                    logger.write_log("ERR: " + str(e))
-                    traceback.print_exc()
+                    logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+                    utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
+                                                "Информация для отладки сохранена в логах бота.", idc, idm)
                     return
 
             if iteration == ATTEMPTS - 1:
