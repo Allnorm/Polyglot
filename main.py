@@ -7,10 +7,16 @@ import threading
 from distort import distort_main
 from qwerty import qwerty_main
 from translate import translate_main
-
+from inline import query_text_main
 
 logger.write_log("###POLYGLOT HAS BEEN STARTED###")
 utils.list_of_langs()
+
+
+@utils.bot.inline_handler(lambda query: len(query.query) > 0)
+def query_text(inline_query):
+
+    query_text_main(inline_query)
 
 
 @utils.bot.message_handler(commands=['qwerty', 'q'])
@@ -21,20 +27,17 @@ def qwerty(message):
 
 @utils.bot.message_handler(commands=['d', 'distort'])
 def distort(message):
-
     thread = threading.Thread(target=distort_main, args=(message,))
     thread.start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])
 def translate(message):
-
     translate_main(message)
 
 
 @utils.bot.message_handler(commands=['start'])
 def send_welcome(message):
-
     logger.write_log(logger.BLOB_TEXT, message)
     utils.bot.reply_to(message, "Привет. Я бот - переводчик. "
                                 "Работаю на основе Google Translate API, и могу переводить сообщения "
@@ -48,7 +51,6 @@ def send_welcome(message):
 
 @utils.bot.message_handler(commands=['help', 'h'])
 def send_help(message):
-
     logger.write_log(logger.BLOB_TEXT, message)
     utils.bot.reply_to(message, "[/t, /trans, /translate] <язык> - перевести сообщение. Исходный язык определяется "
                                 "автоматически. Коды языков можно узнать с помощью команды /langs или /l\n"
@@ -65,7 +67,6 @@ def send_help(message):
 
 @utils.bot.message_handler(commands=['langs', 'l'])
 def send_list(message):
-
     logger.write_log(logger.BLOB_TEXT, message)
 
     try:
@@ -86,14 +87,12 @@ def send_list(message):
 
 @utils.bot.message_handler(commands=['downloadlog'])
 def download_log(message):
-
     logger.write_log(logger.BLOB_TEXT, message)
     logger.download_clear_log(message, True)
 
 
 @utils.bot.message_handler(commands=['clearlog'])
 def clear_log(message):
-
     logger.write_log(logger.BLOB_TEXT, message)
     logger.download_clear_log(message, False)
 
