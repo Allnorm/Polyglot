@@ -13,7 +13,7 @@ logger.write_log("###POLYGLOT HAS BEEN STARTED###")
 utils.list_of_langs()
 
 
-@utils.bot.inline_handler(lambda query: len(query.query) > 0)
+@utils.bot.inline_handler(lambda query: len(query.query) >= 0)
 def query_text(inline_query):
 
     query_text_main(inline_query)
