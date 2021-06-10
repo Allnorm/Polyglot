@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 import traceback
 
@@ -7,11 +8,45 @@ import utils
 
 from googletrans import LANGUAGES
 
-ATTEMPTS = 3
-COOLDOWN = 10
+MAX_INITS_DEFAULT = 10
+ATTEMPTS_DEFAULT = 3
+COOLDOWN_DEFAULT = 10
+
+max_inits = MAX_INITS_DEFAULT
+attempts = ATTEMPTS_DEFAULT
+cooldown = COOLDOWN_DEFAULT
+
+
+def distort_init():
+    global max_inits, attempts, cooldown
+    try:
+        max_inits = int(max_inits)
+        attempts = int(attempts)
+        cooldown = int(cooldown)
+    except (ValueError, TypeError):
+        logger.write_log("ERR: Incorrect distort configuration, values will be set to defaults " + "\n"
+                         + traceback.format_exc())
+        max_inits = MAX_INITS_DEFAULT
+        attempts = ATTEMPTS_DEFAULT
+        cooldown = COOLDOWN_DEFAULT
+        return
+
+    if max_inits < 0 or max_inits > sys.maxsize:
+        logger.write_log("ERR: Too broad \"max_inits\" value, value will be set to default")
+        max_inits = MAX_INITS_DEFAULT
+    if attempts < 0 or attempts > sys.maxsize:
+        logger.write_log("ERR: Too broad \"attempts\" value, value will be set to default")
+        attempts = ATTEMPTS_DEFAULT
+    if cooldown < 0 or cooldown > sys.maxsize:
+        logger.write_log("ERR: Too broad \"cooldown\" value, value will be set to default")
+        cooldown = COOLDOWN_DEFAULT
 
 
 def distort_main(message):
+
+    if max_inits == 0:
+        utils.bot.reply_to(message, "Ошибка, хостер бота принудительно отключил функцию Distort")
+        return
 
     inputshiz = utils.textparser(message)
     if inputshiz is None:
@@ -22,15 +57,12 @@ def distort_main(message):
 
     try:
         counter = int(utils.extract_arg(message.text, 1))
-    except ValueError:
-        utils.bot.reply_to(message, "Ошибка, число не распознано")
-        return
-    except TypeError:
+    except (ValueError, TypeError):
         utils.bot.reply_to(message, "Ошибка, число не распознано")
         return
 
-    if counter > 100 or counter < 1:
-        utils.bot.reply_to(message, "Ошибка, укажите значение от 1 до 100")
+    if counter > max_inits or counter < 1:
+        utils.bot.reply_to(message, "Ошибка, укажите значение от 1 до " + str(max_inits))
         return
 
     randlangs = ""
@@ -42,7 +74,7 @@ def distort_main(message):
     else:
         endlang = utils.extract_lang(inputshiz)
 
-    tmpmessage = utils.bot.reply_to(message, "Генерация начата, осталось " + str(counter * COOLDOWN) + " секунд")
+    tmpmessage = utils.bot.reply_to(message, "Генерация начата, осталось " + str(counter * cooldown) + " секунд")
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
 
@@ -51,7 +83,7 @@ def distort_main(message):
 
         randlangs += randlang + "; "
 
-        for iteration in range(ATTEMPTS):  # three tries
+        for iteration in range(attempts):  # three tries as default, if = 0 => without checking
             inputshizchecker = inputshiz
 
             try:
@@ -68,15 +100,16 @@ def distort_main(message):
                                                 "Информация для отладки сохранена в логах бота.", idc, idm)
                     return
 
-            if iteration == ATTEMPTS - 1:
+            if iteration == attempts - 1:
+                logger.write_log("ERR GOOGLE_API_REJECT")
                 utils.bot.edit_message_text("Неизвестная ошибка перевода. Повторите попытку позже.\n"
                                             "Возможно, запрос был заблокирован Google Api", idc, idm)
                 return
 
-        time.sleep(COOLDOWN)
+        time.sleep(cooldown)
 
         outstr = "Готова итерация " + str(i + 1) + "/" + str(counter) + "\n" \
-            "Осталось " + str((counter - i - 1) * COOLDOWN) + " секунд"
+            "Осталось " + str((counter - i - 1) * cooldown) + " секунд"
         utils.bot.edit_message_text(outstr, idc, idm)
 
     try:

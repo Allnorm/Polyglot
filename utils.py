@@ -1,15 +1,15 @@
+import os
 import sys
 import traceback
 import telebot
+import configparser
 from googletrans import Translator, LANGUAGES
+
+import initdialog
 import logger
 
-# proxy = {'http':'ip:port'}
-# translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
-# try it if bot was banned in Google Api
-# usually unban happens in about half an hour
-
-translator = Translator(service_urls=['translate.googleapis.com'])
+proxy_port = ""
+proxy_type = ""
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -18,26 +18,63 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
+    import distort
+    import translate
+    global proxy_port
+    global proxy_type
+
+    if not os.path.isfile("polyglot.ini"):
+        initdialog.init_dialog()
+
+    config = configparser.ConfigParser()
     logger.clear_log()
     try:
-        file = open("polyglot.conf", 'r')
-        token = file.readline().rstrip()
-        log_key = file.readline().rstrip()
-        file.close()
+        config.read("polyglot.ini")
+        token = config["Polyglot"]["token"]
+        log_key = config["Polyglot"]["key"]
+        translate_verify = config["Polyglot"]["translate-verify"]
+        proxy_port = config["Polyglot"]["proxy"]
+        proxy_type = config["Polyglot"]["proxy-type"]
+        distort.max_inits = config["Distort"]["max-inits"]
+        distort.attempts = config["Distort"]["attempts"]
+        distort.cooldown = config["Distort"]["cooldown"]
     except Exception as e:
-        logger.write_log("ERR: Config file was not found or not readable! Bot will close!")
+        logger.write_log("ERR: Config file was not found, not readable or incorrect! Bot will close!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
+
     if token == "":
         logger.write_log("ERR: Token is unknown! Bot will close!")
         sys.exit(1)
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
+
+    if translate_verify == ("true" or "True" or "1"):
+        translate_verify = True
+    elif translate_verify == ("false" or "False" or "0"):
+        translate_verify = False
+    else:
+        logger.write_log("Unknown value \"translate-verify\", value will be set to default")
+        translate_verify = True
+
     logger.key = log_key
+    translate.translate_verify = translate_verify
+    distort.distort_init()
     return token
 
-
 bot = telebot.TeleBot(config_init())
+
+if proxy_port != "" and proxy_type != "":
+    proxy = {proxy_type: proxy_port}
+    translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
+    logger.write_log("WARN: working with proxy! Type " + proxy_type + ", address " + proxy_port)
+else:
+    translator = Translator(service_urls=['translate.googleapis.com'])
+
+    # proxy = {'http':'ip:port'}
+    # translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
+    # try it if bot was banned in Google Api
+    # usually unban happens in about half an hour
 
 
 def textparser(message):

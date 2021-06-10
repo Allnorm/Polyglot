@@ -3,6 +3,7 @@ import traceback
 import logger
 import utils
 
+translate_verify = True
 
 def translate_main(message):
 
@@ -24,6 +25,7 @@ def translate_main(message):
     try:
         translated = utils.translator.translate(inputtext, lang).text
         if translated == inputtext:
+            logger.write_log("ERR GOOGLE_API_REJECT")
             utils.bot.reply_to(message, "Исходный и итоговый текст совпадают. Возможно, Google Api отклонил запрос. "
                                         "Если вы уверены, что так быть не должно, повторите попытку позже")
             return
