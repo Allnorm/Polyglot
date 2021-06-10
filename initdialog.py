@@ -5,7 +5,7 @@ import logger
 
 def init_dialog():
     token = ""
-    logger.write_log("WARN! Config file isn't created, trying to create it now")
+    logger.write_log("WARN: Config file isn't created, trying to create it now")
     while token == "":
         token = input("Hello, mr. new user! Please, write your bot token: ")
     key = input("Please, write your secret key for working with log (optional): ")
