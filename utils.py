@@ -49,9 +49,9 @@ def config_init():
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
 
-    if translate_verify == ("true" or "True" or "1"):
+    if translate_verify == "true" or translate_verify == "True" or translate_verify == "1":
         translate_verify = True
-    elif translate_verify == ("false" or "False" or "0"):
+    elif translate_verify == "false" or translate_verify == "False" or translate_verify == "0":
         translate_verify = False
     else:
         logger.write_log("Unknown value \"translate-verify\", value will be set to default")
