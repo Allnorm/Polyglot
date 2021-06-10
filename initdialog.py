@@ -1,3 +1,4 @@
+import sys
 import traceback
 
 import logger
@@ -24,3 +25,4 @@ def init_dialog():
     except IOError as e:
         logger.write_log("ERR: Bot cannot write new config file and will close")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        sys.exit(1)
