@@ -33,8 +33,8 @@ def config_init():
         token = config["Polyglot"]["token"]
         log_key = config["Polyglot"]["key"]
         translate_verify = config["Polyglot"]["translate-verify"]
-        proxy_port = config["Polyglot"]["proxy"]
-        proxy_type = config["Polyglot"]["proxy-type"]
+        # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
+        # proxy_type = config["Polyglot"]["proxy-type"]
         distort.max_inits = config["Distort"]["max-inits"]
         distort.attempts = config["Distort"]["attempts"]
         distort.cooldown = config["Distort"]["cooldown"]
@@ -62,6 +62,7 @@ def config_init():
     distort.distort_init()
     return token
 
+
 bot = telebot.TeleBot(config_init())
 
 if proxy_port != "" and proxy_type != "":
@@ -69,7 +70,7 @@ if proxy_port != "" and proxy_type != "":
     translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
     logger.write_log("WARN: working with proxy! Type " + proxy_type + ", address " + proxy_port)
 else:
-    translator = Translator(service_urls=['translate.googleapis.com'])
+    translator = Translator()
 
     # proxy = {'http':'ip:port'}
     # translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
