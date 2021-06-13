@@ -9,8 +9,7 @@ from qwerty import qwerty_main
 from translate import translate_main
 from inline import query_text_main
 
-logger.write_log("###POLYGLOT HAS BEEN STARTED###")
-logger.write_log("Version 0.4 beta build 1")
+logger.write_log("###POLYGLOT v0.4 beta build 1 HAS BEEN STARTED###")
 utils.list_of_langs()
 
 
