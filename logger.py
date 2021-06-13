@@ -38,7 +38,7 @@ def write_log(text=BLOB_TEXT, message=None):
 
     if not os.path.isfile(current_log):
         try:
-            f = open(current_log, 'w')
+            f = open(current_log, 'w', encoding="utf-8")
             f.close()
         except Exception:
             print("ERR: File " + current_log + " is not writable!")
@@ -46,7 +46,7 @@ def write_log(text=BLOB_TEXT, message=None):
             return
 
     try:
-        f = open(current_log, 'a')
+        f = open(current_log, 'a', encoding="utf-8")
         f.write(log + "\n")
         f.close()
     except Exception:
@@ -75,7 +75,7 @@ def download_clear_log(message, down_clear_check):
 
     if down_clear_check:
         try:
-            f = open(current_log, 'r')
+            f = open(current_log, 'r', encoding="utf-8")
             utils.bot.send_document(message.chat.id, f)
             f.close()
             write_log("INFO: log was downloaded successful by " + username_parser(message))
