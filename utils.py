@@ -77,18 +77,6 @@ else:
     # try it if bot was banned in Google Api
     # usually unban happens in about half an hour
 
-# A workaround before fixing by Google. Remove as soon as possible
-
-
-def spaces2syms(str):
-    return str.replace(" ", "ᅠ")
-
-
-def syms2spaces(str):
-    return str.replace("ᅠ", " ")
-
-# A workaround before fixing by Google. Remove as soon as possible
-
 
 def textparser(message):
     if message.reply_to_message is None:

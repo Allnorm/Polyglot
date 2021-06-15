@@ -21,9 +21,7 @@ def translate_query(inline_query):
         return "Укажите код языка/название страны"
 
     try:
-        translated = utils.syms2spaces(utils.translator.translate(utils.spaces2syms(inputtext), lang).text)
-        # A workaround before fixing by Google. Remove as soon as possible
-        # translated = utils.translator.translate(inputtext, lang).text
+        translated = utils.translator.translate(inputtext, lang).text
         if translated == inputtext:
             return ("Исходный и итоговый текст совпадают. Возможно, Google Api отклонил запрос. "
                     "Если вы уверены, что так быть не должно, повторите попытку позже")
