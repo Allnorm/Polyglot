@@ -24,7 +24,9 @@ def translate_main(message):
         return
 
     try:
-        translated = utils.translator.translate(inputtext, lang).text
+        translated = utils.syms2spaces(utils.translator.translate(utils.spaces2syms(inputtext), lang).text)
+        # A workaround before fixing by Google. Remove as soon as possible
+        # translated = utils.translator.translate(inputtext, lang).text
         if translated == inputtext and translate_verify is True:
             logger.write_log("ERR: GOOGLE_API_REJECT")
             utils.bot.reply_to(message, "Исходный и итоговый текст совпадают. Возможно, Google Api отклонил запрос. "

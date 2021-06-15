@@ -87,7 +87,9 @@ def distort_main(message):
             inputshizchecker = inputshiz
 
             try:
-                inputshiz = utils.translator.translate(inputshiz, randlang).text
+                inputshiz = utils.syms2spaces(utils.translator.translate(utils.spaces2syms(inputshiz), randlang).text)
+                # A workaround before fixing by Google. Remove as soon as possible
+                # inputshiz = utils.translator.translate(inputshiz, randlang).text
                 if inputshizchecker != inputshiz:
                     break
 
@@ -113,10 +115,14 @@ def distort_main(message):
         utils.bot.edit_message_text(outstr, idc, idm)
 
     try:
-        inputshiz = utils.translator.translate(inputshiz, endlang).text
+        inputshiz = utils.syms2spaces(utils.translator.translate(utils.spaces2syms(inputshiz), endlang).text)
+        # A workaround before fixing by Google. Remove as soon as possible
+        # inputshiz = utils.translator.translate(inputshiz, endlang).text
     except Exception as e:
         if str(e) in "invalid destination language":
             endlang = utils.extract_lang(utils.textparser(message))
-            inputshiz = utils.translator.translate(inputshiz, endlang).text
+            inputshiz = utils.syms2spaces(utils.translator.translate(utils.spaces2syms(inputshiz), endlang).text)
+            # A workaround before fixing by Google. Remove as soon as possible
+            # inputshiz = utils.translator.translate(inputshiz, endlang).text
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs, idc, idm)
