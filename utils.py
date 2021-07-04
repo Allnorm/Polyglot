@@ -3,18 +3,22 @@ import sys
 import traceback
 import telebot
 import configparser
-from googletrans import Translator, LANGUAGES
+from google.cloud import translate
 
 import initdialog
 import logger
 
 proxy_port = ""
 proxy_type = ""
+json_key = ""
+project_name = "projects/"
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
            'uk': "йцукенгшщзхїфівапролджєячсмитьбю.ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ,'₴",
            'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
+
+langlist = ""
 
 
 def config_init():
@@ -22,6 +26,8 @@ def config_init():
     import translate
     global proxy_port
     global proxy_type
+    global json_key
+    global project_name
 
     if not os.path.isfile("polyglot.ini"):
         initdialog.init_dialog()
@@ -33,6 +39,8 @@ def config_init():
         token = config["Polyglot"]["token"]
         log_key = config["Polyglot"]["key"]
         translate_verify = config["Polyglot"]["translate-verify"]
+        json_key = config["GoogleAPI"]["keypath"]
+        project_name = project_name + config["GoogleAPI"]["projectname"]
         # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
         # proxy_type = config["Polyglot"]["proxy-type"]
         distort.max_inits = config["Distort"]["max-inits"]
@@ -65,17 +73,7 @@ def config_init():
 
 bot = telebot.TeleBot(config_init())
 
-if proxy_port != "" and proxy_type != "":
-    proxy = {proxy_type: proxy_port}
-    translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
-    logger.write_log("WARN: working with proxy! Type " + proxy_type + ", address " + proxy_port)
-else:
-    translator = Translator()
-
-    # proxy = {'http':'ip:port'}
-    # translator = Translator(service_urls=['translate.googleapis.com'], proxies=proxy)
-    # try it if bot was banned in Google Api
-    # usually unban happens in about half an hour
+translator = translate.TranslationServiceClient.from_service_account_json(json_key)
 
 
 def textparser(message):
@@ -110,14 +108,15 @@ def extract_arg(arg, num):
 
 
 def extract_lang(lang):
-    return translator.detect(lang).lang
+    return translator.detect_language(parent=project_name, content=lang).languages[0].language_code
 
 
 def list_of_langs():
+    global langlist
     output = "Список всех кодов и соответствующих им языков:\n"
-
-    for key, value in LANGUAGES.items():
-        output = output + key + " - " + value + "\n"
+    langlist = translator.get_supported_languages(parent=project_name, display_language_code="ru")
+    for lang in langlist.languages:
+        output = output + lang.display_name + " - " + lang.language_code + "\n"
 
     output = output + "\nСписок всех доступных раскладок клавиатуры: "
 

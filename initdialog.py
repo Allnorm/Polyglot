@@ -21,7 +21,10 @@ def init_dialog():
                     "[Distort]\n"
                     "max-inits=10\n"
                     "attempts=3\n"
-                    "cooldown=10")  # This is an default configuration of Polyglot bot
+                    "cooldown=10\n"
+                    "[GoogleAPI]\n"
+                    "keypath=key.json\n"
+                    "projectname=")  # This is an default configuration of Polyglot bot
     except IOError as e:
         logger.write_log("ERR: Bot cannot write new config file and will close")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

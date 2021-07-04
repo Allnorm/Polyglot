@@ -1,6 +1,7 @@
 polyglot.ini
 langlist.txt
 polyglot.log
+key.json
 /.idea
 /__pycache__
 /venv

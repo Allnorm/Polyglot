@@ -2,7 +2,7 @@ import traceback
 
 import logger
 import utils
-from googletrans import LANGUAGES
+# from googletrans import LANGUAGES
 
 
 def qwerty_main(message):

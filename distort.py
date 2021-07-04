@@ -6,8 +6,6 @@ import traceback
 import logger
 import utils
 
-from googletrans import LANGUAGES
-
 MAX_INITS_DEFAULT = 10
 ATTEMPTS_DEFAULT = 3
 COOLDOWN_DEFAULT = 10
@@ -79,7 +77,7 @@ def distort_main(message):
     idm = tmpmessage.message_id
 
     for i in range(counter):
-        randlang = random.choice(list(LANGUAGES))
+        randlang = random.choice(list(utils.langlist.languages)).language_code
 
         randlangs += randlang + "; "
 
@@ -87,7 +85,9 @@ def distort_main(message):
             inputshizchecker = inputshiz
 
             try:
-                inputshiz = utils.translator.translate(inputshiz, randlang).text
+                inputshiz = utils.translator.translate_text(parent=utils.project_name,
+                                                             contents=[inputshiz], target_language_code=randlang,
+                                                             mime_type="text/plain").translations[0].translated_text
                 if inputshizchecker != inputshiz:
                     break
 
@@ -113,10 +113,14 @@ def distort_main(message):
         utils.bot.edit_message_text(outstr, idc, idm)
 
     try:
-        inputshiz = utils.translator.translate(inputshiz, endlang).text
+        inputshiz = utils.translator.translate_text(parent=utils.project_name,
+                                                     contents=[inputshiz], target_language_code=endlang,
+                                                     mime_type="text/plain").translations[0].translated_text
     except Exception as e:
         if str(e) in "invalid destination language":
             endlang = utils.extract_lang(utils.textparser(message))
-            inputshiz = utils.translator.translate(inputshiz, endlang).text
+            inputshiz = utils.translator.translate_text(parent=utils.project_name,
+                                                        contents=[inputshiz], target_language_code=endlang,
+                                                        mime_type="text/plain").translations[0].translated_text
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs, idc, idm)
