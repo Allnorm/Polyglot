@@ -25,7 +25,9 @@ def qwerty_main(message):
 
     if tab1 is None and arg2 is None:
         utils.bot.reply_to(message, "Исходный язык не распознан. Неправильный аргумент или неверно распознан "
-                                    "язык? (" + LANGUAGES.get(utils.extract_lang(text)) + ")\n"
+                                    "язык? (" +
+                                    utils.translator.detect_language(parent=utils.project_name, content=text).
+                                    languages[0].language_code + ")\n"
                                     "Попробуйте указать исходный язык вручную. Возможно, язык отсутствует в "
                                     "словаре символов")
         return
