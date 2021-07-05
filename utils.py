@@ -5,6 +5,8 @@ import time
 import traceback
 import telebot
 import configparser
+import json
+
 from google.cloud import translate
 
 import initdialog
@@ -13,7 +15,7 @@ import logger
 proxy_port = ""
 proxy_type = ""
 json_key = ""
-project_name = "projects/"
+project_name = ""
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -26,31 +28,33 @@ lang_frozen = True
 
 def config_init():
     import distort
-    global proxy_port
-    global proxy_type
-    global json_key
-    global project_name
+    global proxy_port, proxy_type, json_key, project_name
+
+    token, key, log_key = "", "", ""
 
     if not os.path.isfile("polyglot.ini"):
+        logger.write_log("WARN: Config file isn't created, trying to create it now")
+        print("Hello, mr. new user!")
         initdialog.init_dialog()
 
     config = configparser.ConfigParser()
     logger.clear_log()
-    try:
-        config.read("polyglot.ini")
-        token = config["Polyglot"]["token"]
-        log_key = config["Polyglot"]["key"]
-        json_key = config["GoogleAPI"]["keypath"]
-        project_name = project_name + config["GoogleAPI"]["projectname"]
-        # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
-        # proxy_type = config["Polyglot"]["proxy-type"]
-        distort.max_inits = config["Distort"]["max-inits"]
-        distort.attempts = config["Distort"]["attempts"]
-        distort.cooldown = config["Distort"]["cooldown"]
-    except Exception as e:
-        logger.write_log("ERR: Config file was not found, not readable or incorrect! Bot will close!")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        sys.exit(1)
+    while True:
+        try:
+            config.read("polyglot.ini")
+            token = config["Polyglot"]["token"]
+            log_key = config["Polyglot"]["key"]
+            json_key = config["Polyglot"]["keypath"]
+            # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
+            # proxy_type = config["Polyglot"]["proxy-type"]
+            distort.max_inits = config["Distort"]["max-inits"]
+            distort.attempts = config["Distort"]["attempts"]
+            distort.cooldown = config["Distort"]["cooldown"]
+            break
+        except Exception as e:
+            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            logger.write_log("ERR: Incorrect config file! Trying to remake!")
+            initdialog.init_dialog()
 
     if token == "":
         logger.write_log("ERR: Token is unknown! Bot will close!")
@@ -59,6 +63,12 @@ def config_init():
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
     if not os.path.isfile(json_key):
         logger.write_log("ERR: JSON file wasn't found! Bot will close!")
+        sys.exit(1)
+    try:
+        project_name = "projects/" + json.load(open(json_key, 'r')).get("project_id")
+    except Exception as e:
+        logger.write_log("ERR: Project name isn't readable from JSON! Bot will close!")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
 
     logger.key = log_key
