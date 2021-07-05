@@ -23,7 +23,6 @@ def init_dialog():
         file.write("[Polyglot]\n"
                     "token=" + token + "\n"
                     "key=" + key + "\n"
-                    "translate-verify=true\n"
                     "proxy=\n"
                     "proxy-type=\n"
                     "[Distort]\n"

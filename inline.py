@@ -21,13 +21,10 @@ def translate_query(inline_query):
         return "Укажите код языка/название страны"
 
     try:
-        translated = utils.translator.translate_text(parent=utils.project_name,
+        inputtext = utils.translator.translate_text(parent=utils.project_name,
                                                      contents=[inputtext], target_language_code=lang,
                                                      mime_type="text/plain").translations[0].translated_text
-        if translated == inputtext:
-            return ("Исходный и итоговый текст совпадают. Возможно, Google Api отклонил запрос. "
-                    "Если вы уверены, что так быть не должно, повторите попытку позже")
-        return translated
+        return inputtext
 
     except Exception as e:
         if str(e) in "400 Target language is invalid.":

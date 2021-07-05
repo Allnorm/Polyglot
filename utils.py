@@ -26,7 +26,6 @@ lang_frozen = True
 
 def config_init():
     import distort
-    import translate
     global proxy_port
     global proxy_type
     global json_key
@@ -41,7 +40,6 @@ def config_init():
         config.read("polyglot.ini")
         token = config["Polyglot"]["token"]
         log_key = config["Polyglot"]["key"]
-        translate_verify = config["Polyglot"]["translate-verify"]
         json_key = config["GoogleAPI"]["keypath"]
         project_name = project_name + config["GoogleAPI"]["projectname"]
         # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
@@ -63,16 +61,7 @@ def config_init():
         logger.write_log("ERR: JSON file wasn't found! Bot will close!")
         sys.exit(1)
 
-    if translate_verify == "true" or translate_verify == "True" or translate_verify == "1":
-        translate_verify = True
-    elif translate_verify == "false" or translate_verify == "False" or translate_verify == "0":
-        translate_verify = False
-    else:
-        logger.write_log("Unknown value \"translate-verify\", value will be set to default")
-        translate_verify = True
-
     logger.key = log_key
-    translate.translate_verify = translate_verify
     distort.distort_init()
     return token
 
