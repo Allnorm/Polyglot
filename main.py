@@ -10,7 +10,7 @@ from translate import translate_main
 from inline import query_text_main
 
 utils.list_of_langs()
-logger.write_log("###POLYGLOT v0.5 alpha build 10 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.5.1 alpha build 1 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
