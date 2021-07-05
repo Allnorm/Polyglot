@@ -92,18 +92,14 @@ def distort_main(message):
                     break
 
             except Exception as e:
-                if str(e) in "400 Target language is invalid.":
-                    pass
-                else:
-                    logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-                    utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
-                                                "Информация для отладки сохранена в логах бота.", idc, idm)
-                    return
+                logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+                utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
+                                            "Информация для отладки сохранена в логах бота.", idc, idm)
+                return
 
             if iteration == attempts - 1:
-                logger.write_log("ERR GOOGLE_API_REJECT")
-                utils.bot.edit_message_text("Неизвестная ошибка перевода. Повторите попытку позже.\n"
-                                            "Возможно, запрос был заблокирован Google Api", idc, idm)
+                utils.bot.edit_message_text("Итоговый текст попытки искажения совпадает с исходным. "
+                                            "Повторите попытку позже или попробуйте другой текст", idc, idm)
                 return
 
         time.sleep(cooldown)
@@ -114,8 +110,8 @@ def distort_main(message):
 
     try:
         inputshiz = utils.translator.translate_text(parent=utils.project_name,
-                                                     contents=[inputshiz], target_language_code=endlang,
-                                                     mime_type="text/plain").translations[0].translated_text
+                                                    contents=[inputshiz], target_language_code=endlang,
+                                                    mime_type="text/plain").translations[0].translated_text
     except Exception as e:
         if str(e) in "400 Target language is invalid.":
             endlang = utils.extract_lang(utils.textparser(message))
