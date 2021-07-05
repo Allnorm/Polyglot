@@ -9,11 +9,12 @@ from qwerty import qwerty_main
 from translate import translate_main
 from inline import query_text_main
 
-logger.write_log("###POLYGLOT-newapi v0.5 pre-alpha build 1 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT-newapi v0.5 alpha build 3 HAS BEEN STARTED###")
 utils.list_of_langs()
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
+
     if ("@" in message.text and "@" + utils.bot.get_me().username in message.text) or not ("@" in message.text):
         return True
     else:

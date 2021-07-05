@@ -57,6 +57,10 @@ def config_init():
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
 
+    if not os.path.isfile(json_key):
+        logger.write_log("ERR: JSON file wasn't found! Bot will close!")
+        sys.exit(1)
+
     if translate_verify == "true" or translate_verify == "True" or translate_verify == "1":
         translate_verify = True
     elif translate_verify == "false" or translate_verify == "False" or translate_verify == "0":
