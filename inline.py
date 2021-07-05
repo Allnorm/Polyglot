@@ -46,4 +46,3 @@ def query_text_main(inline_query):
         description="{!s}".format(text_result),
         input_message_content=types.InputTextMessageContent(message_text="{!s}".format(text_result)))
     utils.bot.answer_inline_query(inline_query.id, [output])
-    print(text_result)
