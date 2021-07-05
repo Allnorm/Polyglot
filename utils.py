@@ -130,7 +130,7 @@ def list_of_langs():
     global langlist, lang_frozen
     threading.Thread(target=lang_frozen_checker).start()
     output = "Список всех кодов и соответствующих им языков:\n"
-    langlist = translator.get_supported_languages(parent=project_name, display_language_code="ru")
+    langlist = translator.get_supported_languages(parent=project_name, display_language_code="en")
     lang_frozen = False
     for lang in langlist.languages:
         output = output + lang.display_name + " - " + lang.language_code + "\n"
