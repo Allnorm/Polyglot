@@ -17,8 +17,6 @@ def init_dialog():
         file.write("[Polyglot]\n"
                     "token=" + token + "\n"
                     "key=" + key + "\n"
-                    "proxy=\n"
-                    "proxy-type=\n"
                     "keypath=" + keypath + "\n"
                     "[Distort]\n"
                     "max-inits=10\n"

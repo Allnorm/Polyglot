@@ -30,8 +30,6 @@ def config_init():
     import distort
     global proxy_port, proxy_type, json_key, project_name
 
-    token, key, log_key = "", "", ""
-
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: Config file isn't created, trying to create it now")
         print("Hello, mr. new user!")
@@ -45,8 +43,6 @@ def config_init():
             token = config["Polyglot"]["token"]
             log_key = config["Polyglot"]["key"]
             json_key = config["Polyglot"]["keypath"]
-            # proxy_port = config["Polyglot"]["proxy"] Temporary disabled
-            # proxy_type = config["Polyglot"]["proxy-type"]
             distort.max_inits = config["Distort"]["max-inits"]
             distort.attempts = config["Distort"]["attempts"]
             distort.cooldown = config["Distort"]["cooldown"]
@@ -78,7 +74,13 @@ def config_init():
 
 bot = telebot.TeleBot(config_init())
 
-translator = translate.TranslationServiceClient.from_service_account_json(json_key)
+try:
+    translator = translate.TranslationServiceClient.from_service_account_json(json_key)
+except Exception as e:
+    logger.write_log("ERR: Translator object wasn't created successful! Bot will close! "
+                     "Please check your JSON key or Google Cloud settings.")
+    logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+    sys.exit(1)
 
 
 def textparser(message):
