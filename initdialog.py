@@ -18,10 +18,7 @@ def init_dialog():
                     "token=" + token + "\n"
                     "key=" + key + "\n"
                     "keypath=" + keypath + "\n"
-                    "[Distort]\n"
-                    "max-inits=10\n"
-                    "attempts=3\n"
-                    "cooldown=10")  # This is an default configuration of Polyglot bot
+                    "max-inits=10")  # This is an default configuration of Polyglot bot
         logger.write_log("INFO: New config file was created successful")
     except IOError as e:
         logger.write_log("ERR: Bot cannot write new config file and will close")

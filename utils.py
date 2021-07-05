@@ -43,9 +43,7 @@ def config_init():
             token = config["Polyglot"]["token"]
             log_key = config["Polyglot"]["key"]
             json_key = config["Polyglot"]["keypath"]
-            distort.max_inits = config["Distort"]["max-inits"]
-            distort.attempts = config["Distort"]["attempts"]
-            distort.cooldown = config["Distort"]["cooldown"]
+            distort.max_inits = config["Polyglot"]["max-inits"]
             break
         except Exception as e:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
