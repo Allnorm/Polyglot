@@ -9,8 +9,8 @@ from qwerty import qwerty_main
 from translate import translate_main
 from inline import query_text_main
 
-logger.write_log("###POLYGLOT-newapi v0.5 alpha build 3 HAS BEEN STARTED###")
 utils.list_of_langs()
+logger.write_log("###POLYGLOT-newapi v0.5 alpha build 4 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -38,8 +38,7 @@ def qwerty(message):
 def distort(message):
 
     if botname_checker(message):
-        thread = threading.Thread(target=distort_main, args=(message,))
-        thread.start()
+        threading.Thread(target=distort_main, args=(message,)).start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])

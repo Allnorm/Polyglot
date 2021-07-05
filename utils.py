@@ -1,5 +1,7 @@
 import os
 import sys
+import threading
+import time
 import traceback
 import telebot
 import configparser
@@ -19,6 +21,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
            'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
 
 langlist = ""
+lang_frozen = True
 
 
 def config_init():
@@ -56,7 +59,6 @@ def config_init():
         sys.exit(1)
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
-
     if not os.path.isfile(json_key):
         logger.write_log("ERR: JSON file wasn't found! Bot will close!")
         sys.exit(1)
@@ -115,10 +117,19 @@ def extract_lang(lang):
     return translator.detect_language(parent=project_name, content=lang).languages[0].language_code
 
 
+def lang_frozen_checker():
+    time.sleep(15)
+    if lang_frozen is True:
+        logger.write_log("ERR: langlist-gen timed out! Please check your JSON key or Google Cloud settings!")
+        os._exit(1)
+
+
 def list_of_langs():
-    global langlist
+    global langlist, lang_frozen
+    threading.Thread(target=lang_frozen_checker).start()
     output = "Список всех кодов и соответствующих им языков:\n"
     langlist = translator.get_supported_languages(parent=project_name, display_language_code="ru")
+    lang_frozen = False
     for lang in langlist.languages:
         output = output + lang.display_name + " - " + lang.language_code + "\n"
 
