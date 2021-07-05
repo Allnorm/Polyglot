@@ -36,7 +36,7 @@ def translate_main(message):
         utils.bot.reply_to(message, translated)
 
     except Exception as e:
-        if str(e) in "invalid destination language":
+        if str(e) in "400 Target language is invalid.":
             utils.bot.reply_to(message, "Указан неверный код языка/название страны")
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

@@ -92,7 +92,7 @@ def distort_main(message):
                     break
 
             except Exception as e:
-                if str(e) in "invalid destination language":
+                if str(e) in "400 Target language is invalid.":
                     pass
                 else:
                     logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
@@ -117,7 +117,7 @@ def distort_main(message):
                                                      contents=[inputshiz], target_language_code=endlang,
                                                      mime_type="text/plain").translations[0].translated_text
     except Exception as e:
-        if str(e) in "invalid destination language":
+        if str(e) in "400 Target language is invalid.":
             endlang = utils.extract_lang(utils.textparser(message))
             inputshiz = utils.translator.translate_text(parent=utils.project_name,
                                                         contents=[inputshiz], target_language_code=endlang,
