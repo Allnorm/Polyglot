@@ -12,7 +12,8 @@ def init_dialog():
     while token == "":
         token = input("Please, write your bot token: ")
     while project_name == "":
-        project_name = input("Please, write name of your Google project (for example, daring-atrium-318221 or another): ")
+        project_name = input("Please, write name of your Google project "
+                             "(for example, daring-atrium-318221 or another): ")
     key = input("Please, write your secret key for working with log (optional): ")
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
     if keypath == "":
