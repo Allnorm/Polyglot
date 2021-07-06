@@ -1,3 +1,4 @@
+import os
 import traceback
 
 import logger
@@ -10,7 +11,7 @@ from translate import translate_main
 from inline import query_text_main
 
 utils.list_of_langs()
-logger.write_log("###POLYGLOT v0.5.1 alpha build 1 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.5.1 alpha build 2 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -69,7 +70,8 @@ def send_help(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.bot.reply_to(message, "[/t, /trans, /translate] <язык> - перевести сообщение. Исходный язык определяется "
-                                    "автоматически. Коды языков можно узнать с помощью команды /langs или /l\n"
+                                    "автоматически. Коды и названия языков можно "
+                                    "узнать с помощью команды /langs или /l\n"
                                     "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры\n"
                                     "[/d, /distort] <количество итераций> <итоговый язык> - "
                                     "Перевести сообщение на заданное количество "
@@ -78,7 +80,8 @@ def send_help(message):
                                     "результат будет выведен на языке оригинала\n"
                                     "[/q, /qwerty] <исходный язык> <итоговый язык> ИЛИ "
                                     "/q <итоговый язык> - смена раскладки текста. Исходный язык может определяться "
-                                    "автоматически. Список доступных раскладок можно посмотреть с помощью команды /langs")
+                                    "автоматически. Список доступных раскладок можно "
+                                    "посмотреть с помощью команды /langs")
 
 
 @utils.bot.message_handler(commands=['langs', 'l'])
@@ -93,14 +96,15 @@ def send_list(message):
                                     "Здесь список всех языков для перевода и раскладок")
         except FileNotFoundError:
             logger.write_log("WARN: Trying to re-create removed langlist file")
-            utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
-                                        "отправить команду ещё раз. "
-                                        "Если это не сработает, обратитесь к авторам бота.")
             utils.list_of_langs()
+            if not os.path.isfile("langlist.txt"):
+                utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
+                                            "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")
+
         except Exception as e:
-            logger.write_log("ERR: langlist isn't available")
+            logger.write_log("ERR: langlist file isn't available")
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-            utils.bot.reply_to(message, "Ошибка чтения файла с языками Обратитесь к авторам бота\n"
+            utils.bot.reply_to(message, "Ошибка чтения файла с языками. Обратитесь к авторам бота. "
                                         "Информация для отладки сохранена в логах бота.")
 
 
