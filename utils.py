@@ -11,7 +11,6 @@ import interlayer
 proxy_port = ""
 proxy_type = ""
 
-langlist = ""
 lang_frozen = True
 
 
