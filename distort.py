@@ -19,7 +19,7 @@ def distort_init():
         max_inits = MAX_INITS_DEFAULT
         return
 
-    if max_inits < 0 or max_inits > sys.maxsize:
+    if max_inits < 0 or max_inits > 100:
         logger.write_log("ERR: Too broad \"max_inits\" value, value will be set to default")
         max_inits = MAX_INITS_DEFAULT
 
