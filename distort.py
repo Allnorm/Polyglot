@@ -1,5 +1,4 @@
 import random
-import sys
 import traceback
 
 import logger
