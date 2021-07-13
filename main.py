@@ -1,3 +1,4 @@
+import os
 import traceback
 
 import logger
@@ -9,7 +10,7 @@ from qwerty import qwerty_main
 from translate import translate_main
 from inline import query_text_main
 
-logger.write_log("###POLYGLOT v0.4 beta build 2 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.5-freeapi beta build 1 HAS BEEN STARTED###")
 utils.list_of_langs()
 
 
@@ -93,10 +94,10 @@ def send_list(message):
                                     "Здесь список всех языков для перевода и раскладок")
         except FileNotFoundError:
             logger.write_log("WARN: Trying to re-create removed langlist file")
-            utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла, попробуйте "
-                                        "отправить команду ещё раз. "
-                                        "Если это не сработает, обратитесь к авторам бота.")
             utils.list_of_langs()
+            if not os.path.isfile("langlist.txt"):
+                utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
+                                            "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")
         except Exception as e:
             logger.write_log("ERR: langlist isn't available")
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
