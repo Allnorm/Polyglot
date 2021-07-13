@@ -69,18 +69,18 @@ def distort_main(message):
         randlangs_list += randlang + "; "
 
         try:
-            inputshiz = interlayer.get_translate(inputshiz, randlang)
+            inputshiz = interlayer.get_translate(inputshiz, randlang, True)
         except interlayer.TooManyRequestException:
             utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
             return
-        except Exception as e:
+        except Exception:
             utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
                                         "Информация для отладки сохранена в логах бота.", idc, idm)
             return
 
         lastlang = randlang
 
-    while (True):
+    while True:
         try:
             inputshiz = interlayer.get_translate(inputshiz, endlang)
             break

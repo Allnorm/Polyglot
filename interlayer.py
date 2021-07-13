@@ -100,7 +100,7 @@ def list_of_langs():
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
 
 
-def get_translate(input_text, target_lang, src_lang=None):
+def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
     try:
         return translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
                                     mime_type="text/plain").translations[0].translated_text
