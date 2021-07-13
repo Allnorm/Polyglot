@@ -11,6 +11,9 @@ import logger
 
 json_key = ""
 project_name = ""
+lang_frozen = True
+translator: translate.TranslationServiceClient
+langlist: translate.SupportedLanguage
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -38,7 +41,7 @@ def api_init(config):
     global project_name, json_key
     try:
         json_key = config["Polyglot"]["keypath"]
-    except:
+    except Exception:
         raise
 
     if not os.path.isfile(json_key):
@@ -103,7 +106,7 @@ def list_of_langs():
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
     try:
         return translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
-                                    mime_type="text/plain").translations[0].translated_text
+                                         mime_type="text/plain").translations[0].translated_text
     except Exception as e:
         if str(e) in "400 Target language is invalid.":
             raise BadTrgLangException
