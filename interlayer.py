@@ -31,6 +31,7 @@ def init_dialog_api(config):
     if keypath == "":
         keypath = "key.json"
     config.set("Polyglot", "keypath", keypath)
+    return config
 
 
 def api_init(config):
