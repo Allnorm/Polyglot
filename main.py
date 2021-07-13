@@ -99,7 +99,7 @@ def send_list(message):
                 utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
                                             "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")
         except Exception as e:
-            logger.write_log("ERR: langlist isn't available")
+            logger.write_log("ERR: langlist file isn't available")
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             utils.bot.reply_to(message, "Ошибка чтения файла с языками Обратитесь к авторам бота\n"
                                         "Информация для отладки сохранена в логах бота.")

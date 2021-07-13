@@ -13,12 +13,12 @@ def translate_query(inline_query):
     try:
         inputtext = inline_query.query.split(' ', 1)[1].lstrip()
     except IndexError:
-        return "Введите код языка и текст"
+        return "Введите код/название языка и текст"
 
     logger.write_log("LOG: user " + logger.username_parser(inline_query) + " sent an INLINE: " + inputtext)
 
     if lang is None:
-        return "Укажите код языка/название страны"
+        return "Укажите код/название языка"
 
     try:
         translated = utils.translator.translate(inputtext, lang).text
@@ -29,7 +29,7 @@ def translate_query(inline_query):
 
     except Exception as e:
         if str(e) in "invalid destination language":
-            return "Указан неверный код языка/название страны"
+            return "Указан неверный код/название языка"
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             return ("Ошибка перевода. Обратитесь к авторам бота\n"
