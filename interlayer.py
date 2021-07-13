@@ -22,6 +22,10 @@ class BadTrgLangException(Exception):
     pass
 
 
+class TooManyRequestException(Exception):
+    pass
+
+
 def init_dialog_api(config):
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
     if keypath == "":

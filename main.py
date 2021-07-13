@@ -8,12 +8,11 @@ import threading
 
 from distort import distort_main
 from qwerty import qwerty_main
-from translate import translate_main
 from inline import query_text_main
 
 interlayer.translate_init()
 interlayer.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 pre-alpha build 1 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.6 pre-alpha build 2 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -48,7 +47,31 @@ def distort(message):
 def translate(message):
 
     if botname_checker(message):
-        translate_main(message)
+        lang = utils.extract_arg(message.text, 1)
+        if utils.extract_arg(message.text, 2) is not None:
+            lang = lang + " " + utils.extract_arg(message.text, 2)
+
+        inputtext = utils.textparser(message)
+        if inputtext is None:
+            logger.write_log("none", message)
+            return
+
+        logger.write_log(inputtext, message)
+
+        if lang is None:
+            utils.bot.reply_to(message, "Укажите код/название языка на английском")
+            return
+
+        try:
+            inputtext = interlayer.get_translate(inputtext, lang)
+            utils.bot.reply_to(message, inputtext)
+        except interlayer.BadTrgLangException:
+            utils.bot.reply_to(message, "Указан неверный код/название яыка")
+        except interlayer.TooManyRequestException:
+            utils.bot.reply_to(message, "Слишком много запросов к API, пожалуйста, попробуйте позже.")
+        except Exception:
+            utils.bot.reply_to(message, "Ошибка перевода. Обратитесь к авторам бота\n"
+                                        "Информация для отладки сохранена в логах бота.")
 
 
 @utils.bot.message_handler(commands=['start'])
