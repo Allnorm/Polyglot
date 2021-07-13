@@ -59,11 +59,11 @@ def distort_main(message):
     tmpmessage = utils.bot.reply_to(message, "Генерация начата, ожидайте")
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
+    lastlang = utils.extract_lang(inputshiz)
+    randlang = random.choice(list(utils.langlist.languages)).language_code
 
     for i in range(counter):
-        randlang = utils.extract_lang(inputshiz)
-        currentlang = randlang
-        while randlang == currentlang:
+        while randlang == lastlang:
             randlang = random.choice(list(utils.langlist.languages)).language_code
 
         randlangs_list += randlang + "; "
@@ -78,6 +78,8 @@ def distort_main(message):
             utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
                                             "Информация для отладки сохранена в логах бота.", idc, idm)
             return
+
+        lastlang = randlang
 
     try:
         inputshiz = utils.translator.translate_text(parent=utils.project_name,
