@@ -2,6 +2,7 @@ import configparser
 import sys
 import traceback
 
+import interlayer
 import logger
 
 
@@ -10,16 +11,13 @@ def init_dialog():
     while token == "":
         token = input("Please, write your bot token: ")
     key = input("Please, write your secret key for working with log (optional): ")
-    keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
-    if keypath == "":
-        keypath = "key.json"
 
     config = configparser.ConfigParser()
     config.add_section("Polyglot")
     config.set("Polyglot", "token", token)
     config.set("Polyglot", "key", key)
-    config.set("Polyglot", "keypath", keypath)
     config.set("Polyglot", "max-inits", "100")
+    config = interlayer.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:
         config.write(open("polyglot.ini", "w"))

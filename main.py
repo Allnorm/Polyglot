@@ -1,6 +1,7 @@
 import os
 import traceback
 
+import interlayer
 import logger
 import utils
 import threading
@@ -10,7 +11,8 @@ from qwerty import qwerty_main
 from translate import translate_main
 from inline import query_text_main
 
-utils.list_of_langs()
+interlayer.translate_init()
+interlayer.list_of_langs()
 logger.write_log("###POLYGLOT v0.6 pre-alpha build 1 HAS BEEN STARTED###")
 
 
@@ -96,7 +98,7 @@ def send_list(message):
                                     "Здесь список всех языков для перевода и раскладок")
         except FileNotFoundError:
             logger.write_log("WARN: Trying to re-create removed langlist file")
-            utils.list_of_langs()
+            interlayer.list_of_langs()
             if not os.path.isfile("langlist.txt"):
                 utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
                                             "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")

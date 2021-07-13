@@ -1,5 +1,6 @@
 import traceback
 
+import interlayer
 import logger
 import utils
 
@@ -16,17 +17,15 @@ def qwerty_main(message):
     arg1, arg2 = utils.extract_arg(message.text, 1), utils.extract_arg(message.text, 2)
 
     if arg2 is None:
-        tab1 = utils.layouts.get(utils.extract_lang(text))
-        tab2 = utils.layouts.get(arg1)
+        tab1 = interlayer.layouts.get(interlayer.extract_lang(text))
+        tab2 = interlayer.layouts.get(arg1)
     else:
-        tab1 = utils.layouts.get(arg1)
-        tab2 = utils.layouts.get(arg2)
+        tab1 = interlayer.layouts.get(arg1)
+        tab2 = interlayer.layouts.get(arg2)
 
     if tab1 is None and arg2 is None:
         utils.bot.reply_to(message, "Исходный язык не распознан. Неправильный аргумент или неверно распознан "
-                                    "язык? (" +
-                                    utils.translator.detect_language(parent=utils.project_name, content=text).
-                                    languages[0].language_code + ")\n"
+                                    "язык? (" + interlayer.extract_lang(text) + ")\n"
                                     "Попробуйте указать исходный язык вручную. Возможно, язык отсутствует в "
                                     "словаре символов")
         return

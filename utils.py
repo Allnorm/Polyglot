@@ -1,26 +1,15 @@
 import os
 import sys
-import threading
-import time
 import traceback
 import telebot
 import configparser
-import json
-
-from google.cloud import translate
 
 import initdialog
 import logger
+import interlayer
 
 proxy_port = ""
 proxy_type = ""
-json_key = ""
-project_name = ""
-
-layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
-           'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
-           'uk': "йцукенгшщзхїфівапролджєячсмитьбю.ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ,'₴",
-           'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
 
 langlist = ""
 lang_frozen = True
@@ -28,7 +17,7 @@ lang_frozen = True
 
 def config_init():
     import distort
-    global proxy_port, proxy_type, json_key, project_name
+    global proxy_port, proxy_type
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: Config file isn't created, trying to create it now")
@@ -42,8 +31,8 @@ def config_init():
             config.read("polyglot.ini")
             token = config["Polyglot"]["token"]
             log_key = config["Polyglot"]["key"]
-            json_key = config["Polyglot"]["keypath"]
             distort.max_inits = config["Polyglot"]["max-inits"]
+            config = interlayer.api_init(config)
             break
         except Exception as e:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
@@ -55,15 +44,6 @@ def config_init():
         sys.exit(1)
     if log_key == "":
         logger.write_log("WARN: Key isn't available! Unsafe mode!")
-    if not os.path.isfile(json_key):
-        logger.write_log("ERR: JSON file wasn't found! Bot will close!")
-        sys.exit(1)
-    try:
-        project_name = "projects/" + json.load(open(json_key, 'r')).get("project_id")
-    except Exception as e:
-        logger.write_log("ERR: Project name isn't readable from JSON! Bot will close!")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        sys.exit(1)
 
     logger.key = log_key
     distort.distort_init()
@@ -71,14 +51,6 @@ def config_init():
 
 
 bot = telebot.TeleBot(config_init())
-
-try:
-    translator = translate.TranslationServiceClient.from_service_account_json(json_key)
-except Exception as e:
-    logger.write_log("ERR: Translator object wasn't created successful! Bot will close! "
-                     "Please check your JSON key or Google Cloud settings.")
-    logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-    sys.exit(1)
 
 
 def textparser(message):
@@ -111,38 +83,3 @@ def extract_arg(arg, num):
         return arg.split()[num]
     except Exception:
         pass
-
-
-def extract_lang(lang):
-    return translator.detect_language(parent=project_name, content=lang).languages[0].language_code
-
-
-def lang_frozen_checker():
-    time.sleep(15)
-    if lang_frozen is True:
-        logger.write_log("ERR: langlist-gen timed out! Please check your JSON key or Google Cloud settings!")
-        os._exit(1)
-
-
-def list_of_langs():
-    global langlist, lang_frozen
-    threading.Thread(target=lang_frozen_checker).start()
-    output = "Список всех кодов и соответствующих им языков:\n"
-    langlist = translator.get_supported_languages(parent=project_name, display_language_code="en")
-    lang_frozen = False
-    for lang in langlist.languages:
-        output = output + lang.display_name + " - " + lang.language_code + "\n"
-
-    output = output + "\nСписок всех доступных раскладок клавиатуры: "
-
-    for key, value in layouts.items():
-        output = output + key + " "
-
-    try:
-        file = open("langlist.txt", "w")
-        file.write(output)
-        file.close()
-        logger.write_log("INFO: langlist updated successful")
-    except Exception as e:
-        logger.write_log("ERR: langlist file isn't available")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

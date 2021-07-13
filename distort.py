@@ -1,6 +1,7 @@
 import random
 import traceback
 
+import interlayer
 import logger
 import utils
 
@@ -53,12 +54,12 @@ def distort_main(message):
     elif utils.extract_arg(message.text, 2) is not None:
         endlang = utils.extract_arg(message.text, 2)
     else:
-        endlang = utils.extract_lang(inputshiz)
+        endlang = interlayer.extract_lang(inputshiz)
 
     tmpmessage = utils.bot.reply_to(message, "Генерация начата, ожидайте")
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
-    lastlang = utils.extract_lang(inputshiz)
+    lastlang = interlayer.extract_lang(inputshiz)
     randlang = random.choice(list(utils.langlist.languages)).language_code
 
     for i in range(counter):
@@ -68,27 +69,21 @@ def distort_main(message):
         randlangs_list += randlang + "; "
 
         try:
-            inputshiz = utils.translator.translate_text(parent=utils.project_name,
-                                                        contents=[inputshiz], target_language_code=randlang,
-                                                        mime_type="text/plain").translations[0].translated_text
+            inputshiz = interlayer.get_translate(inputshiz, randlang)
 
         except Exception as e:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
-                                            "Информация для отладки сохранена в логах бота.", idc, idm)
+                                        "Информация для отладки сохранена в логах бота.", idc, idm)
             return
 
         lastlang = randlang
 
     try:
-        inputshiz = utils.translator.translate_text(parent=utils.project_name,
-                                                    contents=[inputshiz], target_language_code=endlang,
-                                                    mime_type="text/plain").translations[0].translated_text
-    except Exception as e:
-        if str(e) in "400 Target language is invalid.":
-            endlang = utils.extract_lang(utils.textparser(message))
-            inputshiz = utils.translator.translate_text(parent=utils.project_name,
-                                                        contents=[inputshiz], target_language_code=endlang,
-                                                        mime_type="text/plain").translations[0].translated_text
+        inputshiz = interlayer.get_translate(inputshiz, endlang)
+
+    except interlayer.BadTrgLangException:
+        endlang = interlayer.extract_lang(utils.textparser(message))
+        inputshiz = interlayer.get_translate(inputshiz, endlang)
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs_list, idc, idm)
