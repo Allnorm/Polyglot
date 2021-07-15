@@ -24,6 +24,14 @@ class TooManyRequestException(Exception):
     pass
 
 
+class EqalLangsException(Exception):
+    pass
+
+
+class BadSrcLangException(Exception):
+    pass
+
+
 def init_dialog_api(config):
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
     if keypath == "":
@@ -87,10 +95,15 @@ def list_of_langs():
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
     try:
         return translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
+                                         source_language_code=src_lang,
                                          mime_type="text/plain").translations[0].translated_text
     except Exception as e:
         if str(e) in "400 Target language is invalid.":
             raise BadTrgLangException
+        if str(e) in "400 Target language can't be equal to source language.":
+            return "Невозможно сделать перевод с языка на тот же язык"
+        if str(e) in "400 Source language is invalid.":
+            raise BadSrcLangException
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             raise

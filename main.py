@@ -12,7 +12,7 @@ from inline import query_text_main
 
 interlayer.translate_init()
 utils.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 alpha build 9 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.6 alpha build 10 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -69,7 +69,9 @@ def translate(message):
             inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
             utils.bot.reply_to(message, inputtext)
         except interlayer.BadTrgLangException:
-            utils.bot.reply_to(message, "Указан неверный код/название яыка")
+            utils.bot.reply_to(message, "Указан неверный код/название языка для перевода")
+        except interlayer.BadSrcLangException:
+            utils.bot.reply_to(message, "Указан неверный код/название исходного языка")
         except interlayer.TooManyRequestException:
             utils.bot.reply_to(message, "Слишком много запросов к API, пожалуйста, попробуйте позже.")
         except Exception:
