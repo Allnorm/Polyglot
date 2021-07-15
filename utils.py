@@ -82,3 +82,32 @@ def extract_arg(arg, num):
         return arg.split()[num]
     except Exception:
         pass
+
+
+def download_clear_log(message, down_clear_check):
+    if extract_arg(message.text, 1) != logger.key and logger.key != "":
+        bot.reply_to(message, "Неверный ключ доступа")
+        return
+
+    if down_clear_check:
+        try:
+            f = open(logger.current_log, 'r', encoding="utf-8")
+            bot.send_document(message.chat.id, f)
+            f.close()
+            logger.write_log("INFO: log was downloaded successful by " + logger.username_parser(message))
+        except FileNotFoundError:
+            logger.write_log("INFO: user " + logger.username_parser(message)
+                             + " tried to download empty log\n" + traceback.format_exc())
+            bot.send_message(message.chat.id, "Лог-файл не найден!")
+        except Exception:
+            logger.write_log("ERR: user " + logger.username_parser(message) +
+                             " tried to download log, but something went wrong!\n" + traceback.format_exc())
+            bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
+    else:
+        if logger.clear_log():
+            logger.write_log("INFO: log was cleared by user " + logger.username_parser(message) + ". Have fun!")
+            bot.send_message(message.chat.id, "Очистка лога успешна")
+        else:
+            logger.write_log("ERR: user " + logger.username_parser(message) +
+                             " tried to clear log, but something went wrong\n!")
+            bot.send_message(message.chat.id, "Ошибка очистки лога")

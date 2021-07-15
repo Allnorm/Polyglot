@@ -65,33 +65,3 @@ def clear_log():
             return False
 
     return True
-
-
-def download_clear_log(message, down_clear_check):
-    import utils
-    if utils.extract_arg(message.text, 1) != key and key != "":
-        utils.bot.reply_to(message, "Неверный ключ доступа")
-        return
-
-    if down_clear_check:
-        try:
-            f = open(current_log, 'r', encoding="utf-8")
-            utils.bot.send_document(message.chat.id, f)
-            f.close()
-            write_log("INFO: log was downloaded successful by " + username_parser(message))
-        except FileNotFoundError:
-            write_log("INFO: user " + username_parser(message)
-                      + " tried to download empty log\n" + traceback.format_exc())
-            utils.bot.send_message(message.chat.id, "Лог-файл не найден!")
-        except Exception:
-            write_log("ERR: user " + username_parser(message) +
-                      " tried to download log, but something went wrong!\n" + traceback.format_exc())
-            utils.bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
-    else:
-        if clear_log():
-            write_log("INFO: log was cleared by user " + username_parser(message) + ". Have fun!")
-            utils.bot.send_message(message.chat.id, "Очистка лога успешна")
-        else:
-            write_log("ERR: user " + username_parser(message) +
-                      " tried to clear log, but something went wrong\n!")
-            utils.bot.send_message(message.chat.id, "Ошибка очистки лога")

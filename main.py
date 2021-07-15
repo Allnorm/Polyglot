@@ -12,7 +12,7 @@ from inline import query_text_main
 
 interlayer.translate_init()
 interlayer.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 pre-alpha build 6 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.6 pre-alpha build 7 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -138,7 +138,7 @@ def download_log(message):
 
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        logger.download_clear_log(message, True)
+        utils.download_clear_log(message, True)
 
 
 @utils.bot.message_handler(commands=['clearlog'])
@@ -146,7 +146,7 @@ def clear_log(message):
 
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        logger.download_clear_log(message, False)
+        utils.download_clear_log(message, False)
 
 
 utils.bot.infinity_polling(True)
