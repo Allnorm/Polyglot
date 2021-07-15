@@ -16,6 +16,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
            'uk': "йцукенгшщзхїфівапролджєячсмитьбю.ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ,'₴",
            'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
 
+
 def config_init():
     import distort
     global proxy_port, proxy_type
@@ -136,3 +137,25 @@ def list_of_langs():
     except Exception as e:
         logger.write_log("ERR: langlist file isn't available")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+
+
+def lang_autocorr(langstr, inline=False):
+
+    if inline is False:
+        langstr = langstr.lower()
+        for key, value in interlayer.lang_list.items():
+            langstr = langstr.replace(value.lower(), key)
+    elif (extract_arg(langstr, 1)) is not None and inline is True:
+        for key, value in interlayer.lang_list.items():
+            if (extract_arg(langstr, 0) + " " + extract_arg(langstr, 1)).lower() == value.lower():
+                args = extract_arg(langstr, 0) + " " + extract_arg(langstr, 1)
+                langstr = langstr.replace(args, args.lower(), 1)
+                langstr = langstr.replace(value.lower(), key, 1)
+                break
+            elif (extract_arg(langstr, 0)).lower() == value.lower():
+                args = extract_arg(langstr, 0)
+                langstr = langstr.replace(args, args.lower(), 1)
+                langstr = langstr.replace(value.lower(), key, 1)
+                break
+
+    return langstr

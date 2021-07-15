@@ -6,6 +6,7 @@ import utils
 
 
 def translate_query(inline_query):
+    inline_query.query = utils.lang_autocorr(inline_query.query, True)
     lang = utils.extract_arg(inline_query.query, 0)
 
     try:

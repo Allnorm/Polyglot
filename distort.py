@@ -49,10 +49,11 @@ def distort_main(message):
 
     randlangs_list = ""
 
-    if utils.extract_arg(message.text, 2) is not None and utils.extract_arg(message.text, 3) is not None:
-        endlang = utils.extract_arg(message.text, 2) + " " + utils.extract_arg(message.text, 3)
-    elif utils.extract_arg(message.text, 2) is not None:
-        endlang = utils.extract_arg(message.text, 2)
+    if utils.extract_arg(message.text, 2) is not None:
+        endlang = utils.extract_arg(utils.lang_autocorr(message.text), 2)
+        if interlayer.lang_list.get(endlang) is None:
+            utils.bot.reply_to(message, "Указан неверный код/название яыка")
+            return
     else:
         endlang = interlayer.extract_lang(inputshiz)
 
@@ -80,14 +81,10 @@ def distort_main(message):
 
         lastlang = randlang
 
-    while True:
-        try:
-            inputshiz = interlayer.get_translate(inputshiz, endlang)
-            break
-        except interlayer.BadTrgLangException:
-            endlang = interlayer.extract_lang(utils.textparser(message))
-        except interlayer.TooManyRequestException:
-            utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
-            return
+    try:
+        inputshiz = interlayer.get_translate(inputshiz, endlang)
+    except interlayer.TooManyRequestException:
+        utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
+        return
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs_list, idc, idm)

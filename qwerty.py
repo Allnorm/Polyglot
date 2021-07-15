@@ -13,7 +13,7 @@ def qwerty_main(message):
         return
 
     logger.write_log(text, message)
-
+    message.text = utils.lang_autocorr(message.text)
     arg1, arg2 = utils.extract_arg(message.text, 1), utils.extract_arg(message.text, 2)
 
     if arg2 is None:
