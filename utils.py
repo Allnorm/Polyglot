@@ -24,7 +24,9 @@ def config_init():
         initdialog.init_dialog()
 
     config = configparser.ConfigParser()
-    logger.clear_log()
+    if logger.clear_log():
+        logger.write_log("INFO: log was cleared successful")
+
     while True:
         try:
             config.read("polyglot.ini")

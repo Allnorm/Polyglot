@@ -59,7 +59,6 @@ def clear_log():
     if os.path.isfile(current_log):
         try:
             os.remove(current_log)
-            write_log("INFO: log was cleared successful")
         except Exception:
             write_log("ERR: File " + current_log + " wasn't removed\n" + traceback.format_exc())
             return False
