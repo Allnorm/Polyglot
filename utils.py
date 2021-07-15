@@ -11,8 +11,10 @@ import interlayer
 proxy_port = ""
 proxy_type = ""
 
-lang_frozen = True
-
+layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
+           'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
+           'uk': "йцукенгшщзхїфівапролджєячсмитьбю.ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ,'₴",
+           'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
 
 def config_init():
     import distort
@@ -113,3 +115,24 @@ def download_clear_log(message, down_clear_check):
             logger.write_log("ERR: user " + logger.username_parser(message) +
                              " tried to clear log, but something went wrong\n!")
             bot.send_message(message.chat.id, "Ошибка очистки лога")
+
+
+def list_of_langs():
+    output = "Список всех кодов и соответствующих им языков:\n"
+    interlayer.list_of_langs()
+    for key, value in interlayer.lang_list.items():
+        output = output + value + " - " + key + "\n"
+
+    output = output + "\nСписок всех доступных раскладок клавиатуры: "
+
+    for key, value in layouts.items():
+        output = output + key + " "
+
+    try:
+        file = open("langlist.txt", "w")
+        file.write(output)
+        file.close()
+        logger.write_log("INFO: langlist updated successful")
+    except Exception as e:
+        logger.write_log("ERR: langlist file isn't available")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

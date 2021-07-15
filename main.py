@@ -11,8 +11,8 @@ from qwerty import qwerty_main
 from inline import query_text_main
 
 interlayer.translate_init()
-interlayer.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 pre-alpha build 7 HAS BEEN STARTED###")
+utils.list_of_langs()
+logger.write_log("###POLYGLOT v0.6 pre-alpha build 8 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands

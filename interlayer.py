@@ -13,12 +13,7 @@ json_key = ""
 project_name = ""
 lang_frozen = True
 translator: translate.TranslationServiceClient
-langlist: translate.SupportedLanguage
-
-layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
-           'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
-           'uk': "йцукенгшщзхїфівапролджєячсмитьбю.ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ,'₴",
-           'be': "йцукенгшўзх'фывапролджэячсмітьбю.ЙЦУКЕНГШЎЗХ'ФЫВАПРОЛДЖЭЯЧСМІТЬБЮ,ёЁ"}
+lang_list = {}
 
 
 class BadTrgLangException(Exception):
@@ -80,27 +75,13 @@ def lang_frozen_checker():
 
 
 def list_of_langs():
-    global langlist, lang_frozen
+    global lang_list, lang_frozen
     threading.Thread(target=lang_frozen_checker).start()
-    output = "Список всех кодов и соответствующих им языков:\n"
-    langlist = translator.get_supported_languages(parent=project_name, display_language_code="en")
+
+    lang_buffer = translator.get_supported_languages(parent=project_name, display_language_code="en")
     lang_frozen = False
-    for lang in langlist.languages:
-        output = output + lang.display_name + " - " + lang.language_code + "\n"
-
-    output = output + "\nСписок всех доступных раскладок клавиатуры: "
-
-    for key, value in layouts.items():
-        output = output + key + " "
-
-    try:
-        file = open("langlist.txt", "w")
-        file.write(output)
-        file.close()
-        logger.write_log("INFO: langlist updated successful")
-    except Exception as e:
-        logger.write_log("ERR: langlist file isn't available")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+    for lang in lang_buffer.languages:
+        lang_list.update({lang.language_code: lang.display_name})
 
 
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):

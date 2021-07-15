@@ -60,11 +60,11 @@ def distort_main(message):
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
     lastlang = interlayer.extract_lang(inputshiz)
-    randlang = random.choice(list(interlayer.langlist.languages)).language_code
+    randlang = random.choice(list(interlayer.lang_list))
 
     for i in range(counter):
         while randlang == lastlang:
-            randlang = random.choice(list(interlayer.langlist.languages)).language_code
+            randlang = random.choice(list(interlayer.lang_list))
 
         randlangs_list += randlang + "; "
 
