@@ -2,7 +2,6 @@ import json
 import os
 import sys
 import threading
-import time
 import traceback
 
 from google.cloud import translate
@@ -11,7 +10,6 @@ import logger
 
 json_key = ""
 project_name = ""
-lang_frozen = True
 translator: translate.TranslationServiceClient
 lang_list = {}
 
@@ -75,19 +73,19 @@ def extract_lang(text):
     return translator.detect_language(parent=project_name, content=text).languages[0].language_code
 
 
-def lang_frozen_checker():
-    time.sleep(15)
-    if lang_frozen is True:
-        logger.write_log("ERR: langlist-gen timed out! Please check your JSON key or Google Cloud settings!")
-        os._exit(1)
-
-
 def list_of_langs():
-    global lang_list, lang_frozen
-    threading.Thread(target=lang_frozen_checker).start()
+    global lang_list
+    que = []
+    lang_buffer: translate.SupportedLanguages
+    lang_check = threading.Thread(target=lambda queue: queue.append(translator.get_supported_languages
+                                  (parent=project_name, display_language_code="en")), args=(que,), daemon=True)
+    lang_check.start()
+    lang_check.join(15)
+    if lang_check.is_alive():
+        logger.write_log("ERR: langlist-gen timed out! Please check your JSON key or Google Cloud settings!")
+        sys.exit(1)
 
-    lang_buffer = translator.get_supported_languages(parent=project_name, display_language_code="en")
-    lang_frozen = False
+    lang_buffer = que.pop(0)
     for lang in lang_buffer.languages:
         lang_list.update({lang.language_code: lang.display_name})
 
