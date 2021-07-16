@@ -26,7 +26,7 @@ def pre_init(cold_start=True):
     utils.list_of_langs()
 
     if cold_start:
-        logger.write_log("###POLYGLOT v0.6.1 alpha build 1 HAS BEEN STARTED###")
+        logger.write_log("###POLYGLOT v0.6.1 alpha build 2 HAS BEEN STARTED###")
 
 
 pre_init()

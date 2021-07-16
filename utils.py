@@ -33,16 +33,14 @@ def config_init():
         try:
             config.read("polyglot.ini")
             token = config["Polyglot"]["token"]
+            if token == "":
+                raise ValueError("Token is unknown!")
             config = interlayer.api_init(config)
             break
         except Exception as e:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             logger.write_log("ERR: Incorrect config file! Trying to remake!")
             initdialog.init_dialog()
-
-    if token == "":
-        logger.write_log("ERR: Token is unknown! Bot will close!")
-        sys.exit(1)
 
     bot = telebot.TeleBot(token)
     try:
