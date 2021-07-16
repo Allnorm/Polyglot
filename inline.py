@@ -6,6 +6,8 @@ import utils
 
 
 def translate_query(inline_query):
+    logger.write_log("LOG: user " + logger.username_parser(inline_query) + " sent an INLINE: " + inline_query.query)
+
     inline_query.query = utils.lang_autocorr(inline_query.query, True)
     lang = utils.extract_arg(inline_query.query, 0)
 
@@ -13,8 +15,6 @@ def translate_query(inline_query):
         inputtext = inline_query.query.split(' ', 1)[1].lstrip()
     except IndexError:
         return "Введите код/название языка и текст"
-
-    logger.write_log("LOG: user " + logger.username_parser(inline_query) + " sent an INLINE: " + inputtext)
 
     if lang is None:
         return "Укажите код/название языка"

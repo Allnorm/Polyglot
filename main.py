@@ -12,7 +12,7 @@ from inline import query_text_main
 
 interlayer.translate_init()
 utils.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 alpha build 10 HAS BEEN STARTED###")
+logger.write_log("###POLYGLOT v0.6 beta build 11 HAS BEEN STARTED###")
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -47,21 +47,21 @@ def distort(message):
 def translate(message):
 
     if botname_checker(message):
-        src_lang = None
-        if utils.extract_arg(message.text, 2) is not None:
-            src_lang = utils.extract_arg(utils.lang_autocorr(message.text), 1)
-            lang = utils.extract_arg(utils.lang_autocorr(message.text), 2)
-        else:
-            lang = utils.extract_arg(utils.lang_autocorr(message.text), 1)
-
         inputtext = utils.textparser(message)
         if inputtext is None:
             logger.write_log("none", message)
             return
 
         logger.write_log(inputtext, message)
+        src_lang = None
+        message.text = utils.lang_autocorr(message.text)
 
-        if lang is None:
+        if utils.extract_arg(message.text, 2) is not None:
+            src_lang = utils.extract_arg(message.text, 1)
+            lang = utils.extract_arg(message.text, 2)
+        elif utils.extract_arg(message.text, 1) is not None:
+            lang = utils.extract_arg(message.text, 1)
+        else:
             utils.bot.reply_to(message, "Укажите код/название языка на английском")
             return
 
@@ -99,7 +99,8 @@ def send_help(message):
 
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        utils.bot.reply_to(message, "[/t, /trans, /translate] <язык> - перевести сообщение. Исходный язык определяется "
+        utils.bot.reply_to(message, "[/t, /trans, /translate] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> "
+                                    "- перевести сообщение. Исходный язык может определяться "
                                     "автоматически. Коды и названия языков можно "
                                     "узнать с помощью команды /langs или /l\n"
                                     "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры\n"
@@ -108,8 +109,8 @@ def send_help(message):
                                     "рандомных языков и вывести результат на нужном вам языке. "
                                     "Если оставить параметр <итоговый язык> пустым, "
                                     "результат будет выведен на языке оригинала\n"
-                                    "[/q, /qwerty] <исходный язык> <итоговый язык> ИЛИ "
-                                    "/q <итоговый язык> - смена раскладки текста. Исходный язык может определяться "
+                                    "[/q, /qwerty] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> - "
+                                    "смена раскладки текста. Исходный язык может определяться "
                                     "автоматически. Список доступных раскладок можно "
                                     "посмотреть с помощью команды /langs")
 
