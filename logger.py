@@ -7,7 +7,22 @@ current_log = "polyglot.log"
 key = ""
 
 
+def key_init(config):
+
+    global key
+    try:
+        key = config["Polyglot"]["key"]
+    except KeyError:
+        write_log("ERR: Incorrect key configuration! " + "\n"
+                  + traceback.format_exc())
+        return
+
+    if key == "":
+        write_log("WARN: Key isn't available! Unsafe mode!")
+
+
 def username_parser(message):
+
     if message.from_user.username is None:
         if message.from_user.last_name is None:
             username = str(message.from_user.first_name)
@@ -24,6 +39,7 @@ def username_parser(message):
 
 
 def write_log(text=BLOB_TEXT, message=None):
+
     if message is not None:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + username_parser(message) + \
               " sent a command " + str(message.text) + \
@@ -40,7 +56,7 @@ def write_log(text=BLOB_TEXT, message=None):
         try:
             f = open(current_log, 'w', encoding="utf-8")
             f.close()
-        except Exception:
+        except IOError:
             print("ERR: File " + current_log + " is not writable!")
             traceback.print_exc()
             return
@@ -49,17 +65,18 @@ def write_log(text=BLOB_TEXT, message=None):
         f = open(current_log, 'a', encoding="utf-8")
         f.write(log + "\n")
         f.close()
-    except Exception:
+    except IOError:
         print("ERR: File " + current_log + " is not writable!")
         traceback.print_exc()
         return
 
 
 def clear_log():
+
     if os.path.isfile(current_log):
         try:
             os.remove(current_log)
-        except Exception:
+        except IOError:
             write_log("ERR: File " + current_log + " wasn't removed\n" + traceback.format_exc())
             return False
 

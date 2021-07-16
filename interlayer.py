@@ -31,6 +31,7 @@ class BadSrcLangException(Exception):
 
 
 def init_dialog_api(config):
+
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
     if keypath == "":
         keypath = "key.json"
@@ -39,15 +40,18 @@ def init_dialog_api(config):
 
 
 def api_init(config):
+
     global project_name, json_key
+
     try:
         json_key = config["Polyglot"]["keypath"]
-    except Exception:
+    except KeyError:
         raise
 
     if not os.path.isfile(json_key):
         logger.write_log("ERR: JSON file wasn't found! Bot will close!")
         sys.exit(1)
+
     try:
         project_name = "projects/" + json.load(open(json_key, 'r')).get("project_id")
     except Exception as e:
@@ -55,10 +59,11 @@ def api_init(config):
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
 
-    return
+    return config
 
 
 def translate_init():
+
     global translator
     try:
         translator = translate.TranslationServiceClient.from_service_account_json(json_key)
@@ -70,10 +75,12 @@ def translate_init():
 
 
 def extract_lang(text):
+
     return translator.detect_language(parent=project_name, content=text).languages[0].language_code
 
 
 def list_of_langs():
+
     global lang_list
     que = []
     lang_buffer: translate.SupportedLanguages
@@ -91,6 +98,7 @@ def list_of_langs():
 
 
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
+
     try:
         return translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
                                          source_language_code=src_lang,

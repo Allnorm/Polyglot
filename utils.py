@@ -10,6 +10,7 @@ import interlayer
 
 proxy_port = ""
 proxy_type = ""
+bot: telebot.TeleBot
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -18,8 +19,8 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
-    import distort
-    global proxy_port, proxy_type
+
+    global proxy_port, proxy_type, bot
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: Config file isn't created, trying to create it now")
@@ -27,15 +28,11 @@ def config_init():
         initdialog.init_dialog()
 
     config = configparser.ConfigParser()
-    if logger.clear_log():
-        logger.write_log("INFO: log was cleared successful")
 
     while True:
         try:
             config.read("polyglot.ini")
             token = config["Polyglot"]["token"]
-            log_key = config["Polyglot"]["key"]
-            distort.max_inits = config["Polyglot"]["max-inits"]
             config = interlayer.api_init(config)
             break
         except Exception as e:
@@ -46,15 +43,17 @@ def config_init():
     if token == "":
         logger.write_log("ERR: Token is unknown! Bot will close!")
         sys.exit(1)
-    if log_key == "":
-        logger.write_log("WARN: Key isn't available! Unsafe mode!")
 
-    logger.key = log_key
-    distort.distort_init()
-    return token
+    bot = telebot.TeleBot(token)
+    try:
+        bot.get_me()
+    except telebot.apihelper.ApiTelegramException as e:
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logger.write_log("ERR: Telegram API isn't working correctly, bot will close! "
+                         "Check your connection or API token")
+        sys.exit(1)
 
-
-bot = telebot.TeleBot(config_init())
+    return config
 
 
 def textparser(message):
@@ -104,7 +103,7 @@ def download_clear_log(message, down_clear_check):
             logger.write_log("INFO: user " + logger.username_parser(message)
                              + " tried to download empty log\n" + traceback.format_exc())
             bot.send_message(message.chat.id, "Лог-файл не найден!")
-        except Exception:
+        except IOError:
             logger.write_log("ERR: user " + logger.username_parser(message) +
                              " tried to download log, but something went wrong!\n" + traceback.format_exc())
             bot.send_message(message.chat.id, "Ошибка выгрузки лога!")

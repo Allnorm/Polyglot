@@ -1,3 +1,4 @@
+import configparser
 import os
 import traceback
 
@@ -6,13 +7,28 @@ import logger
 import utils
 import threading
 
-from distort import distort_main
+from distort import distort_main, distort_init
 from qwerty import qwerty_main
 from inline import query_text_main
 
-interlayer.translate_init()
-utils.list_of_langs()
-logger.write_log("###POLYGLOT v0.6 beta build 12 HAS BEEN STARTED###")
+
+def pre_init(cold_start=True):
+    config: configparser.ConfigParser
+
+    if cold_start:
+        if logger.clear_log():
+            logger.write_log("INFO: log was cleared successful")
+
+    config = utils.config_init()
+    distort_init(config)
+    logger.key_init(config)
+    interlayer.translate_init()
+    utils.list_of_langs()
+    if cold_start:
+        logger.write_log("###POLYGLOT v0.6.1 alpha build 1 HAS BEEN STARTED###")
+
+
+pre_init()
 
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
@@ -153,6 +169,21 @@ def clear_log(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.download_clear_log(message, False)
+
+
+@utils.bot.message_handler(commands=['restart'])
+def restart(message):
+
+    if botname_checker(message):
+        logger.write_log(logger.BLOB_TEXT, message)
+
+        if utils.extract_arg(message.text, 1) != logger.key and logger.key != "":
+            utils.bot.reply_to(message, "Неверный ключ доступа")
+            return
+
+        pre_init(False)
+        logger.write_log("INFO: bot was restarted successful")
+        utils.bot.reply_to(message, "Бот успешно перезапущен")
 
 
 utils.bot.infinity_polling(True)

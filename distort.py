@@ -9,11 +9,11 @@ MAX_INITS_DEFAULT = 10
 max_inits = MAX_INITS_DEFAULT
 
 
-def distort_init():
+def distort_init(config):
     global max_inits
     try:
-        max_inits = int(max_inits)
-    except (ValueError, TypeError):
+        max_inits = int(config["Polyglot"]["max-inits"])
+    except (ValueError, KeyError):
         logger.write_log("ERR: Incorrect distort configuration, values will be set to defaults " + "\n"
                          + traceback.format_exc())
         max_inits = MAX_INITS_DEFAULT
