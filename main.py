@@ -24,6 +24,7 @@ def pre_init(cold_start=True):
     logger.key_init(config)
     interlayer.translate_init()
     utils.list_of_langs()
+
     if cold_start:
         logger.write_log("###POLYGLOT v0.6.1 alpha build 1 HAS BEEN STARTED###")
 
