@@ -38,8 +38,9 @@ def write_log(text=BLOB_TEXT, message=None):
         try:
             f = open(current_log, 'w', encoding="utf-8")
             f.close()
-        except IOError:
+        except Exception as e:
             print("ERR: File " + current_log + " is not writable!")
+            print(e)
             traceback.print_exc()
             return
 
@@ -47,8 +48,9 @@ def write_log(text=BLOB_TEXT, message=None):
         f = open(current_log, 'a', encoding="utf-8")
         f.write(log + "\n")
         f.close()
-    except IOError:
+    except Exception as e:
         print("ERR: File " + current_log + " is not writable!")
+        print(e)
         traceback.print_exc()
         return
 
@@ -58,8 +60,10 @@ def clear_log():
     if os.path.isfile(current_log):
         try:
             os.remove(current_log)
-        except IOError:
-            write_log("ERR: File " + current_log + " wasn't removed\n" + traceback.format_exc())
+        except Exception as e:
+            print("ERR: File " + current_log + " wasn't removed")
+            print(e)
+            traceback.print_exc()
             return False
 
     return True

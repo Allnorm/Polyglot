@@ -26,9 +26,8 @@ def translate_query(inline_query):
         return "Указан неверный код/название языка"
     except interlayer.TooManyRequestException:
         return "Слишком много запросов к API, пожалуйста, попробуйте позже."
-    except Exception:
-        return ("Ошибка перевода. Обратитесь к авторам бота\n"
-                "Информация для отладки сохранена в логах бота.")
+    except interlayer.UnkTransException:
+        return "Ошибка перевода. Обратитесь к авторам бота.\nИнформация для отладки сохранена в логах бота."
 
 
 def query_text_main(inline_query):

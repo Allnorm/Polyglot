@@ -84,7 +84,7 @@ def textparser(message):
 def extract_arg(arg, num):
     try:
         return arg.split()[num]
-    except Exception:
+    except IndexError:
         pass
 
 

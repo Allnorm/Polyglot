@@ -23,7 +23,7 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.1 alpha build 5 HAS BEEN STARTED###")
+    logger.write_log("###POLYGLOT v0.6.1 beta build 6 HAS BEEN STARTED###")
 
 
 pre_init()
@@ -88,7 +88,7 @@ def translate(message):
             utils.bot.reply_to(message, "Указан неверный код/название исходного языка")
         except interlayer.TooManyRequestException:
             utils.bot.reply_to(message, "Слишком много запросов к API, пожалуйста, попробуйте позже.")
-        except Exception:
+        except interlayer.UnkTransException:
             utils.bot.reply_to(message, "Ошибка перевода. Обратитесь к авторам бота\n"
                                         "Информация для отладки сохранена в логах бота.")
 
@@ -142,10 +142,15 @@ def send_list(message):
         except FileNotFoundError:
             logger.write_log("WARN: Trying to re-create removed langlist file")
             interlayer.list_of_langs()
+
             if not os.path.isfile("langlist.txt"):
                 utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
                                             "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")
+                return
 
+            file = open("langlist.txt", "r")
+            utils.bot.send_document(message.chat.id, file, message.id,
+                                    "Здесь список всех языков для перевода и раскладок")
         except Exception as e:
             logger.write_log("ERR: langlist file isn't available")
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())

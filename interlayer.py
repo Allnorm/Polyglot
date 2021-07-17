@@ -30,6 +30,10 @@ class BadSrcLangException(Exception):
     pass
 
 
+class UnkTransException(Exception):
+    pass
+
+
 def init_dialog_api(config):
 
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
@@ -112,4 +116,4 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
             raise BadSrcLangException
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-            raise
+            raise UnkTransException
