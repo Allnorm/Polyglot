@@ -75,15 +75,16 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
 
     try:
         trans_result = translator.translate(input_text, target_lang, src_lang).text
-    except (AttributeError, httpcore._exceptions.ReadError) as e:
-        traceback.format_exc()
+    except (AttributeError, httpcore._exceptions.ReadError):
         if distorting:
             time.sleep(10)
             try:
                 trans_result = translator.translate(input_text, target_lang, src_lang).text
             except (AttributeError, httpcore._exceptions.ReadError):
+                logger.write_log("ERR: GOOGLE_API_REJECT")
                 raise TooManyRequestException
         else:
+            logger.write_log("ERR: GOOGLE_API_REJECT")
             raise TooManyRequestException
     except Exception as e:
         if str(e) in "invalid destination language":
