@@ -23,7 +23,7 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.1 beta build 6 HAS BEEN STARTED###")
+    logger.write_log("###POLYGLOT v0.6.1 beta build 7 HAS BEEN STARTED###")
 
 
 pre_init()
@@ -88,6 +88,8 @@ def translate(message):
             utils.bot.reply_to(message, "Указан неверный код/название исходного языка")
         except interlayer.TooManyRequestException:
             utils.bot.reply_to(message, "Слишком много запросов к API, пожалуйста, попробуйте позже.")
+        except interlayer.TooLongMsg:
+            utils.bot.reply_to(message, "Ошибка: текст слишком большой для перевода.")
         except interlayer.UnkTransException:
             utils.bot.reply_to(message, "Ошибка перевода. Обратитесь к авторам бота\n"
                                         "Информация для отладки сохранена в логах бота.")

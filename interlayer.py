@@ -30,6 +30,10 @@ class BadSrcLangException(Exception):
     pass
 
 
+class TooLongMsg(Exception):
+    pass
+
+
 class UnkTransException(Exception):
     pass
 
@@ -102,9 +106,8 @@ def list_of_langs():
 
 
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
-
     try:
-        return translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
+        trans_result = translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
                                          source_language_code=src_lang,
                                          mime_type="text/plain").translations[0].translated_text
     except Exception as e:
@@ -117,3 +120,8 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             raise UnkTransException
+
+    if len(trans_result) > 4096:
+        raise TooLongMsg
+
+    return trans_result

@@ -8,6 +8,9 @@ import utils
 def translate_query(inline_query):
     logger.write_log("LOG: user " + logger.username_parser(inline_query) + " sent an INLINE: " + inline_query.query)
 
+    if len(inline_query.query) > 250:
+        return "Слишком много символов, максимум поддерживается 250"
+
     inline_query.query = utils.lang_autocorr(inline_query.query, True)
     lang = utils.extract_arg(inline_query.query, 0)
 

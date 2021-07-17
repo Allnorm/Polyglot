@@ -74,6 +74,9 @@ def distort_main(message):
         except interlayer.TooManyRequestException:
             utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
             return
+        except interlayer.TooLongMsg:
+            utils.bot.edit_message_text("Ошибка: текст слишком большой для перевода.", idc, idm)
+            return
         except interlayer.UnkTransException:
             utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
                                         "Информация для отладки сохранена в логах бота.", idc, idm)
@@ -83,10 +86,7 @@ def distort_main(message):
 
     try:
         inputshiz = interlayer.get_translate(inputshiz, endlang)
-    except interlayer.TooManyRequestException:
-        utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
-        return
-    except interlayer.UnkTransException:
+    except (interlayer.UnkTransException, interlayer.TooLongMsg, interlayer.TooManyRequestException):
         pass
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs_list, idc, idm)

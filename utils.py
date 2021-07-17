@@ -73,11 +73,6 @@ def textparser(message):
         bot.reply_to(message, "Перевод не выполнен. В сообщении не обнаружен текст.\n")
         return
 
-    if len(inputtext) >= 3000:
-        bot.reply_to(message, "Ошибка. В сообщении более 3000 символов!")
-        logger.write_log("WARN: too long msg from " + logger.username_parser(message))
-        return
-
     return inputtext
 
 
