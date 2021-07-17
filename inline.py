@@ -35,6 +35,6 @@ def query_text_main(inline_query):
     text_result = translate_query(inline_query)
     output = types.InlineQueryResultArticle(
         id='1', title="Перевод",
-        description="{!s}".format(text_result),
-        input_message_content=types.InputTextMessageContent(message_text="{!s}".format(text_result)))
+        description=text_result,
+        input_message_content=types.InputTextMessageContent(message_text=text_result))
     utils.bot.answer_inline_query(inline_query.id, [output])
