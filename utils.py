@@ -11,6 +11,7 @@ import interlayer
 proxy_port = ""
 proxy_type = ""
 bot: telebot.TeleBot
+whitelist = []
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -55,6 +56,7 @@ def config_init():
 
 
 def textparser(message):
+
     if message.reply_to_message is None:
         bot.reply_to(message, "Пожалуйста, используйте эту команду как ответ на сообщение")
         return
@@ -87,8 +89,8 @@ def extract_arg(arg, num):
 
 
 def download_clear_log(message, down_clear_check):
-    if extract_arg(message.text, 1) != logger.key and logger.key != "":
-        bot.reply_to(message, "Неверный ключ доступа")
+
+    if user_admin_checker(message) is False:
         return
 
     if down_clear_check:
@@ -156,3 +158,30 @@ def lang_autocorr(langstr, inline=False):
                 break
 
     return langstr
+
+
+def whitelist_init():
+    global whitelist
+
+    try:
+        file = open("whitelist.txt", 'r', encoding="utf-8")
+        whitelist = file.readlines()
+    except FileNotFoundError:
+        logger.write_log("WARN: file \"whitelist.txt\" not found. Working without admin privileges.")
+        return
+    except IOError:
+        logger.write_log("ERR: file \"whitelist.txt\" isn't readable. Working without admin privileges.")
+        return
+    if not whitelist:
+        logger.write_log("WARN: whitelist is empty. Working without admin privileges.")
+
+
+def user_admin_checker(message):
+    global whitelist
+
+    for checker in whitelist:
+        if "@" + str(message.from_user.username) == checker.rstrip("\n") or \
+                str(message.from_user.id) == checker.rstrip("\n"):
+            return True
+
+    return False

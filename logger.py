@@ -4,21 +4,6 @@ import datetime
 
 BLOB_TEXT = "not_needed"
 current_log = "polyglot.log"
-key = ""
-
-
-def key_init(config):
-
-    global key
-    try:
-        key = config["Polyglot"]["key"]
-    except KeyError:
-        write_log("ERR: Incorrect key configuration! " + "\n"
-                  + traceback.format_exc())
-        return
-
-    if key == "":
-        write_log("WARN: Key isn't available! Unsafe mode!")
 
 
 def username_parser(message):
@@ -46,9 +31,6 @@ def write_log(text=BLOB_TEXT, message=None):
               ". Reply message: " + text
     else:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + text
-
-    if key != "":
-        log = log.replace(key, "###SECRET KEY###")
 
     print(log)
 

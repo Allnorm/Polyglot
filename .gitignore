@@ -1,5 +1,6 @@
 polyglot.ini
 langlist.txt
+whitelist.txt
 polyglot.log
 key.json
 /.idea

@@ -10,12 +10,10 @@ def init_dialog():
     token = ""
     while token == "":
         token = input("Please, write your bot token: ")
-    key = input("Please, write your secret key for working with log (optional): ")
 
     config = configparser.ConfigParser()
     config.add_section("Polyglot")
     config.set("Polyglot", "token", token)
-    config.set("Polyglot", "key", key)
     config.set("Polyglot", "max-inits", "100")
     config = interlayer.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
