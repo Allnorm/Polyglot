@@ -58,7 +58,7 @@ def translate_init():
         sys.exit(1)
 
 
-def BadTrgLangException(text):
+def extract_lang(text):
     try:
         return translator.detect(text).lang.lower()
     except (AttributeError, httpcore._exceptions.ReadError):
