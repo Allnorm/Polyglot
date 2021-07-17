@@ -23,7 +23,7 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.1 alpha build 4 HAS BEEN STARTED###")
+    logger.write_log("###POLYGLOT v0.6.1 alpha build 5 HAS BEEN STARTED###")
 
 
 pre_init()

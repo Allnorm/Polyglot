@@ -46,7 +46,7 @@ def config_init():
     bot = telebot.TeleBot(token)
     try:
         bot.get_me()
-    except telebot.apihelper.ApiTelegramException as e:
+    except Exception as e:
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         logger.write_log("ERR: Telegram API isn't working correctly, bot will close! "
                          "Check your connection or API token")
