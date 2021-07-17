@@ -58,9 +58,14 @@ def translate_init():
         sys.exit(1)
 
 
-def extract_lang(text):
-
-    return translator.detect(text).lang.lower()
+def BadTrgLangException(text):
+    try:
+        return translator.detect(text).lang.lower()
+    except (AttributeError, httpcore._exceptions.ReadError):
+        logger.write_log("ERR: GOOGLE_API_REJECT (in lang extract)")
+    except Exception as e:
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+    return None
 
 
 def list_of_langs():
@@ -72,6 +77,8 @@ def list_of_langs():
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
     if src_lang is None:
         src_lang = "auto"
+    if target_lang is None:
+        raise BadTrgLangException
 
     try:
         trans_result = translator.translate(input_text, target_lang, src_lang).text

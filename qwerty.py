@@ -24,9 +24,13 @@ def qwerty_main(message):
         tab2 = utils.layouts.get(arg2)
 
     if tab1 is None and arg2 is None:
+        try:
+            recognized_lang = interlayer.get_translate(interlayer.lang_list.get
+                                                             (interlayer.extract_lang(text)), "ru")
+        except (interlayer.BadTrgLangException, interlayer.UnkTransException, interlayer.TooManyRequestException):
+            recognized_lang = "Unknown"
         utils.bot.reply_to(message, "Исходный язык не распознан. Неправильный аргумент или неверно распознан язык? (" +
-                                    interlayer.get_translate(interlayer.lang_list.get
-                                                             (interlayer.extract_lang(text)), "ru") + ")\n"
+                                     recognized_lang + ")\n"
                                     "Попробуйте указать исходный язык вручную. Возможно, язык отсутствует в "
                                     "словаре символов")
         return
