@@ -121,7 +121,8 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             raise UnkTransException
 
-    if len(trans_result) > 4096:
+    if len(trans_result) > 4096 and distorting is False:
+        logger.write_log("WARN: too long message for sending.")
         raise TooLongMsg
 
     return trans_result

@@ -87,6 +87,7 @@ def distort_main(message):
     try:
         inputshiz = interlayer.get_translate(inputshiz, endlang)
     except (interlayer.UnkTransException, interlayer.TooLongMsg, interlayer.TooManyRequestException):
-        pass
+        utils.bot.reply_to(message, "К сожалению, на итоговый язык не удалось перевести.\n"
+                                    "Информация для отладки сохранена в логах бота.")
 
     utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs_list, idc, idm)
