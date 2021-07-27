@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import traceback
 import telebot
 import configparser
@@ -44,13 +45,19 @@ def config_init():
             initdialog.init_dialog()
 
     bot = telebot.TeleBot(token)
-    try:
-        bot.get_me()
-    except Exception as e:
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        logger.write_log("ERR: Telegram API isn't working correctly, bot will close! "
-                         "Check your connection or API token")
-        sys.exit(1)
+
+    for checker in range(3):
+        try:
+            bot.get_me()
+            break
+        except Exception as e:
+            if checker >= 2:
+                logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+                logger.write_log("ERR: Telegram API isn't working correctly after three tries, bot will close! "
+                                 "Check your connection or API token")
+                sys.exit(1)
+            else:
+                time.sleep(5)
 
     return config
 
