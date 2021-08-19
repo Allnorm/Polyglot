@@ -23,7 +23,7 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.2 build 1 HAS BEEN STARTED###")
+    logger.write_log("###POLYGLOT v0.6.2 build 2 HAS BEEN STARTED###")
 
 
 pre_init()
@@ -176,4 +176,4 @@ def clear_log(message):
         utils.download_clear_log(message, False)
 
 
-utils.bot.infinity_polling(True)
+utils.bot.infinity_polling()
