@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-import threading
 import traceback
 
 from google.cloud import translate
@@ -39,7 +38,6 @@ class UnkTransException(Exception):
 
 
 def init_dialog_api(config):
-
     keypath = input("Please, write path to your JSON Google API Key (optional, key.json as default): ")
     if keypath == "":
         keypath = "key.json"
@@ -48,7 +46,6 @@ def init_dialog_api(config):
 
 
 def api_init(config):
-
     global project_name, json_key
 
     try:
@@ -71,7 +68,6 @@ def api_init(config):
 
 
 def translate_init():
-
     global translator
     try:
         translator = translate.TranslationServiceClient.from_service_account_json(json_key)
@@ -83,33 +79,25 @@ def translate_init():
 
 
 def extract_lang(text):
-
-    return translator.detect_language(parent=project_name, content=text).languages[0].language_code
+    try:
+        return translator.detect_language(parent=project_name, content=text, timeout=10).languages[0].language_code
+    except Exception as e:
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        raise UnkTransException
 
 
 def list_of_langs():
-
     global lang_list
-    que = []
-    lang_buffer: translate.SupportedLanguages
-    lang_check = threading.Thread(target=lambda queue: queue.append(translator.get_supported_languages
-                                  (parent=project_name, display_language_code="en")), args=(que,), daemon=True)
-    lang_check.start()
-    lang_check.join(15)
-    if lang_check.is_alive():
-        logger.write_log("ERR: langlist-gen timed out! Please check your JSON key or Google Cloud settings!")
-        sys.exit(1)
-
-    lang_buffer = que.pop(0)
+    lang_buffer = translator.get_supported_languages(parent=project_name, display_language_code="en", timeout=10)
     for lang in lang_buffer.languages:
         lang_list.update({lang.language_code: lang.display_name})
 
 
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
     try:
-        trans_result = translator.translate_text(parent=project_name, contents=[input_text], target_language_code=target_lang,
-                                         source_language_code=src_lang,
-                                         mime_type="text/plain").translations[0].translated_text
+        trans_result = translator.translate_text(parent=project_name, contents=[input_text],
+                                                 target_language_code=target_lang, source_language_code=src_lang,
+                                                 mime_type="text/plain", timeout=10).translations[0].translated_text
     except Exception as e:
         if str(e) in "400 Target language is invalid.":
             raise BadTrgLangException

@@ -23,7 +23,7 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.2 build 2 HAS BEEN STARTED###")
+    logger.write_log("###POLYGLOT v0.6.3 build 1 HAS BEEN STARTED###")
 
 
 pre_init()
@@ -39,27 +39,23 @@ def botname_checker(message):  # Crutch to prevent the bot from responding to ot
 
 @utils.bot.inline_handler(lambda query: len(query.query) >= 0)
 def query_text(inline_query):
-
     query_text_main(inline_query)
 
 
 @utils.bot.message_handler(commands=['qwerty', 'q'])
 def qwerty(message):
-
     if botname_checker(message):
         qwerty_main(message)
 
 
 @utils.bot.message_handler(commands=['d', 'distort'])
 def distort(message):
-
     if botname_checker(message):
         threading.Thread(target=distort_main, args=(message,)).start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])
 def translate(message):
-
     if botname_checker(message):
         inputtext = utils.textparser(message)
         if inputtext is None:
@@ -95,9 +91,27 @@ def translate(message):
                                         "Информация для отладки сохранена в логах бота.")
 
 
+@utils.bot.message_handler(commands=['detect'])
+def detect(message):
+    if not botname_checker(message):
+        return
+
+    inputtext = utils.textparser(message)
+    if inputtext is None:
+        logger.write_log("none", message)
+        return
+
+    logger.write_log(inputtext, message)
+    try:
+        lang = interlayer.lang_list.get(interlayer.extract_lang(inputtext))
+        translated_lang = interlayer.get_translate(lang, "ru")
+        utils.bot.reply_to(message, "Язык сообщения распознан как " + lang + " (" + translated_lang + ")")
+    except (interlayer.BadTrgLangException, interlayer.UnkTransException):
+        utils.bot.reply_to(message, "Ошибка распознания языка! Информация сохранена в логах бота.")
+
+
 @utils.bot.message_handler(commands=['start'])
 def send_welcome(message):
-
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.bot.reply_to(message, "Привет. Я бот - переводчик. "
@@ -112,28 +126,28 @@ def send_welcome(message):
 
 @utils.bot.message_handler(commands=['help', 'h'])
 def send_help(message):
-
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.bot.reply_to(message, "[/t, /trans, /translate] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> "
                                     "- перевести сообщение. Исходный язык может определяться "
                                     "автоматически. Коды и названия языков можно "
-                                    "узнать с помощью команды /langs или /l\n"
-                                    "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры\n"
+                                    "узнать с помощью команды /langs или /l.\n"
+                                    "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры.\n"
                                     "[/d, /distort] <количество итераций> <итоговый язык> - "
                                     "Перевести сообщение на заданное количество "
                                     "рандомных языков и вывести результат на нужном вам языке. "
                                     "Если оставить параметр <итоговый язык> пустым, "
-                                    "результат будет выведен на языке оригинала\n"
+                                    "результат будет выведен на языке оригинала.\n"
                                     "[/q, /qwerty] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> - "
                                     "смена раскладки текста. Исходный язык может определяться "
                                     "автоматически. Список доступных раскладок можно "
-                                    "посмотреть с помощью команды /langs")
+                                    "посмотреть с помощью команды /langs.\n"
+                                    "[/detect] - определить исходный язык сообщения."
+                           )
 
 
 @utils.bot.message_handler(commands=['langs', 'l'])
 def send_list(message):
-
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
 
@@ -162,7 +176,6 @@ def send_list(message):
 
 @utils.bot.message_handler(commands=['log'])
 def download_log(message):
-
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.download_clear_log(message, True)
@@ -170,7 +183,6 @@ def download_log(message):
 
 @utils.bot.message_handler(commands=['clrlog'])
 def clear_log(message):
-
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.download_clear_log(message, False)

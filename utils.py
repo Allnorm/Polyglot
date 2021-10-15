@@ -65,7 +65,7 @@ def config_init():
 def textparser(message):
 
     if message.reply_to_message is None:
-        bot.reply_to(message, "Пожалуйста, используйте эту команду как ответ на сообщение")
+        bot.reply_to(message, "Пожалуйста, используйте эту команду как ответ на сообщение.")
         return
 
     if message.reply_to_message.text is not None:
@@ -77,7 +77,7 @@ def textparser(message):
         for option in message.reply_to_message.poll.options:
             inputtext += "☑️ " + option.text + "\n"
     else:
-        bot.reply_to(message, "Перевод не выполнен. В сообщении не обнаружен текст.\n")
+        bot.reply_to(message, "В сообщении не обнаружен текст.\n")
         return
 
     return inputtext
