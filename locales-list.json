@@ -2,7 +2,7 @@
 	"version": "0.7 alpha",
 	"localesList": [
 		"ru",
-		"en"
+		"en",
 		"uk"
 	],
 	"ru": {
@@ -43,7 +43,6 @@
 		"logUploadError": "Ошибка выгрузки лога!",
 		"logClearSuccess": "Очистка лога успешна.",
 		"logClearError": "Ошибка очистки лога."
-		
 	},
 	"en": {
 		"fullName": "English",
@@ -69,7 +68,7 @@
 		"distortStarted": "Generation started, please wait",
 		"distortUnkTransException": "Error with distorted text. Please contact the bot authors\nDebugging information is saved in the bot logs.",
 		"distortEndingError": "Unfortunately, it was not possible to translate into the final language.\nInformation for debugging was saved in the bot logs.",
-		"usedDistortions": "\n\nDistortions were used:",
+		"usedDistortions": "\n\nDistortions were used: ",
 		"tooLongInline": "Too many characters, maximum supported 250",
 		"inlineInstruction": "Enter language code/name and text",
 		"inlineInstructionTwo": "Please enter language code/name",
@@ -83,7 +82,6 @@
 		"logUploadError": "Error uploading the log!",
 		"logClearSuccess": "Clearing the log successfully.",
 		"logClearError": "Error clearing the log."
-		
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
@@ -123,6 +121,5 @@
 		"logUploadError": "Помилка вивантаження лога!",
 		"logClearSuccess": "Очищення лога успішно.",
 		"logClearError": "Помилка очищення лога."
-		
 	}
 }
