@@ -2,8 +2,12 @@ import configparser
 import os
 import traceback
 
+from telebot import types
+
 import interlayer
+import locales
 import logger
+import sql_worker
 import utils
 import threading
 
@@ -14,6 +18,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
+    version = "0.7 alpha"
+    build = "1"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -23,7 +29,11 @@ def pre_init():
     utils.whitelist_init()
     interlayer.translate_init()
     utils.list_of_langs()
-    logger.write_log("###POLYGLOT v0.6.3 build 1 HAS BEEN STARTED###")
+    locales.locales_check_integrity(config)
+    if locales.locale_data.get("version") != version:
+        logger.write_log("WARN: Polyglot and locale versions doesn't match! This can cause the bot to malfunction."
+                         "\nPlease, try to check updates for bot or locales file.")
+    logger.write_log("###POLYGLOT {} build {} HAS BEEN STARTED###".format(version, build))
 
 
 pre_init()
@@ -35,6 +45,20 @@ def botname_checker(message):  # Crutch to prevent the bot from responding to ot
         return True
     else:
         return False
+
+
+def chat_settings_init(message, auxiliary_text):
+    locales_list = locales.locale_data.get("localesList")
+    buttons = types.InlineKeyboardMarkup()
+    for locale in locales_list:
+        try:
+            locale_name = locales.locale_data.get(locale).get("fullName")
+        except AttributeError as e:
+            logger.write_log("ERR: lang parsing failed!")
+            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            continue
+        buttons.add(types.InlineKeyboardButton(text=locale_name, callback_data=locale + " " + auxiliary_text))
+    utils.bot.reply_to(message, "Choose your language", reply_markup=buttons, parse_mode='html')
 
 
 @utils.bot.inline_handler(lambda query: len(query.query) >= 0)
@@ -72,23 +96,22 @@ def translate(message):
         elif utils.extract_arg(message.text, 1) is not None:
             lang = utils.extract_arg(message.text, 1)
         else:
-            utils.bot.reply_to(message, "Укажите код/название языка на английском")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "specifyLang"))
             return
 
         try:
             inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
             utils.bot.reply_to(message, inputtext)
         except interlayer.BadTrgLangException:
-            utils.bot.reply_to(message, "Указан неверный код/название языка для перевода")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.BadSrcLangException:
-            utils.bot.reply_to(message, "Указан неверный код/название исходного языка")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "badSrcLangException"))
         except interlayer.TooManyRequestException:
-            utils.bot.reply_to(message, "Слишком много запросов к API, пожалуйста, попробуйте позже.")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
         except interlayer.TooLongMsg:
-            utils.bot.reply_to(message, "Ошибка: текст слишком большой для перевода.")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
         except interlayer.UnkTransException:
-            utils.bot.reply_to(message, "Ошибка перевода. Обратитесь к авторам бота\n"
-                                        "Информация для отладки сохранена в логах бота.")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "unkTransException"))
 
 
 @utils.bot.message_handler(commands=['detect'])
@@ -104,46 +127,38 @@ def detect(message):
     logger.write_log(inputtext, message)
     try:
         lang = interlayer.lang_list.get(interlayer.extract_lang(inputtext))
-        translated_lang = interlayer.get_translate(lang, "ru")
-        utils.bot.reply_to(message, "Язык сообщения распознан как " + lang + " (" + translated_lang + ")")
+        if locales.get_chat_lang(message.chat.id) != "en":
+            translated_lang = " (" + interlayer.get_translate(lang, locales.get_chat_lang(message.chat.id)) + ")"
+        else:
+            translated_lang = ""
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectedAs").format(lang, translated_lang))
     except (interlayer.BadTrgLangException, interlayer.UnkTransException):
-        utils.bot.reply_to(message, "Ошибка распознания языка! Информация сохранена в логах бота.")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
 
 
 @utils.bot.message_handler(commands=['start'])
 def send_welcome(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        utils.bot.reply_to(message, "Привет. Я бот - переводчик. "
-                                    "Работаю на основе Google Translate API, и могу переводить сообщения "
-                                    "в чате на лету.\n\n"
-                                    "Для этого добавь меня в чат, и при необходимости перевести чьё-то "
-                                    "сообщение 'Ответь' на него, и напиши команду: /t <код языка>. "
-                                    "Исходный язык перевода бот определит автоматически.\n\n"
-                                    "Остальные команды можно узнать командой /help.\n\n"
-                                    "Также я могу работать в личных сообщениях, как обычный переводчик.")
+        chat_info = sql_worker.get_chat_info(message.chat.id)
+        if chat_info is None:
+            chat_settings_init(message, "start")
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "startMSG"))
+
+
+@utils.bot.message_handler(commands=['settings'])
+def send_welcome(message):
+    if botname_checker(message):
+        logger.write_log(logger.BLOB_TEXT, message)
+        chat_settings_init(message, "settings")
 
 
 @utils.bot.message_handler(commands=['help', 'h'])
 def send_help(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        utils.bot.reply_to(message, "[/t, /trans, /translate] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> "
-                                    "- перевести сообщение. Исходный язык может определяться "
-                                    "автоматически. Коды и названия языков можно "
-                                    "узнать с помощью команды /langs или /l.\n"
-                                    "[/l, /langs] - список доступных языковых кодов и раскладок клавиатуры.\n"
-                                    "[/d, /distort] <количество итераций> <итоговый язык> - "
-                                    "Перевести сообщение на заданное количество "
-                                    "рандомных языков и вывести результат на нужном вам языке. "
-                                    "Если оставить параметр <итоговый язык> пустым, "
-                                    "результат будет выведен на языке оригинала.\n"
-                                    "[/q, /qwerty] <итоговый язык> ИЛИ <исходный язык> <итоговый язык> - "
-                                    "смена раскладки текста. Исходный язык может определяться "
-                                    "автоматически. Список доступных раскладок можно "
-                                    "посмотреть с помощью команды /langs.\n"
-                                    "[/detect] - определить исходный язык сообщения."
-                           )
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "helpText"))
 
 
 @utils.bot.message_handler(commands=['langs', 'l'])
@@ -154,24 +169,22 @@ def send_list(message):
         try:
             file = open("langlist.txt", "r")
             utils.bot.send_document(message.chat.id, file, message.id,
-                                    "Здесь список всех языков для перевода и раскладок")
+                                    locales.get_text(message.chat.id, "langList"))
         except FileNotFoundError:
             logger.write_log("WARN: Trying to re-create removed langlist file")
             interlayer.list_of_langs()
 
             if not os.path.isfile("langlist.txt"):
-                utils.bot.reply_to(message, "Ошибка, список языков отсутствует. Попытка пересоздания файла не удалась. "
-                                            "Обратитесь к авторам бота. Информация для отладки сохранена в логах бота.")
+                utils.bot.reply_to(message, locales.get_text(message.chat.id, "langListRemakeErr"))
                 return
 
             file = open("langlist.txt", "r")
             utils.bot.send_document(message.chat.id, file, message.id,
-                                    "Здесь список всех языков для перевода и раскладок")
+                                    locales.get_text(message.chat.id, "langList"))
         except Exception as e:
             logger.write_log("ERR: langlist file isn't available")
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-            utils.bot.reply_to(message, "Ошибка чтения файла с языками. Обратитесь к авторам бота. "
-                                        "Информация для отладки сохранена в логах бота.")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "langListReadErr"))
 
 
 @utils.bot.message_handler(commands=['log'])
@@ -186,6 +199,17 @@ def clear_log(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.download_clear_log(message, False)
+
+
+@utils.bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call_msg):
+    sql_worker.write_chat_info(call_msg.message.chat.id, call_msg.data.split()[0])
+    if call_msg.data.split()[1] == "start":
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "startMSG"),
+                                    call_msg.message.chat.id, call_msg.message.id)
+    elif call_msg.data.split()[1] == "settings":
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configSuccess"),
+                                    call_msg.message.chat.id, call_msg.message.id)
 
 
 utils.bot.infinity_polling()

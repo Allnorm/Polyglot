@@ -102,7 +102,7 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
         if str(e) in "400 Target language is invalid.":
             raise BadTrgLangException
         if str(e) in "400 Target language can't be equal to source language.":
-            return "Невозможно сделать перевод с языка на тот же язык"
+            raise EqalLangsException
         if str(e) in "400 Source language is invalid.":
             raise BadSrcLangException
         else:
