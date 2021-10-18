@@ -45,7 +45,14 @@ def locales_download_list(config):
         locales_repo = LOCALES_REPO_DEFAULT
 
     http = urllib3.PoolManager()
-    r = http.request('GET', locales_repo)
+    try:
+        r = http.request('GET', locales_repo)
+        logger.write_log("INFO: locales file downloaded successful from repository " + locales_repo)
+    except Exception as e:
+        logger.write_log("ERR: Impossible to download locales file! Bot will close. "
+                         "You can to try download it manually.")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        sys.exit(1)
     if r.status != 200:
         logger.write_log("ERR: Impossible to download locales file! You can try download it manually. Bot will close")
         sys.exit(1)
