@@ -110,6 +110,8 @@ def translate(message):
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
         except interlayer.TooLongMsg:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
+        except interlayer.EqualLangsException:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "equalLangsException"))
         except interlayer.UnkTransException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "unkTransException"))
 

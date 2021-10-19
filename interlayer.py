@@ -21,7 +21,7 @@ class TooManyRequestException(Exception):
     pass
 
 
-class EqalLangsException(Exception):
+class EqualLangsException(Exception):
     pass
 
 
