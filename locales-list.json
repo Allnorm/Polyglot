@@ -9,14 +9,12 @@
 	"ru": {
 		"fullName": "Russian (Русский)",
 		"settings": "Настройки бота",
-
 		"adminsOnly": "Данная команда предназначена только для администраторов чата",
 		"canSetAdmins": "Теперь настраивать бота могут только администраторы",
 		"canSetAll": "Теперь настраивать бота могут любые пользователи",
 		"langBtn": "Язык",
 		"backBtn": "Назад",
 		"lockBtn": "Блокировка",
-
 		"chooseLang": "Выберите свой язык\nChoose your language",
 		"startMSG": "Привет. Я бот - переводчик. Работаю на основе Google Translate API, и могу переводить сообщения в чате на лету.\n\nДля этого добавь меня в чат, и при необходимости перевести чьё-то сообщение 'Ответь' на него, и напиши команду: /t <код языка>. Исходный язык перевода бот определит автоматически.\n\nОстальные команды можно узнать командой /help.\n\nТакже я могу работать в личных сообщениях, как обычный переводчик.",
 		"configSuccess": "Конфигурация бота применена успешно.",
@@ -59,14 +57,12 @@
 	"en": {
 		"fullName": "English",
 		"settings": "Bot settings",
-		
 		"adminsOnly": "This command is for chat administrators only",
 		"canSetAdmins": "Now only administrators can configure the bot",
 		"canSetAll": "Now any users can configure the bot",
 		"langBtn": "Language",
 		"backBtn": "Back",
 		"lockBtn": "Admin lock",
-		
 		"chooseLang": "Choose your language",
 		"startMSG": "Hello. I am a bot - translator. I work on the basis of the Google Translate API, and I can translate messages in the chat on the fly.\n\nTo do this, add me to the chat, and if necessary, translate someone's 'Reply' message to it, and write command: /t <language code>. The bot will automatically detect the source language of translation.\n\nOther commands can be found with the command /help.\n\nI can also work in private messages like a regular translator.",
 		"configSuccess": "Bot configuration applied successfully.",
@@ -109,21 +105,19 @@
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
 		"settings": "Налаштування бота",
-		
 		"adminsOnly": "Дана команда призначена тільки для адміністраторів чату",
 		"canSetAdmins": "Тепер налаштовувати бота можуть тільки адміністратори",
 		"canSetAll": "Тепер налаштовувати бота можуть будь-які користувачі",
 		"langBtn": "Мова",
 		"backBtn": "Назад",
 		"lockBtn": "Блокування",
-
 		"chooseLang": "Оберiть свою мову\nChoose your language",
 		"startMSG": "Вітаю. Я бот - перекладач. Працюю на основі Google Translate API, та можу перекладати повідомлення в чаті на льоту.\n\nДля цього додай мене в чат, та при необхідності перекласти чиєсь повідомлення 'Відповідай' на нього, та напиши команду: /t <код мови>. Вхідну мову перекладу бот визначить автоматично.\n\nРешту команд можна дізнатися командою /help.\n\nТакож я можу працювати в особистих повідомленнях, як звичайний перекладач.",
 		"configSuccess": "Конфігурацію бота застосовано успішно.",
 		"configFailed": "Конфігурацію бота не застосовано. Інформацію про помилку збережено в логах бота.",
 		"specifyLang": "Вкажіть код/назву мови англійською.",
 		"badTrgLangException": "Невірно вказано код/назву мови для перекладу.",
-    	"badSrcLangException": "Невірно вказано код/назву вхідної мови.",
+    		"badSrcLangException": "Невірно вказано код/назву вхідної мови.",
 		"tooManyRequestException": "Занадто багато запитів до API, будь ласка, спробуйте пізніше.",
 		"tooLongMsg": "Помилка: текст занадто великий для перекладу.",
 		"equalLangsException": "Неможливо зробити переклад з мови на цю саму мову",
@@ -159,14 +153,12 @@
 	"be": {
 		"fullName": "Belarusian (Беларуская)",
 		"settings": "Налады бота",
-
 		"adminsOnly": "Гэту каманду могуць выкарыстоўваць толькі адміністратары",
 		"canSetAdmins": "Цяпер налажваць бота могуць толькі адміністратары",
 		"canSetAll": "Цяпер налажваць бота могуць усе карыстальнікі",
 		"langBtn": "Мова",
 		"backBtn": "Назад",
 		"lockBtn": "Блакіроўка",
-
 		"chooseLang": "Абярыце сваю мову\nChoose your language",
 		"startMSG": "Прывітанне. Я бот-перакладчык. Працую на базе Google Translate API, і магу перакладаць паведамленні ў чаце на ляту.\n\nДля гэтага трэба дадаць мяне ў чат, і, калі трэба перакласці паведамленне, трэба 'адказаць' на яго камандай: /t <код мовы>. Зыходную мову пераклада бот зразумее аўтаматычна.\n\nДаведацца астатнія каманды можна праз /help.\n\nЯ таксама магу працаваць у асабістых паведамленнях як звычайны перакладчык.",
 		"configSuccess": "Канфігурацыя была ўжытая паспяхова.",
