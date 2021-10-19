@@ -18,7 +18,7 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "0.7 alpha"
+    version = "0.7.1 alpha"
     build = "1"
 
     if logger.clear_log():
@@ -47,7 +47,7 @@ def botname_checker(message):  # Crutch to prevent the bot from responding to ot
         return False
 
 
-def chat_settings_init(message, auxiliary_text):
+def chat_settings_lang(message, auxiliary_text):
     locales_list = locales.locale_data.get("localesList")
     buttons = types.InlineKeyboardMarkup()
     for locale in locales_list:
@@ -58,7 +58,14 @@ def chat_settings_init(message, auxiliary_text):
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
             continue
         buttons.add(types.InlineKeyboardButton(text=locale_name, callback_data=locale + " " + auxiliary_text))
-    utils.bot.reply_to(message, "Choose your language", reply_markup=buttons, parse_mode='html')
+    if auxiliary_text == "settings" and message.chat.type != "private":
+        buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "backBtn"),
+                                               callback_data="back " + auxiliary_text))
+        utils.bot.edit_message_text(locales.get_text(message.chat.id, "chooseLang"), message.chat.id, message.id,
+                                    reply_markup=buttons, parse_mode='html')
+        return
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "chooseLang"),
+                       reply_markup=buttons, parse_mode='html')
 
 
 @utils.bot.inline_handler(lambda query: len(query.query) >= 0)
@@ -144,7 +151,7 @@ def send_welcome(message):
         logger.write_log(logger.BLOB_TEXT, message)
         chat_info = sql_worker.get_chat_info(message.chat.id)
         if chat_info is None:
-            chat_settings_init(message, "start")
+            chat_settings_lang(message, "start")
             return
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "startMSG"))
 
@@ -153,7 +160,19 @@ def send_welcome(message):
 def send_welcome(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
-        chat_settings_init(message, "settings")
+        if message.chat.type == "private":
+            chat_settings_lang(message, "settings")
+        else:
+            if btn_checker(message, message.from_user.id):
+                utils.bot.reply_to(message, locales.get_text(message.chat.id, "adminsOnly"))
+                return
+            buttons = types.InlineKeyboardMarkup()
+            buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "langBtn"),
+                                                   callback_data="chooselang settings"))
+            buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "lockBtn"),
+                                                   callback_data="adminblock settings"))
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "settings"),
+                               reply_markup=buttons, parse_mode='html')
 
 
 @utils.bot.message_handler(commands=['help', 'h'])
@@ -203,15 +222,102 @@ def clear_log(message):
         utils.download_clear_log(message, False)
 
 
+def btn_checker(message, who_id):
+    chat_info = sql_worker.get_chat_info(message.chat.id)
+    if chat_info is not None:
+        if utils.bot.get_chat_member(message.chat.id, who_id).status != "administrator" \
+                and chat_info[0][2] == "yes":
+            return True
+    return False
+
+
+@utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "chooselang")
+def callback_inline_lang_list(call_msg):
+    if btn_checker(call_msg.message, call_msg.from_user.id):
+        utils.bot.answer_callback_query(callback_query_id=call_msg.id,
+                                        text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
+        return
+    chat_settings_lang(call_msg.message, "settings")
+
+
+@utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
+def callback_inline_lang_list(call_msg):
+    if utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status != "administrator":
+        utils.bot.answer_callback_query(callback_query_id=call_msg.id,
+                                        text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
+        return
+    chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
+    if chat_info[0][2] == "yes":
+        set_lock = "no"
+    else:
+        set_lock = "yes"
+    buttons = types.InlineKeyboardMarkup()
+    buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
+                                           callback_data="back settings"))
+    try:
+        sql_worker.write_chat_info(call_msg.message.chat.id, "is_locked", set_lock)
+    except sql_worker.SQLWriteError:
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configFailed"),
+                                    call_msg.message.chat.id, call_msg.message.id,
+                                    reply_markup=buttons, parse_mode="html")
+        return
+    if set_lock == "yes":
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "canSetAdmins"),
+                                    call_msg.message.chat.id, call_msg.message.id,
+                                    reply_markup=buttons, parse_mode="html")
+    else:
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "canSetAll"),
+                                    call_msg.message.chat.id, call_msg.message.id,
+                                    reply_markup=buttons, parse_mode="html")
+
+
+@utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "back")
+def callback_inline_back(call_msg):
+    if btn_checker(call_msg.message, call_msg.from_user.id):
+        utils.bot.answer_callback_query(callback_query_id=call_msg.id,
+                                        text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
+        return
+    buttons = types.InlineKeyboardMarkup()
+    buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "langBtn"),
+                                           callback_data="chooselang settings"))
+    buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "lockBtn"),
+                                           callback_data="adminblock settings"))
+    utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "settings"),
+                                call_msg.message.chat.id, call_msg.message.id, reply_markup=buttons, parse_mode='html')
+
+
 @utils.bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call_msg):
-    sql_worker.write_chat_info(call_msg.message.chat.id, call_msg.data.split()[0])
+def callback_inline_lang_chosen(call_msg):
+    if call_msg.data.split()[0] == "adminblock" or call_msg.data.split()[0] == "back" \
+            or call_msg.data.split()[0] == "chooselang":
+        return
+    if btn_checker(call_msg.message, call_msg.from_user.id):
+        utils.bot.answer_callback_query(callback_query_id=call_msg.id,
+                                        text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
+        return
+    try:
+        sql_worker.write_chat_info(call_msg.message.chat.id, "lang", call_msg.data.split()[0])
+    except sql_worker.SQLWriteError:
+        buttons = types.InlineKeyboardMarkup()
+        if call_msg.message.chat.type != "private":
+            buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
+                                                   callback_data="back settings"))
+        utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configFailed"),
+                                    call_msg.message.chat.id, call_msg.message.id,
+                                    reply_markup=buttons, parse_mode="html")
+        if call_msg.data.split()[1] == "settings":
+            return
     if call_msg.data.split()[1] == "start":
         utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "startMSG"),
                                     call_msg.message.chat.id, call_msg.message.id)
     elif call_msg.data.split()[1] == "settings":
+        buttons = types.InlineKeyboardMarkup()
+        if call_msg.message.chat.type != "private":
+            buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
+                                                   callback_data="back settings"))
         utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configSuccess"),
-                                    call_msg.message.chat.id, call_msg.message.id)
+                                    call_msg.message.chat.id, call_msg.message.id,
+                                    reply_markup=buttons, parse_mode="html")
 
 
 utils.bot.infinity_polling()

@@ -1,5 +1,5 @@
 {	
-	"version": "0.7 alpha",
+	"version": "0.7.1 alpha",
 	"localesList": [
 		"ru",
 		"en",
@@ -7,8 +7,19 @@
 	],
 	"ru": {
 		"fullName": "Russian (Русский)",
+		"settings": "Настройки бота",
+
+		"adminsOnly": "Данная команда предназначена только для администраторов чата",
+		"canSetAdmins": "Теперь настраивать бота могут только администраторы",
+		"canSetAll": "Теперь настраивать бота могут любые пользователи",
+		"langBtn": "Язык",
+		"backBtn": "Назад",
+		"lockBtn": "Блокировка",
+
+		"chooseLang": "Выберите свой язык\nChoose your language",
 		"startMSG": "Привет. Я бот - переводчик. Работаю на основе Google Translate API, и могу переводить сообщения в чате на лету.\n\nДля этого добавь меня в чат, и при необходимости перевести чьё-то сообщение 'Ответь' на него, и напиши команду: /t <код языка>. Исходный язык перевода бот определит автоматически.\n\nОстальные команды можно узнать командой /help.\n\nТакже я могу работать в личных сообщениях, как обычный переводчик.",
 		"configSuccess": "Конфигурация бота применена успешно.",
+		"configFailed": "Конфигурация бота не применена. Информация об ошибке сохранена в логах бота.",
 		"specifyLang": "Укажите код/название языка на английском.",
 		"badTrgLangException": "Указан неверный код/название языка для перевода.",
 		"badSrcLangException": "Указан неверный код/название исходного языка.",
@@ -46,8 +57,19 @@
 	},
 	"en": {
 		"fullName": "English",
+		"settings": "Bot settings",
+		
+		"adminsOnly": "This command is for chat administrators only",
+		"canSetAdmins": "Now only administrators can configure the bot",
+		"canSetAll": "Now any users can configure the bot",
+		"langBtn": "Language",
+		"backBtn": "Back",
+		"lockBtn": "Admin lock",
+		
+		"chooseLang": "Choose your language",
 		"startMSG": "Hello. I am a bot - translator. I work on the basis of the Google Translate API, and I can translate messages in the chat on the fly.\n\nTo do this, add me to the chat, and if necessary, translate someone's 'Reply' message to it, and write command: /t <language code>. The bot will automatically detect the source language of translation.\n\nOther commands can be found with the command /help.\n\nI can also work in private messages like a regular translator.",
 		"configSuccess": "Bot configuration applied successfully.",
+		"configFailed": "Bot configuration was not applied. Error information was saved in the bot logs.",
 		"specifyLang": "Enter the language code/name in English.",
 		"badTrgLangException": "Invalid language code/name specified for translation.",
 		"badSrcLangException": "Invalid source language code/name specified.",
@@ -85,11 +107,22 @@
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
+		"settings": "Налаштування бота",
+		
+		"adminsOnly": "Данная команда предназначена только для администраторов чата",
+		"canSetAdmins": "Теперь настраивать бота могут только администраторы",
+		"canSetAll": "Теперь настраивать бота могут любые пользователи",
+		"langBtn": "Язык",
+		"backBtn": "Назад",
+		"lockBtn": "Блокировка",
+
+		"chooseLang": "Оберiть свою мову\nChoose your language",
 		"startMSG": "Вітаю. Я бот - перекладач. Працюю на основі Google Translate API, та можу перекладати повідомлення в чаті на льоту.\n\nДля цього додай мене в чат, та при необхідності перекласти чиєсь повідомлення 'Відповідай' на нього, та напиши команду: /t <код мови>. Вхідну мову перекладу бот визначить автоматично.\n\nРешту команд можна дізнатися командою /help.\n\nТакож я можу працювати в особистих повідомленнях, як звичайний перекладач.",
 		"configSuccess": "Конфігурацію бота застосовано успішно.",
+		"configFailed": "Конфігурація бота не застосовуючи. Інформація про помилку збережена в логах бота.",
 		"specifyLang": "Вкажіть код/назву мови англійською.",
 		"badTrgLangException": "Вказано невірно код/назву мови для перекладу.",
-    		"badSrcLangException": "Вказано невірно код/назву вхідної мови.",
+    	"badSrcLangException": "Вказано невірно код/назву вхідної мови.",
 		"tooManyRequestException": "Занадто багато запитів до API, будь ласка, спробуйте пізніше.",
 		"tooLongMsg": "Помилка: текст занадто великий для перекладу.",
 		"equalLangsException": "Неможливо зробити переклад з мови на цю саму мову",
