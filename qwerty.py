@@ -1,6 +1,7 @@
 import traceback
 
 import interlayer
+import locales
 import logger
 import utils
 
@@ -29,14 +30,11 @@ def qwerty_main(message):
                                                              (interlayer.extract_lang(text)), "ru")
         except (interlayer.BadTrgLangException, interlayer.UnkTransException, interlayer.TooManyRequestException):
             recognized_lang = "Unknown"
-        utils.bot.reply_to(message, "Исходный язык не распознан. Неправильный аргумент или неверно распознан язык? (" +
-                                     recognized_lang + ")\n"
-                                    "Попробуйте указать исходный язык вручную. Возможно, язык отсутствует в "
-                                    "словаре символов")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownSourceLang").format(recognized_lang))
         return
 
     if tab1 is None or tab2 is None:
-        utils.bot.reply_to(message, "Неизвестная раскладка. Возможно, язык отсутствует в словаре символов")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownLayout"))
         return
 
     try:
@@ -44,5 +42,4 @@ def qwerty_main(message):
         utils.bot.reply_to(message, translated_text)
     except Exception as e:
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        utils.bot.reply_to(message, "Ошибка смены раскладки текста. Обратитесь к авторам бота\n"
-                                    "Информация для отладки сохранена в логах бота.")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "layoutError"))

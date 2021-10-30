@@ -1,10 +1,12 @@
 import os
 import sys
+import time
 import traceback
 import telebot
 import configparser
 
 import initdialog
+import locales
 import logger
 import interlayer
 
@@ -44,13 +46,19 @@ def config_init():
             initdialog.init_dialog()
 
     bot = telebot.TeleBot(token)
-    try:
-        bot.get_me()
-    except Exception as e:
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        logger.write_log("ERR: Telegram API isn't working correctly, bot will close! "
-                         "Check your connection or API token")
-        sys.exit(1)
+
+    for checker in range(3):
+        try:
+            bot.get_me()
+            break
+        except Exception as e:
+            if checker >= 2:
+                logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+                logger.write_log("ERR: Telegram API isn't working correctly after three tries, bot will close! "
+                                 "Check your connection or API token")
+                sys.exit(1)
+            else:
+                time.sleep(5)
 
     return config
 
@@ -58,7 +66,7 @@ def config_init():
 def textparser(message):
 
     if message.reply_to_message is None:
-        bot.reply_to(message, "Пожалуйста, используйте эту команду как ответ на сообщение")
+        bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
 
     if message.reply_to_message.text is not None:
@@ -70,7 +78,7 @@ def textparser(message):
         for option in message.reply_to_message.poll.options:
             inputtext += "☑️ " + option.text + "\n"
     else:
-        bot.reply_to(message, "Перевод не выполнен. В сообщении не обнаружен текст.\n")
+        bot.reply_to(message, locales.get_text(message.chat.id, "textNotFound"))
         return
 
     return inputtext
@@ -97,28 +105,28 @@ def download_clear_log(message, down_clear_check):
         except FileNotFoundError:
             logger.write_log("INFO: user " + logger.username_parser(message)
                              + " tried to download empty log\n" + traceback.format_exc())
-            bot.send_message(message.chat.id, "Лог-файл не найден!")
+            bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logNotFound"))
         except IOError:
             logger.write_log("ERR: user " + logger.username_parser(message) +
                              " tried to download log, but something went wrong!\n" + traceback.format_exc())
-            bot.send_message(message.chat.id, "Ошибка выгрузки лога!")
+            bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logUploadError"))
     else:
         if logger.clear_log():
             logger.write_log("INFO: log was cleared by user " + logger.username_parser(message) + ". Have fun!")
-            bot.send_message(message.chat.id, "Очистка лога успешна")
+            bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logClearSuccess"))
         else:
             logger.write_log("ERR: user " + logger.username_parser(message) +
                              " tried to clear log, but something went wrong\n!")
-            bot.send_message(message.chat.id, "Ошибка очистки лога")
+            bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logClearError"))
 
 
 def list_of_langs():
-    output = "Список всех кодов и соответствующих им языков:\n"
+    output = "List of all codes and their corresponding languages:\n"
     interlayer.list_of_langs()
     for key, value in interlayer.lang_list.items():
         output = output + value + " - " + key + "\n"
 
-    output = output + "\nСписок всех доступных раскладок клавиатуры: "
+    output = output + "\nList of all available keyboard layouts: "
 
     for key, value in layouts.items():
         output = output + key + " "

@@ -2,6 +2,7 @@ import random
 import traceback
 
 import interlayer
+import locales
 import logger
 import utils
 
@@ -27,7 +28,7 @@ def distort_init(config):
 def distort_main(message):
 
     if max_inits == 0:
-        utils.bot.reply_to(message, "Ошибка, хостер бота принудительно отключил функцию Distort")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortDisabled"))
         return
 
     inputshiz = utils.textparser(message)
@@ -40,11 +41,11 @@ def distort_main(message):
     try:
         counter = int(utils.extract_arg(message.text, 1))
     except (ValueError, TypeError):
-        utils.bot.reply_to(message, "Ошибка, число не распознано")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortNaN"))
         return
 
     if counter > max_inits or counter < 1:
-        utils.bot.reply_to(message, "Ошибка, укажите значение от 1 до " + str(max_inits))
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortWrongNumber").format(str(max_inits)))
         return
 
     randlangs_list = ""
@@ -52,12 +53,12 @@ def distort_main(message):
     if utils.extract_arg(message.text, 2) is not None:
         endlang = utils.extract_arg(utils.lang_autocorr(message.text), 2)
         if interlayer.lang_list.get(endlang) is None:
-            utils.bot.reply_to(message, "Указан неверный код/название яыка")
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortWrongLang"))
             return
     else:
         endlang = interlayer.extract_lang(inputshiz)
 
-    tmpmessage = utils.bot.reply_to(message, "Генерация начата, ожидайте")
+    tmpmessage = utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortStarted"))
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
     lastlang = interlayer.extract_lang(inputshiz)
@@ -72,14 +73,13 @@ def distort_main(message):
         try:
             inputshiz = interlayer.get_translate(inputshiz, randlang, True)
         except interlayer.TooManyRequestException:
-            utils.bot.edit_message_text("Слишком много запросов к API, пожалуйста, попробуйте позже.", idc, idm)
+            utils.bot.edit_message_text(locales.get_text(message.chat.id, "tooManyRequestException"), idc, idm)
             return
         except interlayer.TooLongMsg:
-            utils.bot.edit_message_text("Ошибка: текст слишком большой для перевода.", idc, idm)
+            utils.bot.edit_message_text(locales.get_text(message.chat.id, "tooLongMsg"), idc, idm)
             return
         except interlayer.UnkTransException:
-            utils.bot.edit_message_text("Ошибка искажения текста. Обратитесь к авторам бота\n"
-                                        "Информация для отладки сохранена в логах бота.", idc, idm)
+            utils.bot.edit_message_text(locales.get_text(message.chat.id, "distortUnkTransException"), idc, idm)
             return
 
         lastlang = randlang
@@ -88,7 +88,7 @@ def distort_main(message):
         inputshiz = interlayer.get_translate(inputshiz, endlang)
     except (interlayer.UnkTransException, interlayer.TooLongMsg, interlayer.TooManyRequestException,
             interlayer.BadTrgLangException):
-        utils.bot.reply_to(message, "К сожалению, на итоговый язык не удалось перевести.\n"
-                                    "Информация для отладки сохранена в логах бота.")
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortEndingError"))
 
-    utils.bot.edit_message_text(inputshiz + "\n\nИспользовались искажения: " + randlangs_list, idc, idm)
+    utils.bot.edit_message_text(inputshiz + locales.get_text(message.chat.id, "usedDistortions")
+                                + randlangs_list, idc, idm)
