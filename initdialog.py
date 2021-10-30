@@ -4,6 +4,7 @@ import traceback
 
 import interlayer
 import logger
+from locales import LOCALES_REPO_DEFAULT
 
 
 def init_dialog():
@@ -15,8 +16,7 @@ def init_dialog():
     config.add_section("Polyglot")
     config.set("Polyglot", "token", token)
     config.set("Polyglot", "max-inits", "100")
-    config.set("Polyglot", "locales-repository",
-               "https://raw.githubusercontent.com/Allnorm/Polyglot/freeapi/locales-list.json")
+    config.set("Polyglot", "locales-repository", LOCALES_REPO_DEFAULT)
     config = interlayer.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:
