@@ -18,8 +18,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "0.7.1 alpha"
-    build = "1"
+    version = "0.7.1"
+    build = "2"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -60,7 +60,7 @@ def chat_settings_lang(message, auxiliary_text):
         buttons.add(types.InlineKeyboardButton(text=locale_name, callback_data=locale + " " + auxiliary_text))
     if auxiliary_text == "settings" and message.chat.type != "private":
         buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "backBtn"),
-                                               callback_data="back " + auxiliary_text))
+                                               callback_data="back"))
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "chooseLang"), message.chat.id, message.id,
                                     reply_markup=buttons, parse_mode='html')
         return
@@ -168,9 +168,9 @@ def send_welcome(message):
                 return
             buttons = types.InlineKeyboardMarkup()
             buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "langBtn"),
-                                                   callback_data="chooselang settings"))
+                                                   callback_data="chooselang"))
             buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "lockBtn"),
-                                                   callback_data="adminblock settings"))
+                                                   callback_data="adminblock"))
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "settings"),
                                reply_markup=buttons, parse_mode='html')
 
@@ -253,7 +253,7 @@ def callback_inline_lang_list(call_msg):
         set_lock = "yes"
     buttons = types.InlineKeyboardMarkup()
     buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
-                                           callback_data="back settings"))
+                                           callback_data="back"))
     try:
         sql_worker.write_chat_info(call_msg.message.chat.id, "is_locked", set_lock)
     except sql_worker.SQLWriteError:
@@ -279,9 +279,9 @@ def callback_inline_back(call_msg):
         return
     buttons = types.InlineKeyboardMarkup()
     buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "langBtn"),
-                                           callback_data="chooselang settings"))
+                                           callback_data="chooselang"))
     buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "lockBtn"),
-                                           callback_data="adminblock settings"))
+                                           callback_data="adminblock"))
     utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "settings"),
                                 call_msg.message.chat.id, call_msg.message.id, reply_markup=buttons, parse_mode='html')
 
@@ -301,7 +301,7 @@ def callback_inline_lang_chosen(call_msg):
         buttons = types.InlineKeyboardMarkup()
         if call_msg.message.chat.type != "private":
             buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
-                                                   callback_data="back settings"))
+                                                   callback_data="back"))
         utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configFailed"),
                                     call_msg.message.chat.id, call_msg.message.id,
                                     reply_markup=buttons, parse_mode="html")
@@ -314,7 +314,7 @@ def callback_inline_lang_chosen(call_msg):
         buttons = types.InlineKeyboardMarkup()
         if call_msg.message.chat.type != "private":
             buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "backBtn"),
-                                                   callback_data="back settings"))
+                                                   callback_data="back"))
         utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configSuccess"),
                                     call_msg.message.chat.id, call_msg.message.id,
                                     reply_markup=buttons, parse_mode="html")
