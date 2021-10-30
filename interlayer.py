@@ -21,7 +21,7 @@ class TooManyRequestException(Exception):
     pass
 
 
-class EqalLangsException(Exception):
+class EqualLangsException(Exception):
     pass
 
 
@@ -65,7 +65,7 @@ def extract_lang(text):
         logger.write_log("ERR: GOOGLE_API_REJECT (in lang extract)")
     except Exception as e:
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-    return None
+    raise UnkTransException
 
 
 def list_of_langs():
@@ -96,8 +96,6 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
     except Exception as e:
         if str(e) in "invalid destination language":
             raise BadTrgLangException
-        if str(e) in "400 Target language can't be equal to source language.":
-            return "Невозможно сделать перевод с языка на тот же язык"
         if str(e) in "invalid source language":
             raise BadSrcLangException
         else:
