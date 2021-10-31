@@ -1,9 +1,12 @@
 import configparser
 import os
 import traceback
+import datetime
+import time
 
 from telebot import types
 
+import adservice
 import interlayer
 import locales
 import logger
@@ -18,8 +21,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "0.7.1"
-    build = "2"
+    version = "1.0 pre-alpha"
+    build = "1"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -220,6 +223,85 @@ def clear_log(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         utils.download_clear_log(message, False)
+
+
+def force_premium(message, current_chat):
+    if utils.user_admin_checker(message) is False:
+        return
+    if current_chat[0][3] == "no":
+        timer = "0"
+        if utils.extract_arg(message.text, 2) is not None:
+            try:
+                timer = str(int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400)
+            except ValueError:
+                utils.bot.reply_to(message, locales.get_text(message.chat.id, "parseTimeError"))
+                return
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "yes")
+            sql_worker.write_chat_info(message.chat.id, "expire_time", timer)
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forcePremium"))
+    else:
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "no")
+            sql_worker.write_chat_info(message.chat.id, "expire_time", "0")
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forceUnPremium"))
+
+
+@utils.bot.message_handler(commands=['premium'])
+def premium(message):
+
+    if not botname_checker(message):
+        return
+
+    sql_worker.actualize_chat_premium(message.chat.id)
+    current_chat = sql_worker.get_chat_info(message.chat.id)
+    if current_chat is None:
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "no")
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        current_chat = sql_worker.get_chat_info(message.chat.id)
+
+    if utils.extract_arg(message.text, 1) == "force":
+        # Usage: /premium force [time_in_hours (optional argument)]
+        force_premium(message, current_chat)
+        return
+
+    if current_chat[0][3] == "no":
+        premium_status = locales.get_text(message.chat.id, "premiumStatusDisabled")
+    else:
+        if current_chat[0][4] != 0:
+            premium_status = locales.get_text(message.chat.id, "premiumStatusTime") + " " + \
+                         datetime.datetime.fromtimestamp(current_chat[0][4]).strftime("%d.%m.%Y %H:%M:%S")
+        else:
+            premium_status = locales.get_text(message.chat.id, "premiumStatusInfinity")
+
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumStatus") + " <b>" + premium_status + "</b>",
+                       parse_mode="html")
+
+
+@utils.bot.message_handler(commands=['mailing'])
+def mailing(message):
+
+    if not botname_checker(message):
+        return
+    if utils.user_admin_checker(message) is False:
+        return
+
+    if message.reply_to_message is None:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
+        return
+
+    logger.write_log(logger.BLOB_TEXT, message)
+    adservice.mailing(message.reply_to_message)
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "mailingSuccess"))
 
 
 def btn_checker(message, who_id):

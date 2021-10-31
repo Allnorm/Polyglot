@@ -1,5 +1,5 @@
 {	
-	"version": "0.7.1",
+	"version": "1.0 pre-alpha",
 	"localesList": [
 		"ru",
 		"en",
@@ -52,7 +52,16 @@
 		"logNotFound": "Лог-файл не найден!",
 		"logUploadError": "Ошибка выгрузки лога!",
 		"logClearSuccess": "Очистка лога успешна.",
-		"logClearError": "Ошибка очистки лога."
+		"logClearError": "Ошибка очистки лога.",
+		"mailingSuccess": "Рассылка успешно завершена.",
+		"forcePremium": "Премиум принудительно подключён в этом чате.",
+		"forceUnPremium": "Премиум принудительно отключён в этом чате.",
+		"premiumError": "Не удалось получить настройки премиума. Пожалуйста, проверьте логи бота.",
+		"premiumStatus": "Текущий статус премиума для этого чата:",
+		"premiumStatusDisabled": "отключён",
+		"premiumStatusInfinity": "действует бессрочно",
+		"premiumStatusTime": "действует до",
+		"parseTimeError": "Не удалось распарсить время в аргументах."
 	},
 	"en": {
 		"fullName": "English",
@@ -100,7 +109,16 @@
 		"logNotFound": "Log file not found!",
 		"logUploadError": "Error uploading the log!",
 		"logClearSuccess": "Clearing the log successfully.",
-		"logClearError": "Error clearing the log."
+		"logClearError": "Error clearing the log.",
+		"mailingSuccess": "Submission completed successfully.",
+		"forcePremium": "Premium is forcibly connected in this chat.",
+		"forceUnPremium": "Premium has been forcibly disabled in this chat.",
+		"premiumError": "Failed to get premium settings. Please check the bot logs.",
+		"premiumStatus": "The current premium status for this chat is:",
+		"premiumStatusDisabled": "disabled",
+		"premiumStatusInfinity": "valid indefinitely",
+		"premiumStatusTime": "valid until",
+		"parseTimeError": "Failed to parse time in arguments."
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
