@@ -61,11 +61,11 @@
 		"premiumStatusInfinity": "действует бессрочно",
 		"premiumStatusTime": "действует до",
 		"parseTimeError": "Не удалось распарсить время в аргументах.",
-		"taskerSuccess": "Рассылка успешно добавлена. Код языка рассылки {}, время окончания {}",
+		"taskerSuccess": "Рассылка успешно добавлена. Код языка рассылки {}, время окончания {}.",
 		"taskerFail": "Рассылка уже существует.",
 		"taskerArguments": "Используйте команду в виде <код языка> <количество дней рассылки>.",
 		"taskerRemError": "Ошибка удаления записи рассылки. Проверьте логи бота.",
-		"taskerRemSuccess": "Сообщение рассылки удалено успешно",
+		"taskerRemSuccess": "Сообщение рассылки удалено успешно.",
 		"adDisabled": "Модуль рекламы отключён в файле конфигурации."
 	},
 	"en": {
@@ -123,12 +123,12 @@
 		"premiumStatusInfinity": "valid indefinitely",
 		"premiumStatusTime": "valid until",
 		"parseTimeError": "Failed to parse time in arguments.",
-		"taskerSuccess": "Рассылка успешно добавлена. Код языка рассылки {}, время окончания {}",
-		"taskerFail": "Рассылка уже существует.",
-		"taskerArguments": "Используйте команду в виде <код языка> <количество дней рассылки>.",
-		"taskerRemError": "Ошибка удаления записи рассылки. Проверьте логи бота.",
-		"taskerRemSuccess": "Сообщение рассылки удалено успешно",
-		"adDisabled": "Модуль рекламы отключён в файле конфигурации."
+		"taskerSuccess": "Mailing list was successfully added. Mailing language code {}, end time {}.",
+		"taskerFail": "The mailing list already exists.",
+		"taskerArguments": "Use a command of the form <language code> <number of days to send>.",
+		"taskerRemError": "Error deleting mailing list entry. Check bot logs.",
+		"taskerRemSuccess": "Mailing message deleted successfully.",
+		"adDisabled": "The ad module is disabled in the config file."
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
