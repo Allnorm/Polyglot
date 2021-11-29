@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.0 alpha"
-    build = "5"
+    build = "6"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -324,7 +324,7 @@ def add_task(message):
 
     lang_code = utils.extract_arg(message.text, 1)
 
-    if sql_worker.write_task(message.reply_to_message.id, text, lang_code, expire_time) is False:
+    if sql_worker.write_task(message.reply_to_message.id, text, lang_code, expire_time, message.chat.id) is False:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerFail"))
     else:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerSuccess").
@@ -351,7 +351,7 @@ def rm_task(message):
         return
 
     try:
-        sql_worker.rem_task(message.reply_to_message.id)
+        sql_worker.rem_task(message.reply_to_message.id, message.chat.id)
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemSuccess"))
     except sql_worker.SQLWriteError:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemError"))

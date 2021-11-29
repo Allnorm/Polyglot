@@ -208,21 +208,23 @@ def user_admin_checker(message):
 
 
 def add_ad(chat_id):
-    list_ad = sql_worker.get_tasks()
-    lang_chat_code = "en"
-    if not list_ad:
+    if enable_ad is False:
         return ""
-    for current_ad in list_ad:
-        if int(current_ad[3]) < int(time.time()):
-            try:
-                sql_worker.rem_task(current_ad[0])
-            except sql_worker.SQLWriteError:
-                pass
+    lang_chat_code = "en"
     chat_info = sql_worker.get_chat_info(chat_id)
     if chat_info:
         if chat_info[0][3] == "yes":
             return ""
         lang_chat_code = chat_info[0][1]
+    list_ad = sql_worker.get_tasks(lang_chat_code)
+    if not list_ad:
+        return ""
+    for current_ad in list_ad:
+        if int(current_ad[3]) < int(time.time()):
+            try:
+                sql_worker.rem_task(current_ad[0], current_ad[4])
+            except sql_worker.SQLWriteError:
+                pass
     random_index = random.randint(0, len(list_ad) - 1)
     if list_ad[random_index][2] != lang_chat_code:
         return ""
