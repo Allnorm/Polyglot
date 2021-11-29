@@ -17,6 +17,7 @@ proxy_type = ""
 bot: telebot.TeleBot
 whitelist = []
 enable_ad = True
+ad_percent = 50
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -25,8 +26,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
-
-    global proxy_port, proxy_type, bot, enable_ad
+    global proxy_port, proxy_type, bot, enable_ad, ad_percent
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: Config file isn't created, trying to create it now")
@@ -61,8 +61,15 @@ def config_init():
     elif enable_ad_set == "false":
         enable_ad = False
     else:
-        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default\n"
+        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default")
+
+    try:
+        ad_percent = int(config["Polyglot"]["ad-percent"])
+    except (ValueError, KeyError):
+        logger.write_log("ERR: Incorrect ad-percent configuration, reset to default (50%)\n"
                          + traceback.format_exc())
+    if ad_percent < 0 or ad_percent > 100:
+        logger.write_log("ERR: Incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
 
     for checker in range(3):
         try:
@@ -81,7 +88,6 @@ def config_init():
 
 
 def textparser(message):
-
     if message.reply_to_message is None:
         bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
@@ -109,7 +115,6 @@ def extract_arg(arg, num):
 
 
 def download_clear_log(message, down_clear_check):
-
     if user_admin_checker(message) is False:
         return
 
@@ -159,7 +164,6 @@ def list_of_langs():
 
 
 def lang_autocorr(langstr, inline=False):
-
     if inline is False:
         langstr = langstr.lower()
         for key, value in interlayer.lang_list.items():
@@ -214,7 +218,7 @@ def add_ad(chat_id):
     chat_info = sql_worker.get_chat_info(chat_id)
     if chat_info:
         if chat_info[0][3] == "yes":
-            return ""
+            return ""  # Return for premium
         lang_chat_code = chat_info[0][1]
     list_ad = sql_worker.get_tasks(lang_chat_code)
     if not list_ad:
@@ -225,6 +229,9 @@ def add_ad(chat_id):
                 sql_worker.rem_task(current_ad[0], current_ad[4])
             except sql_worker.SQLWriteError:
                 pass
+    percent = random.randint(1, 100)
+    if percent > ad_percent:
+        return ""
     random_index = random.randint(0, len(list_ad) - 1)
     if list_ad[random_index][2] != lang_chat_code:
         return ""
