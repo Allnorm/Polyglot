@@ -362,7 +362,7 @@ def btn_checker(message, who_id):
     if chat_info:
         if chat_info[0][2] == "yes":
             status = utils.bot.get_chat_member(message.chat.id, who_id).status
-            if status != "administrator" and status != "owner":
+            if status != "administrator" and status != "owner" and status != "creator":
                 return True
     return False
 
@@ -379,13 +379,18 @@ def callback_inline_lang_list(call_msg):
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
 def callback_inline_lang_list(call_msg):
     status = utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status
-    if status != "administrator" and status != "owner":
+    print(status)
+    if status != "administrator" and status != "owner" and status != "creator":
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
         return
     chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
     if not chat_info:
-        return
+        try:
+            sql_worker.write_chat_info(call_msg.message.chat.id, "lang", "en")
+        except sql_worker.SQLWriteError:
+            return
+        chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
     if chat_info[0][2] == "yes":
         set_lock = "no"
     else:
