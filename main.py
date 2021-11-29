@@ -153,7 +153,7 @@ def send_welcome(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         chat_info = sql_worker.get_chat_info(message.chat.id)
-        if chat_info is None:
+        if not chat_info:
             chat_settings_lang(message, "start")
             return
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "startMSG"))
@@ -261,7 +261,7 @@ def premium(message):
 
     sql_worker.actualize_chat_premium(message.chat.id)
     current_chat = sql_worker.get_chat_info(message.chat.id)
-    if current_chat is None:
+    if not current_chat:
         try:
             sql_worker.write_chat_info(message.chat.id, "premium", "no")
         except sql_worker.SQLWriteError:
@@ -306,7 +306,7 @@ def mailing(message):
 
 def btn_checker(message, who_id):
     chat_info = sql_worker.get_chat_info(message.chat.id)
-    if chat_info is not None:
+    if chat_info:
         if utils.bot.get_chat_member(message.chat.id, who_id).status != "administrator" \
                 and chat_info[0][2] == "yes":
             return True

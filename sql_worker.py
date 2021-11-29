@@ -42,8 +42,6 @@ def get_chat_info(chat_id):
     sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
-    if not record:
-        return None
     return record
 
 
@@ -60,8 +58,6 @@ def get_chat_list():
     sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
-    if not record:
-        return None
     return record
 
 
