@@ -39,7 +39,7 @@ def qwerty_main(message):
 
     try:
         translated_text = text.translate(str.maketrans(tab1, tab2))
-        utils.bot.reply_to(message, translated_text)
+        utils.bot.reply_to(message, translated_text + utils.add_ad(message.chat.id))
     except Exception as e:
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "layoutError"))

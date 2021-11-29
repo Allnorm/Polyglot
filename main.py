@@ -6,7 +6,6 @@ import time
 
 from telebot import types
 
-import adservice
 import interlayer
 import locales
 import logger
@@ -21,8 +20,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.0 pre-alpha"
-    build = "2"
+    version = "1.0 alpha"
+    build = "3"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -111,7 +110,7 @@ def translate(message):
 
         try:
             inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
-            utils.bot.reply_to(message, inputtext)
+            utils.bot.reply_to(message, inputtext + utils.add_ad(message.chat.id))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.BadSrcLangException:
@@ -287,21 +286,58 @@ def premium(message):
                        parse_mode="html")
 
 
-@utils.bot.message_handler(commands=['mailing'])
-def mailing(message):
+@utils.bot.message_handler(commands=['addtask'])
+def add_task(message):
 
     if not botname_checker(message):
         return
+
+    logger.write_log(logger.BLOB_TEXT, message)
     if utils.user_admin_checker(message) is False:
         return
 
-    if message.reply_to_message is None:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
+    text = utils.textparser(message)
+    if text is None:
+        return
+
+    if utils.extract_arg(message.text, 1) is None or utils.extract_arg(message.text, 2) is None:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
+        return
+
+    try:
+        expire_time = int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400
+    except (TypeError, ValueError):
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
+        return
+
+    lang_code = utils.extract_arg(message.text, 1)
+
+    if sql_worker.write_task(message.reply_to_message.id, text, lang_code, expire_time) is False:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerFail"))
+    else:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerSuccess").
+                           format(lang_code,
+                                  datetime.datetime.fromtimestamp(expire_time).strftime("%d.%m.%Y %H:%M:%S")))
+
+
+@utils.bot.message_handler(commands=['remtask'])
+def rm_task(message):
+    if not botname_checker(message):
         return
 
     logger.write_log(logger.BLOB_TEXT, message)
-    adservice.mailing(message.reply_to_message)
-    utils.bot.reply_to(message, locales.get_text(message.chat.id, "mailingSuccess"))
+    if utils.user_admin_checker(message) is False:
+        return
+
+    text = utils.textparser(message)
+    if text is None:
+        return
+
+    try:
+        sql_worker.rem_task(message.reply_to_message.id)
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemSuccess"))
+    except sql_worker.SQLWriteError:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemError"))
 
 
 def btn_checker(message, who_id):

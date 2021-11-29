@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 import time
 import traceback
@@ -9,6 +10,7 @@ import initdialog
 import locales
 import logger
 import interlayer
+import sql_worker
 
 proxy_port = ""
 proxy_type = ""
@@ -188,3 +190,25 @@ def user_admin_checker(message):
             return True
 
     return False
+
+
+def add_ad(chat_id):
+    list_ad = sql_worker.get_tasks()
+    lang_chat_code = "en"
+    if not list_ad:
+        return ""
+    for current_ad in list_ad:
+        if int(current_ad[0][3]) < int(time.time()):
+            try:
+                sql_worker.rem_task(current_ad[0][0])
+            except sql_worker.SQLWriteError:
+                pass
+    chat_info = sql_worker.get_chat_info(chat_id)
+    if chat_info:
+        if chat_info[0][3] == "yes":
+            return ""
+        lang_chat_code = chat_info[0][1]
+    random_index = random.randint(0, len(list_ad) - 1)
+    if list_ad[random_index][2] != lang_chat_code:
+        return ""
+    return "\n---------------\n" + list_ad[random_index][1]

@@ -21,6 +21,11 @@ def table_init():
                                     is_locked TEXT,
                                     premium TEXT NOT NULL,
                                     expire_time INTEGER);''')
+        cursor.execute('''CREATE TABLE if not exists tasks (
+                                    message_id TEXT NOT NULL PRIMARY KEY,
+                                    body TEXT NOT NULL,
+                                    region TEXT NOT NULL,
+                                    expire_time INTEGER);''')
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
@@ -83,7 +88,7 @@ def update_premium_list():
 
 def actualize_chat_premium(chat_id):
     current_chat = get_chat_info(chat_id)
-    if current_chat is None:
+    if not current_chat:
         return
     if current_chat[0][3] == "yes":
         if current_chat[0][4] < time.time() and current_chat[0][4] != 0:
@@ -111,3 +116,55 @@ def write_chat_info(chat_id, key, value):
     sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
+
+
+def write_task(message_id, body, region, expire_time):
+    sqlite_connection = sqlite3.connect(dbname)
+    cursor = sqlite_connection.cursor()
+    try:
+        cursor.execute("""SELECT * FROM tasks WHERE message_id = ?""", (message_id,))
+        record = cursor.fetchall()
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
+        logger.write_log("ERR: read mySQL DB failed!")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        record = []
+    if record:
+        return False
+    try:
+        cursor.execute("""INSERT INTO tasks VALUES (?,?,?,?);""", (message_id, body, region, expire_time))
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
+        logger.write_log("ERR: write mySQL DB failed!")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        raise SQLWriteError
+    sqlite_connection.commit()
+    cursor.close()
+    sqlite_connection.close()
+
+
+def get_tasks():
+    sqlite_connection = sqlite3.connect(dbname)
+    cursor = sqlite_connection.cursor()
+    try:
+        cursor.execute("""SELECT * FROM tasks""")
+        record = cursor.fetchall()
+        cursor.close()
+        sqlite_connection.close()
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
+        logger.write_log("ERR: read mySQL DB failed!")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        record = []
+    return record
+
+
+def rem_task(message_id):
+    sqlite_connection = sqlite3.connect(dbname)
+    cursor = sqlite_connection.cursor()
+    try:
+        cursor.execute("""DELETE FROM tasks WHERE message_id = ?""", (message_id,))
+        sqlite_connection.commit()
+        cursor.close()
+        sqlite_connection.close()
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
+        logger.write_log("ERR: write mySQL DB failed!")
+        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        raise SQLWriteError

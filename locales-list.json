@@ -53,7 +53,6 @@
 		"logUploadError": "Ошибка выгрузки лога!",
 		"logClearSuccess": "Очистка лога успешна.",
 		"logClearError": "Ошибка очистки лога.",
-		"mailingSuccess": "Рассылка успешно завершена.",
 		"forcePremium": "Премиум принудительно подключён в этом чате.",
 		"forceUnPremium": "Премиум принудительно отключён в этом чате.",
 		"premiumError": "Не удалось получить настройки премиума. Пожалуйста, проверьте логи бота.",
@@ -61,7 +60,12 @@
 		"premiumStatusDisabled": "отключён",
 		"premiumStatusInfinity": "действует бессрочно",
 		"premiumStatusTime": "действует до",
-		"parseTimeError": "Не удалось распарсить время в аргументах."
+		"parseTimeError": "Не удалось распарсить время в аргументах.",
+		"taskerSuccess": "Рассылка успешно добавлена. Код языка рассылки {}, время окончания {}",
+		"taskerFail": "Рассылка уже существует.",
+		"taskerArguments": "Используйте команду в виде <код языка> <количество дней рассылки>.",
+		"taskerRemError": "Ошибка удаления записи рассылки",
+		"taskerRemSuccess": "Сообщение рассылки удалено успешно"
 	},
 	"en": {
 		"fullName": "English",
@@ -110,7 +114,6 @@
 		"logUploadError": "Error uploading the log!",
 		"logClearSuccess": "Clearing the log successfully.",
 		"logClearError": "Error clearing the log.",
-		"mailingSuccess": "Submission completed successfully.",
 		"forcePremium": "Premium is forcibly connected in this chat.",
 		"forceUnPremium": "Premium has been forcibly disabled in this chat.",
 		"premiumError": "Failed to get premium settings. Please check the bot logs.",
