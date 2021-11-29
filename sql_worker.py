@@ -123,7 +123,7 @@ def write_task(message_id, body, region, expire_time, chat_id):
     sqlite_connection = sqlite3.connect(dbname)
     cursor = sqlite_connection.cursor()
     try:
-        cursor.execute("""SELECT * FROM tasks WHERE message_id = ?, chat_id = ?""", (message_id, chat_id,))
+        cursor.execute("""SELECT * FROM tasks WHERE message_id = ? AND chat_id = ?""", (message_id, chat_id,))
         record = cursor.fetchall()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: read mySQL DB failed!")
