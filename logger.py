@@ -4,6 +4,23 @@ import datetime
 
 BLOB_TEXT = "not_needed"
 current_log = "polyglot.log"
+logger = True
+
+
+def logger_init(config):
+    global logger
+    try:
+        get_log_set = config["Polyglot"]["msg-logging"].lower()
+    except (ValueError, KeyError):
+        write_log("ERR: Incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
+        return
+    if get_log_set == "true":
+        return
+    elif get_log_set == "false":
+        logger = False
+        write_log("WARN: User messages logging was disabled")
+    else:
+        write_log("ERR: Incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
 
 
 def username_parser(message):
@@ -24,6 +41,9 @@ def username_parser(message):
 
 
 def write_log(text=BLOB_TEXT, message=None):
+
+    if logger is False and message is not None:
+        return
 
     if message is not None:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + username_parser(message) + \

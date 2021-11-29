@@ -21,12 +21,13 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.0 alpha"
-    build = "3"
+    build = "4"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
 
     config = utils.config_init()
+    logger.logger_init(config)
     distort_init(config)
     utils.whitelist_init()
     interlayer.translate_init()
@@ -258,6 +259,12 @@ def premium(message):
     if not botname_checker(message):
         return
 
+    logger.write_log(logger.BLOB_TEXT, message)
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
+        return
+
     sql_worker.actualize_chat_premium(message.chat.id)
     current_chat = sql_worker.get_chat_info(message.chat.id)
     if not current_chat:
@@ -293,7 +300,12 @@ def add_task(message):
         return
 
     logger.write_log(logger.BLOB_TEXT, message)
+
     if utils.user_admin_checker(message) is False:
+        return
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
         return
 
     text = utils.textparser(message)
@@ -326,7 +338,12 @@ def rm_task(message):
         return
 
     logger.write_log(logger.BLOB_TEXT, message)
+
     if utils.user_admin_checker(message) is False:
+        return
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
         return
 
     text = utils.textparser(message)

@@ -16,6 +16,7 @@ proxy_port = ""
 proxy_type = ""
 bot: telebot.TeleBot
 whitelist = []
+enable_ad = True
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -25,7 +26,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 def config_init():
 
-    global proxy_port, proxy_type, bot
+    global proxy_port, proxy_type, bot, enable_ad
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: Config file isn't created, trying to create it now")
@@ -48,6 +49,20 @@ def config_init():
             initdialog.init_dialog()
 
     bot = telebot.TeleBot(token)
+
+    try:
+        enable_ad_set = config["Polyglot"]["enable-ad"].lower()
+    except (ValueError, KeyError):
+        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default\n"
+                         + traceback.format_exc())
+        enable_ad_set = "true"
+    if enable_ad_set == "true":
+        pass
+    elif enable_ad_set == "false":
+        enable_ad = False
+    else:
+        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default\n"
+                         + traceback.format_exc())
 
     for checker in range(3):
         try:

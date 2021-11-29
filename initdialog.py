@@ -17,6 +17,8 @@ def init_dialog():
     config.set("Polyglot", "token", token)
     config.set("Polyglot", "max-inits", "100")
     config.set("Polyglot", "locales-repository", LOCALES_REPO_DEFAULT)
+    config.set("Polyglot", "msg-logging", "true")
+    config.set("Polyglot", "enable-ad", "true")
     config = interlayer.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:
