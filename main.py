@@ -379,7 +379,6 @@ def callback_inline_lang_list(call_msg):
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
 def callback_inline_lang_list(call_msg):
     status = utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status
-    print(status)
     if status != "administrator" and status != "owner" and status != "creator":
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
