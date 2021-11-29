@@ -329,6 +329,8 @@ def callback_inline_lang_list(call_msg):
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
         return
     chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
+    if not chat_info:
+        return
     if chat_info[0][2] == "yes":
         set_lock = "no"
     else:

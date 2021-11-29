@@ -13,3 +13,6 @@ def mailing(message):
                 utils.bot.copy_message(current_chat[0], message.chat.id, message.id)
             except telebot.apihelper.ApiTelegramException:
                 pass
+
+def tasker():
+    pass
