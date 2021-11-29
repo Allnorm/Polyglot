@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.0 beta"
-    build = "8"
+    build = "9"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -360,9 +360,10 @@ def rm_task(message):
 def btn_checker(message, who_id):
     chat_info = sql_worker.get_chat_info(message.chat.id)
     if chat_info:
-        if utils.bot.get_chat_member(message.chat.id, who_id).status != "administrator" \
-                and chat_info[0][2] == "yes":
-            return True
+        if chat_info[0][2] == "yes":
+            status = utils.bot.get_chat_member(message.chat.id, who_id).status
+            if status != "administrator" and status != "owner":
+                return True
     return False
 
 
@@ -377,7 +378,8 @@ def callback_inline_lang_list(call_msg):
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
 def callback_inline_lang_list(call_msg):
-    if utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status != "administrator":
+    status = utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status
+    if status != "administrator" and status != "owner":
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
         return
