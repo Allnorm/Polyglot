@@ -99,11 +99,11 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
                                                  target_language_code=target_lang, source_language_code=src_lang,
                                                  mime_type="text/plain", timeout=10).translations[0].translated_text
     except Exception as e:
-        if str(e) in "400 Target language is invalid.":
+        if "400 Target language is invalid." in str(e):
             raise BadTrgLangException
-        if str(e) in "400 Target language can't be equal to source language.":
+        if "400 Target language can't be equal to source language." in str(e):
             raise EqualLangsException
-        if str(e) in "400 Source language is invalid.":
+        if "400 Source language is invalid." in str(e):
             raise BadSrcLangException
         else:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
