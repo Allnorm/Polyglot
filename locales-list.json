@@ -122,7 +122,7 @@
 		"premiumStatusDisabled": "disabled",
 		"premiumStatusInfinity": "valid indefinitely",
 		"premiumStatusTime": "valid until",
-		"parseTimeError": "Failed to parse time in arguments."
+		"parseTimeError": "Failed to parse time in arguments.",
 		"taskerSuccess": "Рассылка успешно добавлена. Код языка рассылки {}, время окончания {}",
 		"taskerFail": "Рассылка уже существует.",
 		"taskerArguments": "Используйте команду в виде <код языка> <количество дней рассылки>.",
@@ -176,7 +176,7 @@
 		"logNotFound": "Лог-файл не знайдено!",
 		"logUploadError": "Помилка вивантаження лога!",
 		"logClearSuccess": "Очищення лога успішно.",
-		"logClearError": "Помилка очищення лога."
+		"logClearError": "Помилка очищення лога.",
 		"forcePremium": "Премиум принудительно подключён в этом чате.",
 		"forceUnPremium": "Премиум принудительно отключён в этом чате.",
 		"premiumError": "Не удалось получить настройки премиума. Пожалуйста, проверьте логи бота.",
@@ -238,7 +238,7 @@
 		"logNotFound": "Лог-файл не знойдзены!",
 		"logUploadError": "Памылка адпраўкі лога!",
 		"logClearSuccess": "Ачыстка лога прайшла паспяхова.",
-		"logClearError": "Памылка ачысткі лога."
+		"logClearError": "Памылка ачысткі лога.",
 		"forcePremium": "Премиум принудительно подключён в этом чате.",
 		"forceUnPremium": "Премиум принудительно отключён в этом чате.",
 		"premiumError": "Не удалось получить настройки премиума. Пожалуйста, проверьте логи бота.",
