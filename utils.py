@@ -213,9 +213,9 @@ def add_ad(chat_id):
     if not list_ad:
         return ""
     for current_ad in list_ad:
-        if int(current_ad[0][3]) < int(time.time()):
+        if int(current_ad[3]) < int(time.time()):
             try:
-                sql_worker.rem_task(current_ad[0][0])
+                sql_worker.rem_task(current_ad[0])
             except sql_worker.SQLWriteError:
                 pass
     chat_info = sql_worker.get_chat_info(chat_id)
