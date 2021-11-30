@@ -18,7 +18,7 @@ def logger_init(config):
         return
     elif get_log_set == "false":
         logger = False
-        write_log("WARN: User messages logging was disabled")
+        write_log("INFO: User messages logging was disabled")
     else:
         write_log("ERR: Incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
 

@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.0 beta"
-    build = "9"
+    build = "10"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")

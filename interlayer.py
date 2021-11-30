@@ -48,6 +48,13 @@ def init_dialog_api(config):
 def api_init(config):
     global project_name, json_key
 
+    version = "1.0 for googleapi 3.6.1"
+    build = "1"
+    version_polyglot = "1.0 alpha/beta/release"
+    build_polyglot = "- any"
+    logger.write_log("Interlayer version {}, build {}".format(version, build))
+    logger.write_log("Compatible with version of Polyglot {}, build {}".format(version_polyglot, build_polyglot))
+
     try:
         json_key = config["Polyglot"]["keypath"]
     except KeyError:
