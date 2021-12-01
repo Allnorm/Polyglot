@@ -29,7 +29,7 @@ def config_init():
     global proxy_port, proxy_type, bot, enable_ad, ad_percent
 
     if not os.path.isfile("polyglot.ini"):
-        logger.write_log("WARN: Config file isn't created, trying to create it now")
+        logger.write_log("WARN: config file isn't created, trying to create it now")
         print("Hello, mr. new user!")
         initdialog.init_dialog()
 
@@ -45,7 +45,7 @@ def config_init():
             break
         except Exception as e:
             logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-            logger.write_log("ERR: Incorrect config file! Trying to remake!")
+            logger.write_log("ERR: incorrect config file! Trying to remake!")
             initdialog.init_dialog()
 
     bot = telebot.TeleBot(token)
@@ -53,7 +53,7 @@ def config_init():
     try:
         enable_ad_set = config["Polyglot"]["enable-ad"].lower()
     except (ValueError, KeyError):
-        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default\n"
+        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default\n"
                          + traceback.format_exc())
         enable_ad_set = "true"
     if enable_ad_set == "true":
@@ -61,15 +61,15 @@ def config_init():
     elif enable_ad_set == "false":
         enable_ad = False
     else:
-        logger.write_log("ERR: Incorrect enable-ad configuration, ad module will be work by default")
+        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default")
 
     try:
         ad_percent = int(config["Polyglot"]["ad-percent"])
     except (ValueError, KeyError):
-        logger.write_log("ERR: Incorrect ad-percent configuration, reset to default (50%)\n"
+        logger.write_log("ERR: incorrect ad-percent configuration, reset to default (50%)\n"
                          + traceback.format_exc())
     if ad_percent < 0 or ad_percent > 100:
-        logger.write_log("ERR: Incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
+        logger.write_log("ERR: incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
 
     for checker in range(3):
         try:
