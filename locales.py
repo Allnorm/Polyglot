@@ -15,7 +15,7 @@ LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/newap
 def locales_check_integrity(config):
     global locale_data
     if not os.path.isfile("locales-list.json"):
-        logger.write_log("WARN: Locales-list is empty, trying to download it from repos")
+        logger.write_log("WARN: locales-list is empty, trying to download it from repos")
         locales_download_list(config)
     try:
         with open("locales-list.json", "r", encoding='utf-8') as read_file:
@@ -30,7 +30,7 @@ def locales_check_integrity(config):
                          "Try to remove locales-list.json, it should to download automatically.")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
-    logger.write_log("INFO: Locales loaded successful")
+    logger.write_log("INFO: locales loaded successful")
     sql_worker.table_init()
 
 
@@ -39,7 +39,7 @@ def locales_download_list(config):
     try:
         locales_repo = config["Polyglot"]["locales-repository"]
     except KeyError:
-        logger.write_log("ERR: Incorrect locales-repository configurations, reset to default repo ("
+        logger.write_log("ERR: incorrect locales-repository configurations, reset to default repo ("
                          + LOCALES_REPO_DEFAULT + ")\n"
                          + traceback.format_exc())
         locales_repo = LOCALES_REPO_DEFAULT
@@ -49,18 +49,18 @@ def locales_download_list(config):
         r = http.request('GET', locales_repo)
         logger.write_log("INFO: locales file downloaded successful from repository " + locales_repo)
     except Exception as e:
-        logger.write_log("ERR: Impossible to download locales file! Bot will close. "
+        logger.write_log("ERR: impossible to download locales file! Bot will close. "
                          "You can to try download it manually.")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     if r.status != 200:
-        logger.write_log("ERR: Impossible to download locales file! You can try download it manually. Bot will close")
+        logger.write_log("ERR: impossible to download locales file! You can try download it manually. Bot will close")
         sys.exit(1)
     try:
         f = open('locales-list.json', 'wb')
         f.write(r.data)
     except IOError as e:
-        logger.write_log("ERR: Impossible to write new locales file! Bot will close")
+        logger.write_log("ERR: impossible to write new locales file! Bot will close")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
 
