@@ -21,12 +21,12 @@ def locales_check_integrity(config):
         with open("locales-list.json", "r", encoding='utf-8') as read_file:
             locale_data = json.load(read_file)
     except IOError as e:
-        logger.write_log("ERR: Impossible to read locales file! Bot will close\n"
+        logger.write_log("ERR: impossible to read locales file! Bot will close\n"
                          "Try to remove locales-list.json, it should to download automatically.")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     except json.decoder.JSONDecodeError as e:
-        logger.write_log("ERR: Impossible to parse locales file! Bot will close.\n"
+        logger.write_log("ERR: impossible to parse locales file! Bot will close.\n"
                          "Try to remove locales-list.json, it should to download automatically.")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
