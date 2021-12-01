@@ -91,4 +91,4 @@ def distort_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortEndingError"))
 
     utils.bot.edit_message_text(inputshiz + locales.get_text(message.chat.id, "usedDistortions")
-                                + randlangs_list, idc, idm)
+                                + randlangs_list + utils.add_ad(idc), idc, idm)

@@ -9,7 +9,7 @@ import logger
 import sql_worker
 
 locale_data: dict
-LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/freeapi/locales-list.json"
+LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/newapi/locales-list.json"
 
 
 def locales_check_integrity(config):
@@ -67,7 +67,7 @@ def locales_download_list(config):
 
 def get_text(chat_id, string_name):
     chat_info = sql_worker.get_chat_info(chat_id)
-    if chat_info is None:
+    if not chat_info:
         chat_lang = "en"
     else:
         chat_lang = chat_info[0][1]
@@ -100,7 +100,7 @@ def get_text_inline(message, string_name):
 
 def get_chat_lang(chat_id):
     chat_info = sql_worker.get_chat_info(chat_id)
-    if chat_info is None:
+    if not chat_info:
         return "en"
     else:
         return chat_info[0][1]

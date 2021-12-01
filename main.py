@@ -1,6 +1,8 @@
 import configparser
 import os
 import traceback
+import datetime
+import time
 
 from telebot import types
 
@@ -18,13 +20,14 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "0.7-freeapi"
-    build = "1"
+    version = "1.0 beta"
+    build = "10"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
 
     config = utils.config_init()
+    logger.logger_init(config)
     distort_init(config)
     utils.whitelist_init()
     interlayer.translate_init()
@@ -108,7 +111,7 @@ def translate(message):
 
         try:
             inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
-            utils.bot.reply_to(message, inputtext)
+            utils.bot.reply_to(message, inputtext + utils.add_ad(message.chat.id))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.BadSrcLangException:
@@ -150,7 +153,7 @@ def send_welcome(message):
     if botname_checker(message):
         logger.write_log(logger.BLOB_TEXT, message)
         chat_info = sql_worker.get_chat_info(message.chat.id)
-        if chat_info is None:
+        if not chat_info:
             chat_settings_lang(message, "start")
             return
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "startMSG"))
@@ -222,12 +225,145 @@ def clear_log(message):
         utils.download_clear_log(message, False)
 
 
+def force_premium(message, current_chat):
+    if utils.user_admin_checker(message) is False:
+        return
+    if current_chat[0][3] == "no":
+        timer = "0"
+        if utils.extract_arg(message.text, 2) is not None:
+            try:
+                timer = str(int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400)
+            except ValueError:
+                utils.bot.reply_to(message, locales.get_text(message.chat.id, "parseTimeError"))
+                return
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "yes")
+            sql_worker.write_chat_info(message.chat.id, "expire_time", timer)
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forcePremium"))
+    else:
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "no")
+            sql_worker.write_chat_info(message.chat.id, "expire_time", "0")
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forceUnPremium"))
+
+
+@utils.bot.message_handler(commands=['premium'])
+def premium(message):
+
+    if not botname_checker(message):
+        return
+
+    logger.write_log(logger.BLOB_TEXT, message)
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
+        return
+
+    sql_worker.actualize_chat_premium(message.chat.id)
+    current_chat = sql_worker.get_chat_info(message.chat.id)
+    if not current_chat:
+        try:
+            sql_worker.write_chat_info(message.chat.id, "premium", "no")
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        current_chat = sql_worker.get_chat_info(message.chat.id)
+
+    if utils.extract_arg(message.text, 1) == "force":
+        # Usage: /premium force [time_in_hours (optional argument)]
+        force_premium(message, current_chat)
+        return
+
+    if current_chat[0][3] == "no":
+        premium_status = locales.get_text(message.chat.id, "premiumStatusDisabled")
+    else:
+        if current_chat[0][4] != 0:
+            premium_status = locales.get_text(message.chat.id, "premiumStatusTime") + " " + \
+                         datetime.datetime.fromtimestamp(current_chat[0][4]).strftime("%d.%m.%Y %H:%M:%S")
+        else:
+            premium_status = locales.get_text(message.chat.id, "premiumStatusInfinity")
+
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumStatus") + " <b>" + premium_status + "</b>",
+                       parse_mode="html")
+
+
+@utils.bot.message_handler(commands=['addtask'])
+def add_task(message):
+
+    if not botname_checker(message):
+        return
+
+    logger.write_log(logger.BLOB_TEXT, message)
+
+    if utils.user_admin_checker(message) is False:
+        return
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
+        return
+
+    text = utils.textparser(message)
+    if text is None:
+        return
+
+    if utils.extract_arg(message.text, 1) is None or utils.extract_arg(message.text, 2) is None:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
+        return
+
+    try:
+        expire_time = int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400
+    except (TypeError, ValueError):
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
+        return
+
+    lang_code = utils.extract_arg(message.text, 1)
+
+    if sql_worker.write_task(message.reply_to_message.id, text, lang_code, expire_time, message.chat.id) is False:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerFail"))
+    else:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerSuccess").
+                           format(lang_code,
+                                  datetime.datetime.fromtimestamp(expire_time).strftime("%d.%m.%Y %H:%M:%S")))
+
+
+@utils.bot.message_handler(commands=['remtask'])
+def rm_task(message):
+    if not botname_checker(message):
+        return
+
+    logger.write_log(logger.BLOB_TEXT, message)
+
+    if utils.user_admin_checker(message) is False:
+        return
+
+    if not utils.enable_ad:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
+        return
+
+    text = utils.textparser(message)
+    if text is None:
+        return
+
+    try:
+        sql_worker.rem_task(message.reply_to_message.id, message.chat.id)
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemSuccess"))
+    except sql_worker.SQLWriteError:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemError"))
+
+
 def btn_checker(message, who_id):
     chat_info = sql_worker.get_chat_info(message.chat.id)
-    if chat_info is not None:
-        if utils.bot.get_chat_member(message.chat.id, who_id).status != "administrator" \
-                and chat_info[0][2] == "yes":
-            return True
+    if chat_info:
+        if chat_info[0][2] == "yes":
+            status = utils.bot.get_chat_member(message.chat.id, who_id).status
+            if status != "administrator" and status != "owner" and status != "creator":
+                return True
     return False
 
 
@@ -242,11 +378,18 @@ def callback_inline_lang_list(call_msg):
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
 def callback_inline_lang_list(call_msg):
-    if utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status != "administrator":
+    status = utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status
+    if status != "administrator" and status != "owner" and status != "creator":
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
         return
     chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
+    if not chat_info:
+        try:
+            sql_worker.write_chat_info(call_msg.message.chat.id, "lang", "en")
+        except sql_worker.SQLWriteError:
+            return
+        chat_info = sql_worker.get_chat_info(call_msg.message.chat.id)
     if chat_info[0][2] == "yes":
         set_lock = "no"
     else:
