@@ -27,10 +27,10 @@ def table_init():
                                     region TEXT NOT NULL,
                                     expire_time INTEGER,
                                     chat_id TEXT NOT NULL);''')
+        sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-    sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
 
@@ -45,7 +45,6 @@ def get_chat_info(chat_id):
         logger.write_log("ERR: read mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         record = []
-    sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
     return record
@@ -61,7 +60,6 @@ def get_chat_list():
         logger.write_log("ERR: read mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         record = []
-    sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
     return record
@@ -76,15 +74,17 @@ def update_premium_list():
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: read mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-        return
-    if record is not None:
+        record = []
+    if record:
         for current_chat in record:
             if current_chat[4] < time.time() and current_chat[4] != 0:
                 try:
                     write_chat_info(current_chat[0], "premium", "no")
                     write_chat_info(current_chat[0], "expire_time", "0")
                 except SQLWriteError:
-                    return
+                    break
+    cursor.close()
+    sqlite_connection.close()
 
 
 def actualize_chat_premium(chat_id):
@@ -110,11 +110,13 @@ def write_chat_info(chat_id, key, value):
             cursor.execute("""INSERT INTO chats VALUES (?,?,?,?,?);""",
                            (chat_id, "en", "no", "no", "0"))
         cursor.execute("""UPDATE chats SET {} = ? WHERE chat_id = ?""".format(key), (value, chat_id))
+        sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        cursor.close()
+        sqlite_connection.close()
         raise SQLWriteError
-    sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
 
@@ -133,11 +135,13 @@ def write_task(message_id, body, region, expire_time, chat_id):
         return False
     try:
         cursor.execute("""INSERT INTO tasks VALUES (?,?,?,?,?);""", (message_id, body, region, expire_time, chat_id))
+        sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        cursor.close()
+        sqlite_connection.close()
         raise SQLWriteError
-    sqlite_connection.commit()
     cursor.close()
     sqlite_connection.close()
 
@@ -148,12 +152,12 @@ def get_tasks(lang_code):
     try:
         cursor.execute("""SELECT * FROM tasks WHERE region = ?""", (lang_code,))
         record = cursor.fetchall()
-        cursor.close()
-        sqlite_connection.close()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: read mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         record = []
+    cursor.close()
+    sqlite_connection.close()
     return record
 
 
@@ -168,4 +172,6 @@ def rem_task(message_id, chat_id):
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        cursor.close()
+        sqlite_connection.close()
         raise SQLWriteError

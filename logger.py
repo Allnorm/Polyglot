@@ -12,15 +12,15 @@ def logger_init(config):
     try:
         get_log_set = config["Polyglot"]["msg-logging"].lower()
     except (ValueError, KeyError):
-        write_log("ERR: Incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
+        write_log("ERR: incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
         return
     if get_log_set == "true":
         return
     elif get_log_set == "false":
         logger = False
-        write_log("INFO: User messages logging was disabled")
+        write_log("INFO: user messages logging was disabled")
     else:
-        write_log("ERR: Incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
+        write_log("ERR: incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
 
 
 def username_parser(message):
@@ -59,7 +59,7 @@ def write_log(text=BLOB_TEXT, message=None):
             f = open(current_log, 'w', encoding="utf-8")
             f.close()
         except Exception as e:
-            print("ERR: File " + current_log + " is not writable!")
+            print("ERR: file " + current_log + " is not writable!")
             print(e)
             traceback.print_exc()
             return
@@ -69,7 +69,7 @@ def write_log(text=BLOB_TEXT, message=None):
         f.write(log + "\n")
         f.close()
     except Exception as e:
-        print("ERR: File " + current_log + " is not writable!")
+        print("ERR: file " + current_log + " is not writable!")
         print(e)
         traceback.print_exc()
         return
@@ -81,7 +81,7 @@ def clear_log():
         try:
             os.remove(current_log)
         except Exception as e:
-            print("ERR: File " + current_log + " wasn't removed")
+            print("ERR: file " + current_log + " wasn't removed")
             print(e)
             traceback.print_exc()
             return False

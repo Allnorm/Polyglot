@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.0 beta"
-    build = "10"
+    build = "11"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -195,7 +195,7 @@ def send_list(message):
             utils.bot.send_document(message.chat.id, file, message.id,
                                     locales.get_text(message.chat.id, "langList"))
         except FileNotFoundError:
-            logger.write_log("WARN: Trying to re-create removed langlist file")
+            logger.write_log("WARN: trying to re-create removed langlist file")
             interlayer.list_of_langs()
 
             if not os.path.isfile("langlist.txt"):
