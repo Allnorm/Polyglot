@@ -9,7 +9,7 @@ import logger
 import sql_worker
 
 locale_data: dict
-LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/newapi/locales-list.json"
+LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/freeapi/locales-list.json"
 
 
 def locales_check_integrity(config):
