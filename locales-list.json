@@ -3,8 +3,7 @@
 	"localesList": [
 		"ru",
 		"en",
-		"uk",
-		"be"
+		"uk"
 	],
 	"ru": {
 		"fullName": "Russian (Русский)",
