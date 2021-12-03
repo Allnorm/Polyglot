@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 
+import certifi
 import urllib3
 
 import logger
@@ -44,7 +45,7 @@ def locales_download_list(config):
                          + traceback.format_exc())
         locales_repo = LOCALES_REPO_DEFAULT
 
-    http = urllib3.PoolManager()
+    http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
     try:
         r = http.request('GET', locales_repo)
         logger.write_log("INFO: locales file downloaded successful from repository " + locales_repo)
