@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.1"
-    build = "4"
+    build = "5"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -225,6 +225,32 @@ def clear_log(message):
         utils.download_clear_log(message, False)
 
 
+def auto_status(message):
+    disabled = False
+    chat_info = sql_worker.get_chat_info(message.chat.id)
+    if not chat_info:
+        disabled = True
+    if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
+        disabled = True
+    if disabled:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
+                           + locales.get_text(message.chat.id, "premiumStatusDisabled"))
+        return
+
+    lang = interlayer.lang_list.get(chat_info[0][6])
+    try:
+        if locales.get_chat_lang(message.chat.id) != "en":
+            translated_lang = lang + " (" + interlayer.get_translate(lang, chat_info[0][6]) + ")"
+        else:
+            translated_lang = ""
+    except (interlayer.BadTrgLangException, interlayer.UnkTransException):
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
+        return
+
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
+                       + locales.get_text(message.chat.id, "autoTransLang") + translated_lang)
+
+
 @utils.bot.message_handler(commands=['auto'])
 def auto_trans_set(message):
     if not botname_checker(message):
@@ -234,31 +260,9 @@ def auto_trans_set(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransDisabledConf"))
         return
 
-    disabled = False
-
     if utils.extract_arg(message.text, 1) is None:
-        chat_info = sql_worker.get_chat_info(message.chat.id)
-        if not chat_info:
-            disabled = True
-        if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
-            disabled = True
-        if disabled:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
-                               + locales.get_text(message.chat.id, "premiumStatusDisabled"))
-            return
-
-        lang = interlayer.lang_list.get(chat_info[0][6])
-        try:
-            if locales.get_chat_lang(message.chat.id) != "en":
-                translated_lang = lang + " (" + interlayer.get_translate(lang, chat_info[0][6]) + ")"
-            else:
-                translated_lang = ""
-        except (interlayer.BadTrgLangException, interlayer.UnkTransException):
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
-            return
-
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
-                           + locales.get_text(message.chat.id, "autoTransLang") + translated_lang)
+        auto_status(message)
+        return
     else:
         if btn_checker(message, message.from_user.id):
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "adminsOnly"))
