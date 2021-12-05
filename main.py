@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.1"
-    build = "1"
+    build = "2"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -536,8 +536,7 @@ def auto_translate(message):
     if not chat_info:
         return
 
-    target_lang_code = chat_info[0][6]
-    if target_lang_code == "disabled":
+    if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
         return
 
     if message.text is not None:
@@ -558,9 +557,9 @@ def auto_translate(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
         return
 
-    if text_lang != target_lang_code:
+    if text_lang != chat_info[0][6]:
         try:
-            utils.bot.reply_to(message, interlayer.get_translate(inputtext, target_lang_code))
+            utils.bot.reply_to(message, interlayer.get_translate(inputtext, chat_info[0][6]))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.TooManyRequestException:
