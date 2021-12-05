@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.1"
-    build = "2"
+    build = "3"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -549,7 +549,6 @@ def auto_translate(message):
             inputtext += "☑️ " + option.text + "\n"
     else:
         return
-
 
     try:
         text_lang = interlayer.extract_lang(inputtext)

@@ -32,6 +32,7 @@ def table_init():
         try:  # Hook for upgrade from Polyglot 0.7-1.0
             cursor.execute('''ALTER TABLE chats ADD COLUMN user_id TEXT''')
             cursor.execute('''ALTER TABLE chats ADD COLUMN target_lang TEXT''')
+            logger.write_log("INFO: Triggered hook for upgrade from Polyglot 0.7-1.0")
         except (sqlite3.OperationalError, sqlite3.DatabaseError):
             pass
         sqlite_connection.commit()
