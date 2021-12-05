@@ -18,6 +18,7 @@ bot: telebot.TeleBot
 whitelist = []
 enable_ad = True
 ad_percent = 50
+enable_auto = True
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -26,7 +27,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
-    global proxy_port, proxy_type, bot, enable_ad, ad_percent
+    global proxy_port, proxy_type, bot, enable_ad, ad_percent, enable_auto
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: config file isn't created, trying to create it now")
@@ -62,6 +63,19 @@ def config_init():
         enable_ad = False
     else:
         logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default")
+
+    try:
+        enable_auto_set = config["Polyglot"]["enable-auto"].lower()
+    except (ValueError, KeyError):
+        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default\n"
+                         + traceback.format_exc())
+        enable_auto_set = "true"
+    if enable_auto_set == "true":
+        pass
+    elif enable_auto_set == "false":
+        enable_auto = False
+    else:
+        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default")
 
     try:
         ad_percent = int(config["Polyglot"]["ad-percent"])
@@ -107,9 +121,9 @@ def textparser(message):
     return inputtext
 
 
-def extract_arg(arg, num):
+def extract_arg(text, num):
     try:
-        return arg.split()[num]
+        return text.split()[num]
     except IndexError:
         pass
 
@@ -211,11 +225,16 @@ def user_admin_checker(message):
     return False
 
 
-def add_ad(chat_id):
+def add_ad(chat_id, user_id=None):
     if enable_ad is False:
         return ""
     lang_chat_code = "en"
-    chat_info = sql_worker.get_chat_info(chat_id)
+
+    if user_id is None:
+        chat_info = sql_worker.get_chat_info(chat_id)
+    else:
+        chat_info = sql_worker.get_chat_info("", user_id)
+
     if chat_info:
         if chat_info[0][3] == "yes":
             return ""  # Return for premium

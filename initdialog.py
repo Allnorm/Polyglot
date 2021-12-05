@@ -20,6 +20,7 @@ def init_dialog():
     config.set("Polyglot", "msg-logging", "true")
     config.set("Polyglot", "enable-ad", "true")
     config.set("Polyglot", "ad-percent", "50")
+    config.set("Polyglot", "enable-auto", "true")
     config = interlayer.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:

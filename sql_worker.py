@@ -20,13 +20,20 @@ def table_init():
                                     lang TEXT NOT NULL,
                                     is_locked TEXT,
                                     premium TEXT NOT NULL,
-                                    expire_time INTEGER);''')
+                                    expire_time INTEGER,
+                                    user_id TEXT,
+                                    target_lang TEXT);''')
         cursor.execute('''CREATE TABLE if not exists tasks (
                                     message_id TEXT NOT NULL,
                                     body TEXT NOT NULL,
                                     region TEXT NOT NULL,
                                     expire_time INTEGER,
                                     chat_id TEXT NOT NULL);''')
+        try:  # Hook for upgrade from Polyglot 0.7-1.0
+            cursor.execute('''ALTER TABLE chats ADD COLUMN user_id TEXT''')
+            cursor.execute('''ALTER TABLE chats ADD COLUMN target_lang TEXT''')
+        except (sqlite3.OperationalError, sqlite3.DatabaseError):
+            pass
         sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: write mySQL DB failed!")
@@ -35,11 +42,14 @@ def table_init():
     sqlite_connection.close()
 
 
-def get_chat_info(chat_id):
+def get_chat_info(chat_id, user_id=None):
     sqlite_connection = sqlite3.connect(dbname)
     cursor = sqlite_connection.cursor()
     try:
-        cursor.execute("""SELECT * FROM chats WHERE chat_id = ?""", (chat_id,))
+        if user_id is not None:
+            cursor.execute("""SELECT * FROM chats WHERE user_id = ?""", (user_id,))
+        else:
+            cursor.execute("""SELECT * FROM chats WHERE chat_id = ?""", (chat_id,))
         record = cursor.fetchall()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logger.write_log("ERR: read mySQL DB failed!")
@@ -107,8 +117,8 @@ def write_chat_info(chat_id, key, value):
         cursor.execute("""SELECT * FROM chats WHERE chat_id = ?""", (chat_id,))
         record = cursor.fetchall()
         if not record:
-            cursor.execute("""INSERT INTO chats VALUES (?,?,?,?,?);""",
-                           (chat_id, "en", "no", "no", "0"))
+            cursor.execute("""INSERT INTO chats VALUES (?,?,?,?,?,?,?);""",
+                           (chat_id, "en", "no", "no", "0", "", "disabled"))
         cursor.execute("""UPDATE chats SET {} = ? WHERE chat_id = ?""".format(key), (value, chat_id))
         sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:

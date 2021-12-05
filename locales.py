@@ -84,10 +84,11 @@ def get_text(chat_id, string_name):
 
 
 def get_text_inline(message, string_name):
-    if locale_data.get(message.from_user.language_code) is not None:
-        lang_code = message.from_user.language_code
-    else:
+    chat_info = sql_worker.get_chat_info("", message.from_user.id)
+    if not chat_info:
         lang_code = "en"
+    else:
+        lang_code = chat_info[0][1]
     try:
         if locale_data.get(lang_code).get(string_name) is not None:
             return locale_data.get(lang_code).get(string_name)
