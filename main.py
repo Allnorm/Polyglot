@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.1"
-    build = "3"
+    build = "4"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -110,8 +110,8 @@ def translate(message):
             return
 
         try:
-            inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
-            utils.bot.reply_to(message, inputtext + utils.add_ad(message.chat.id))
+            utils.bot.reply_to(message, interlayer.get_translate(inputtext, lang, src_lang=src_lang)
+                               + utils.add_ad(message.chat.id))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.BadSrcLangException:
@@ -558,7 +558,8 @@ def auto_translate(message):
 
     if text_lang != chat_info[0][6]:
         try:
-            utils.bot.reply_to(message, interlayer.get_translate(inputtext, chat_info[0][6]))
+            utils.bot.reply_to(message, interlayer.get_translate(inputtext, chat_info[0][6])
+                               + utils.add_ad(message.chat.id))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.TooManyRequestException:
