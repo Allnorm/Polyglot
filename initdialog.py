@@ -2,6 +2,7 @@ import configparser
 import sys
 import traceback
 
+import ad_module
 import interlayer
 import logger
 from locales import LOCALES_REPO_DEFAULT
@@ -20,7 +21,7 @@ def init_dialog():
     config.set("Polyglot", "msg-logging", "true")
     config.set("Polyglot", "enable-auto", "true")
     config = interlayer.init_dialog_api(config)
-    config = interlayer.init_dialog_api(config)
+    config = ad_module.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:
         config.write(open("polyglot.ini", "w"))
