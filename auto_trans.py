@@ -20,7 +20,7 @@ def auto_status(message):
     lang = interlayer.lang_list.get(chat_info[0][6])
     try:
         if locales.get_chat_lang(message.chat.id) != "en":
-            translated_lang = lang + " (" + interlayer.get_translate(lang, chat_info[0][6]) + ")"
+            translated_lang = lang + " (" + interlayer.get_translate(lang, chat_info[0][1]) + ")"
         else:
             translated_lang = ""
     except (interlayer.BadTrgLangException, interlayer.UnkTransException):
@@ -44,7 +44,8 @@ def auto_enable(message):
             lang = interlayer.lang_list.get(set_lang)
             try:
                 if locales.get_chat_lang(message.chat.id) != "en":
-                    translated_lang = lang + " (" + interlayer.get_translate(lang, set_lang) + ")"
+                    translated_lang = lang + " (" \
+                                      + interlayer.get_translate(lang, locales.get_chat_lang(message.chat.id)) + ")"
                 else:
                     translated_lang = lang
             except (interlayer.BadTrgLangException, interlayer.UnkTransException):
