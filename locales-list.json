@@ -132,7 +132,12 @@
 		"taskerArguments": "Use a command of the form <language code> <number of days to send>.",
 		"taskerRemError": "Error deleting mailing entry. Check bot logs.",
 		"taskerRemSuccess": "Mailing message deleted successfully.",
-		"adDisabled": "The ad module is disabled in the config file."
+		"adDisabled": "The ad module is disabled in the config file.",
+		"autoTransStatus": "Current auto-translation status: ",
+		"autoTransLang": "translate messages into language",
+		"autoTransSuccess": "Automatic language translation will now be performed ",
+		"autoTransDisabled": "Automatic translations disabled",
+		"autoTransDisabledConf": "Error, the bot hoster forcibly disabled automatic text translation"
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
