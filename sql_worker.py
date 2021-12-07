@@ -119,7 +119,7 @@ def write_chat_info(chat_id, key, value):
         record = cursor.fetchall()
         if not record:
             cursor.execute("""INSERT INTO chats VALUES (?,?,?,?,?,?,?);""",
-                           (chat_id, "en", "no", "no", "0", "", "disabled"))
+                           (chat_id, "en", "no", "no", "0", "", "disable"))
         cursor.execute("""UPDATE chats SET {} = ? WHERE chat_id = ?""".format(key), (value, chat_id))
         sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
