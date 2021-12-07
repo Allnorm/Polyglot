@@ -11,8 +11,12 @@ import utils
 enable_ad = True
 ad_percent = 50
 
-def ad_module_pre_init():
 
+def init_dialog_api(config):
+
+    config.set("Polyglot", "enable-ad", "true")
+    config.set("Polyglot", "ad-percent", "50")
+    return config
 
 
 def ad_module_init(config):
