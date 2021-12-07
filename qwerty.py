@@ -1,5 +1,6 @@
 import traceback
 
+import ad_module
 import interlayer
 import locales
 import logger
@@ -26,8 +27,7 @@ def qwerty_main(message):
 
     if tab1 is None and arg2 is None:
         try:
-            recognized_lang = interlayer.get_translate(interlayer.lang_list.get
-                                                             (interlayer.extract_lang(text)), "ru")
+            recognized_lang = interlayer.get_translate(interlayer.lang_list.get(interlayer.extract_lang(text)), "ru")
         except (interlayer.BadTrgLangException, interlayer.UnkTransException, interlayer.TooManyRequestException):
             recognized_lang = "Unknown"
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownSourceLang").format(recognized_lang))
@@ -39,7 +39,7 @@ def qwerty_main(message):
 
     try:
         translated_text = text.translate(str.maketrans(tab1, tab2))
-        utils.bot.reply_to(message, translated_text + utils.add_ad(message.chat.id))
+        utils.bot.reply_to(message, translated_text + ad_module.add_ad(message.chat.id))
     except Exception as e:
         logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "layoutError"))

@@ -1,8 +1,6 @@
 import configparser
 import os
 import traceback
-import datetime
-import time
 
 from telebot import types
 
@@ -13,6 +11,8 @@ import sql_worker
 import utils
 import threading
 
+from ad_module import ad_module_init, status_premium, module_add_task, module_rem_task, add_ad
+from auto_trans import auto_status, auto_enable, auto_engine
 from distort import distort_main, distort_init
 from qwerty import qwerty_main
 from inline import query_text_main
@@ -20,14 +20,15 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.0.1"
-    build = "1"
+    version = "1.1"
+    build = "10"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
 
     config = utils.config_init()
     logger.logger_init(config)
+    ad_module_init(config)
     distort_init(config)
     utils.whitelist_init()
     interlayer.translate_init()
@@ -110,8 +111,8 @@ def translate(message):
             return
 
         try:
-            inputtext = interlayer.get_translate(inputtext, lang, src_lang=src_lang)
-            utils.bot.reply_to(message, inputtext + utils.add_ad(message.chat.id))
+            utils.bot.reply_to(message, interlayer.get_translate(inputtext, lang, src_lang=src_lang)
+                               + add_ad(message.chat.id))
         except interlayer.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
         except interlayer.BadSrcLangException:
@@ -225,32 +226,25 @@ def clear_log(message):
         utils.download_clear_log(message, False)
 
 
-def force_premium(message, current_chat):
-    if utils.user_admin_checker(message) is False:
+@utils.bot.message_handler(commands=['auto'])
+def auto_trans_set(message):
+    if not botname_checker(message):
         return
-    if current_chat[0][3] == "no":
-        timer = "0"
-        if utils.extract_arg(message.text, 2) is not None:
-            try:
-                timer = str(int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400)
-            except ValueError:
-                utils.bot.reply_to(message, locales.get_text(message.chat.id, "parseTimeError"))
-                return
-        try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "yes")
-            sql_worker.write_chat_info(message.chat.id, "expire_time", timer)
-        except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
-            return
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forcePremium"))
+
+    logger.write_log(logger.BLOB_TEXT, message)
+
+    if not utils.enable_auto:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransDisabledConf"))
+        return
+
+    if utils.extract_arg(message.text, 1) is None:
+        auto_status(message)
+        return
     else:
-        try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "no")
-            sql_worker.write_chat_info(message.chat.id, "expire_time", "0")
-        except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+        if btn_checker(message, message.from_user.id):
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "adminsOnly"))
             return
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forceUnPremium"))
+        auto_enable(message)
 
 
 @utils.bot.message_handler(commands=['premium'])
@@ -261,36 +255,7 @@ def premium(message):
 
     logger.write_log(logger.BLOB_TEXT, message)
 
-    if not utils.enable_ad:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
-        return
-
-    sql_worker.actualize_chat_premium(message.chat.id)
-    current_chat = sql_worker.get_chat_info(message.chat.id)
-    if not current_chat:
-        try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "no")
-        except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
-            return
-        current_chat = sql_worker.get_chat_info(message.chat.id)
-
-    if utils.extract_arg(message.text, 1) == "force":
-        # Usage: /premium force [time_in_hours (optional argument)]
-        force_premium(message, current_chat)
-        return
-
-    if current_chat[0][3] == "no":
-        premium_status = locales.get_text(message.chat.id, "premiumStatusDisabled")
-    else:
-        if current_chat[0][4] != 0:
-            premium_status = locales.get_text(message.chat.id, "premiumStatusTime") + " " + \
-                         datetime.datetime.fromtimestamp(current_chat[0][4]).strftime("%d.%m.%Y %H:%M:%S")
-        else:
-            premium_status = locales.get_text(message.chat.id, "premiumStatusInfinity")
-
-    utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumStatus") + " <b>" + premium_status + "</b>",
-                       parse_mode="html")
+    status_premium(message)
 
 
 @utils.bot.message_handler(commands=['addtask'])
@@ -301,35 +266,7 @@ def add_task(message):
 
     logger.write_log(logger.BLOB_TEXT, message)
 
-    if utils.user_admin_checker(message) is False:
-        return
-
-    if not utils.enable_ad:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
-        return
-
-    text = utils.textparser(message)
-    if text is None:
-        return
-
-    if utils.extract_arg(message.text, 1) is None or utils.extract_arg(message.text, 2) is None:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
-        return
-
-    try:
-        expire_time = int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400
-    except (TypeError, ValueError):
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerArguments"))
-        return
-
-    lang_code = utils.extract_arg(message.text, 1)
-
-    if sql_worker.write_task(message.reply_to_message.id, text, lang_code, expire_time, message.chat.id) is False:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerFail"))
-    else:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerSuccess").
-                           format(lang_code,
-                                  datetime.datetime.fromtimestamp(expire_time).strftime("%d.%m.%Y %H:%M:%S")))
+    module_add_task(message)
 
 
 @utils.bot.message_handler(commands=['remtask'])
@@ -339,22 +276,7 @@ def rm_task(message):
 
     logger.write_log(logger.BLOB_TEXT, message)
 
-    if utils.user_admin_checker(message) is False:
-        return
-
-    if not utils.enable_ad:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
-        return
-
-    text = utils.textparser(message)
-    if text is None:
-        return
-
-    try:
-        sql_worker.rem_task(message.reply_to_message.id, message.chat.id)
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemSuccess"))
-    except sql_worker.SQLWriteError:
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "taskerRemError"))
+    module_rem_task(message)
 
 
 def btn_checker(message, who_id):
@@ -440,6 +362,8 @@ def callback_inline_lang_chosen(call_msg):
         return
     try:
         sql_worker.write_chat_info(call_msg.message.chat.id, "lang", call_msg.data.split()[0])
+        if call_msg.message.chat.type == "private":
+            sql_worker.write_chat_info(call_msg.message.chat.id, "user_id", call_msg.from_user.id)
     except sql_worker.SQLWriteError:
         buttons = types.InlineKeyboardMarkup()
         if call_msg.message.chat.type != "private":
@@ -461,6 +385,15 @@ def callback_inline_lang_chosen(call_msg):
         utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "configSuccess"),
                                     call_msg.message.chat.id, call_msg.message.id,
                                     reply_markup=buttons, parse_mode="html")
+
+
+@utils.bot.message_handler(content_types=["text", "audio", "document", "photo", "video"])
+def auto_translate(message):
+
+    if not utils.enable_auto:
+        return
+
+    auto_engine(message)
 
 
 utils.bot.infinity_polling()

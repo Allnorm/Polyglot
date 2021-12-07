@@ -1,5 +1,4 @@
 import os
-import random
 import sys
 import time
 import traceback
@@ -10,14 +9,12 @@ import initdialog
 import locales
 import logger
 import interlayer
-import sql_worker
 
 proxy_port = ""
 proxy_type = ""
 bot: telebot.TeleBot
 whitelist = []
-enable_ad = True
-ad_percent = 50
+enable_auto = True
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -26,7 +23,7 @@ layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCV
 
 
 def config_init():
-    global proxy_port, proxy_type, bot, enable_ad, ad_percent
+    global proxy_port, proxy_type, bot, enable_auto
 
     if not os.path.isfile("polyglot.ini"):
         logger.write_log("WARN: config file isn't created, trying to create it now")
@@ -48,28 +45,20 @@ def config_init():
             logger.write_log("ERR: incorrect config file! Trying to remake!")
             initdialog.init_dialog()
 
-    bot = telebot.TeleBot(token)
-
     try:
-        enable_ad_set = config["Polyglot"]["enable-ad"].lower()
-    except (ValueError, KeyError):
-        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default\n"
+        enable_auto_set = config["Polyglot"]["enable-auto"].lower()
+    except KeyError:
+        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default\n"
                          + traceback.format_exc())
-        enable_ad_set = "true"
-    if enable_ad_set == "true":
+        enable_auto_set = "true"
+    if enable_auto_set == "true":
         pass
-    elif enable_ad_set == "false":
-        enable_ad = False
+    elif enable_auto_set == "false":
+        enable_auto = False
     else:
-        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default")
+        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default")
 
-    try:
-        ad_percent = int(config["Polyglot"]["ad-percent"])
-    except (ValueError, KeyError):
-        logger.write_log("ERR: incorrect ad-percent configuration, reset to default (50%)\n"
-                         + traceback.format_exc())
-    if ad_percent < 0 or ad_percent > 100:
-        logger.write_log("ERR: incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
+    bot = telebot.TeleBot(token)
 
     for checker in range(3):
         try:
@@ -107,9 +96,9 @@ def textparser(message):
     return inputtext
 
 
-def extract_arg(arg, num):
+def extract_arg(text, num):
     try:
-        return arg.split()[num]
+        return text.split()[num]
     except IndexError:
         pass
 
@@ -209,30 +198,3 @@ def user_admin_checker(message):
             return True
 
     return False
-
-
-def add_ad(chat_id):
-    if enable_ad is False:
-        return ""
-    lang_chat_code = "en"
-    chat_info = sql_worker.get_chat_info(chat_id)
-    if chat_info:
-        if chat_info[0][3] == "yes":
-            return ""  # Return for premium
-        lang_chat_code = chat_info[0][1]
-    list_ad = sql_worker.get_tasks(lang_chat_code)
-    if not list_ad:
-        return ""
-    for current_ad in list_ad:
-        if int(current_ad[3]) < int(time.time()):
-            try:
-                sql_worker.rem_task(current_ad[0], current_ad[4])
-            except sql_worker.SQLWriteError:
-                pass
-    percent = random.randint(1, 100)
-    if percent > ad_percent:
-        return ""
-    random_index = random.randint(0, len(list_ad) - 1)
-    if list_ad[random_index][2] != lang_chat_code:
-        return ""
-    return "\n---------------\n" + list_ad[random_index][1]

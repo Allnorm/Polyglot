@@ -1,5 +1,6 @@
 from telebot import types
 
+import ad_module
 import interlayer
 import locales
 import logger
@@ -39,5 +40,6 @@ def query_text_main(inline_query):
     output = types.InlineQueryResultArticle(
         id='1', title=locales.get_text_inline(inline_query, "inlineTitle"),
         description=text_result,
-        input_message_content=types.InputTextMessageContent(message_text=text_result))
+        input_message_content=types.InputTextMessageContent
+        (message_text=text_result + ad_module.add_ad("", inline_query.from_user.id)))
     utils.bot.answer_inline_query(inline_query.id, [output])

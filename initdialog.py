@@ -2,6 +2,7 @@ import configparser
 import sys
 import traceback
 
+import ad_module
 import interlayer
 import logger
 from locales import LOCALES_REPO_DEFAULT
@@ -18,9 +19,9 @@ def init_dialog():
     config.set("Polyglot", "max-inits", "100")
     config.set("Polyglot", "locales-repository", LOCALES_REPO_DEFAULT)
     config.set("Polyglot", "msg-logging", "true")
-    config.set("Polyglot", "enable-ad", "true")
-    config.set("Polyglot", "ad-percent", "50")
+    config.set("Polyglot", "enable-auto", "true")
     config = interlayer.init_dialog_api(config)
+    config = ad_module.init_dialog_api(config)
     # This is an default configuration of Polyglot bot
     try:
         config.write(open("polyglot.ini", "w"))
