@@ -1,6 +1,7 @@
 import ad_module
 import interlayer
 import locales
+import logger
 import sql_worker
 import utils
 
@@ -58,9 +59,6 @@ def auto_enable(message):
 
 def auto_engine(message):
 
-    if not utils.enable_auto:
-        return
-
     chat_info = sql_worker.get_chat_info(message.chat.id)
     if not chat_info:
         return
@@ -78,6 +76,8 @@ def auto_engine(message):
             inputtext += "☑️ " + option.text + "\n"
     else:
         return
+
+    logger.write_log("LOG: user " + logger.username_parser(message) + " sent an AUTO translated message: " + inputtext)
 
     try:
         text_lang = interlayer.extract_lang(inputtext)

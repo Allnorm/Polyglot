@@ -21,7 +21,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.1"
-    build = "8"
+    build = "9"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
@@ -231,6 +231,8 @@ def auto_trans_set(message):
     if not botname_checker(message):
         return
 
+    logger.write_log(logger.BLOB_TEXT, message)
+
     if not utils.enable_auto:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransDisabledConf"))
         return
@@ -387,6 +389,9 @@ def callback_inline_lang_chosen(call_msg):
 
 @utils.bot.message_handler(content_types=["text", "audio", "document", "photo", "video"])
 def auto_translate(message):
+
+    if not utils.enable_auto:
+        return
 
     auto_engine(message)
 
