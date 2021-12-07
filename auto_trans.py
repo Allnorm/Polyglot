@@ -11,8 +11,9 @@ def auto_status(message):
     chat_info = sql_worker.get_chat_info(message.chat.id)
     if not chat_info:
         disabled = True
-    if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
-        disabled = True
+    if chat_info:
+        if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
+            disabled = True
     if disabled:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
                            + locales.get_text(message.chat.id, "premiumStatusDisabled"))
