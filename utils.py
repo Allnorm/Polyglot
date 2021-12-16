@@ -62,7 +62,9 @@ def config_init():
 
     for checker in range(3):
         try:
+            logger.write_log("INFO: trying to check Internet connection, attempt " + str(checker + 1))
             bot.get_me()
+            logger.write_log("...connect is OK")
             break
         except Exception as e:
             if checker >= 2:
@@ -71,7 +73,8 @@ def config_init():
                                  "Check your connection or API token")
                 sys.exit(1)
             else:
-                time.sleep(5)
+                logger.write_log("WARN: Internet isn't available, waiting 60 seconds")
+                time.sleep(60)
 
     return config
 

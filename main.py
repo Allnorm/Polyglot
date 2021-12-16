@@ -20,8 +20,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.1"
-    build = "10"
+    version = "1.2"
+    build = "1"
 
     if logger.clear_log():
         logger.write_log("INFO: log was cleared successful")
