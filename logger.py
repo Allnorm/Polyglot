@@ -5,10 +5,11 @@ import datetime
 BLOB_TEXT = "not_needed"
 current_log = "polyglot.log"
 logger = True
+logger_message = False
 
 
 def logger_init(config):
-    global logger
+    global logger, logger_message
     try:
         get_log_set = config["Polyglot"]["msg-logging"].lower()
     except (ValueError, KeyError):
@@ -19,6 +20,9 @@ def logger_init(config):
     elif get_log_set == "false":
         logger = False
         write_log("INFO: user messages logging was disabled")
+    elif get_log_set == "debug":
+        logger_message = True
+        write_log("WARN: debug mode enabled - the content of messages is logging")
     else:
         write_log("ERR: incorrect logging configuration, logging will be work by default\n" + traceback.format_exc())
 
@@ -44,6 +48,9 @@ def write_log(text=BLOB_TEXT, message=None):
 
     if logger is False and message is not None:
         return
+
+    if logger_message is False and message is not None:
+        text = BLOB_TEXT
 
     if message is not None:
         log = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " LOG: user " + username_parser(message) + \
