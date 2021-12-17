@@ -1,11 +1,10 @@
 import json
+import logging
 import os
 import sys
 import traceback
 
 from google.cloud import translate
-
-import logger
 
 json_key = ""
 project_name = ""
@@ -48,12 +47,12 @@ def init_dialog_api(config):
 def api_init(config):
     global project_name, json_key
 
-    version = "1.0 for googleapi 3.6.1"
+    version = "1.0.1 for googleapi 3.6.1"
     build = "1"
-    version_polyglot = "1.0-1.1 alpha/beta/release"
+    version_polyglot = "1.2 alpha/beta/release"
     build_polyglot = "- any"
-    logger.write_log("Interlayer version {}, build {}".format(version, build))
-    logger.write_log("Compatible with version of Polyglot {}, build {}".format(version_polyglot, build_polyglot))
+    logging.info("Interlayer version {}, build {}".format(version, build))
+    logging.info("Compatible with version of Polyglot {}, build {}".format(version_polyglot, build_polyglot))
 
     try:
         json_key = config["Polyglot"]["keypath"]
@@ -61,14 +60,14 @@ def api_init(config):
         raise
 
     if not os.path.isfile(json_key):
-        logger.write_log("ERR: JSON file wasn't found! Bot will close!")
+        logging.error("JSON file wasn't found! Bot will close!")
         sys.exit(1)
 
     try:
         project_name = "projects/" + json.load(open(json_key, 'r')).get("project_id")
     except Exception as e:
-        logger.write_log("ERR: Project name isn't readable from JSON! Bot will close!")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error("Project name isn't readable from JSON! Bot will close!")
+        logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
 
     return config
@@ -79,9 +78,9 @@ def translate_init():
     try:
         translator = translate.TranslationServiceClient.from_service_account_json(json_key)
     except Exception as e:
-        logger.write_log("ERR: Translator object wasn't created successful! Bot will close! "
-                         "Please check your JSON key or Google Cloud settings.")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error("Translator object wasn't created successful! Bot will close! "
+                      "Please check your JSON key or Google Cloud settings.")
+        logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
 
 
@@ -89,7 +88,7 @@ def extract_lang(text):
     try:
         return translator.detect_language(parent=project_name, content=text, timeout=10).languages[0].language_code
     except Exception as e:
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error(str(e) + "\n" + traceback.format_exc())
         raise UnkTransException
 
 
@@ -113,11 +112,11 @@ def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=
         if "400 Source language is invalid." in str(e):
             raise BadSrcLangException
         else:
-            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            logging.error(str(e) + "\n" + traceback.format_exc())
             raise UnkTransException
 
     if len(trans_result) > 4096 and distorting is False:
-        logger.write_log("WARN: too long message for sending.")
+        logging.warning("too long message for sending.")
         raise TooLongMsg
 
     return trans_result

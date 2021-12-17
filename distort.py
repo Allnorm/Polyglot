@@ -1,3 +1,4 @@
+import logging
 import random
 import traceback
 
@@ -16,13 +17,13 @@ def distort_init(config):
     try:
         max_inits = int(config["Polyglot"]["max-inits"])
     except (ValueError, KeyError):
-        logger.write_log("ERR: Incorrect distort configuration, values will be set to defaults " + "\n"
+        logging.error("incorrect distort configuration, values will be set to defaults " + "\n"
                          + traceback.format_exc())
         max_inits = MAX_INITS_DEFAULT
         return
 
     if max_inits < 0 or max_inits > 100:
-        logger.write_log("ERR: Too broad \"max_inits\" value, value will be set to default")
+        logging.error("too broad \"max_inits\" value, value will be set to default")
         max_inits = MAX_INITS_DEFAULT
 
 
@@ -34,10 +35,10 @@ def distort_main(message):
 
     inputshiz = utils.textparser(message)
     if inputshiz is None:
-        logger.write_log("none", message)
+        logger.write_log(message, "none")
         return
 
-    logger.write_log(inputshiz, message)
+    logger.write_log(message, inputshiz)
 
     try:
         counter = int(utils.extract_arg(message.text, 1))

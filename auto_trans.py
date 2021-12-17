@@ -1,3 +1,5 @@
+import logging
+
 import ad_module
 import interlayer
 import locales
@@ -78,7 +80,7 @@ def auto_engine(message):
     else:
         return
 
-    logger.write_log("LOG: user " + logger.username_parser(message) + " sent an AUTO translated message: " + inputtext)
+    logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message: " + inputtext)
 
     try:
         text_lang = interlayer.extract_lang(inputtext)
