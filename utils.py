@@ -63,7 +63,7 @@ def config_init():
 
     for checker in range(3):
         try:
-            logging.info("trying to check Internet connection, attempt " + str(checker + 1))
+            logging.info("Trying to check Internet connection, attempt " + str(checker + 1))
             bot.get_me()
             logging.info("...connect is OK")
             break

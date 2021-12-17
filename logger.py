@@ -21,7 +21,7 @@ def logger_init():
             logging.StreamHandler(sys.stdout)
         ],
         level=logging.INFO,
-        format='%(asctime)s %(module)s.%(funcName)s %(levelname)s: %(message)s',
+        format='%(asctime)s %(levelname)s: %(message)s',
         datefmt="%d-%m-%Y %H:%M:%S")
 
     return log_cleared
