@@ -80,7 +80,10 @@ def auto_engine(message):
     else:
         return
 
-    logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message: " + inputtext)
+    if logger.logger_message is True:
+        logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message: " + inputtext)
+    elif logger.logger is True:
+        logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message")
 
     try:
         text_lang = interlayer.extract_lang(inputtext)

@@ -10,7 +10,10 @@ import utils
 
 
 def translate_query(inline_query):
-    logging.info("user " + logger.username_parser(inline_query) + " sent an INLINE: " + inline_query.query)
+    if logger.logger_message is True:
+        logging.info("user " + logger.username_parser(inline_query) + " sent an INLINE: " + inline_query.query)
+    elif logger.logger is True:
+        logging.info("user " + logger.username_parser(inline_query) + " sent an INLINE")
 
     if len(inline_query.query) > 250:
         return locales.get_text_inline(inline_query, "tooLongInline")
