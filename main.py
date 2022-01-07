@@ -22,7 +22,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.2"
-    build = "6"
+    build = "7"
 
     if logger.logger_init():
         logging.info("log was cleared successful")
