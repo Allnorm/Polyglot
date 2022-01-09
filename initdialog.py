@@ -1,10 +1,10 @@
 import configparser
+import logging
 import sys
 import traceback
 
 import ad_module
 import interlayer
-import logger
 from locales import LOCALES_REPO_DEFAULT
 
 
@@ -25,8 +25,8 @@ def init_dialog():
     # This is an default configuration of Polyglot bot
     try:
         config.write(open("polyglot.ini", "w"))
-        logger.write_log("INFO: New config file was created successful")
+        logging.info("new config file was created successful")
     except IOError as e:
-        logger.write_log("ERR: Bot cannot write new config file and will close")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error("bot cannot write new config file and will close")
+        logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)

@@ -1,3 +1,4 @@
+import logging
 import traceback
 
 import ad_module
@@ -11,10 +12,10 @@ def qwerty_main(message):
 
     text = utils.textparser(message)
     if text is None:
-        logger.write_log("none", message)
+        logger.write_log(message, "none")
         return
 
-    logger.write_log(text, message)
+    logger.write_log(message, text)
     message.text = utils.lang_autocorr(message.text)
     arg1, arg2 = utils.extract_arg(message.text, 1), utils.extract_arg(message.text, 2)
 
@@ -41,5 +42,5 @@ def qwerty_main(message):
         translated_text = text.translate(str.maketrans(tab1, tab2))
         utils.bot.reply_to(message, translated_text + ad_module.add_ad(message.chat.id))
     except Exception as e:
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error(str(e) + "\n" + traceback.format_exc())
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "layoutError"))

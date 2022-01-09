@@ -1,10 +1,10 @@
 import datetime
+import logging
 import random
 import time
 import traceback
 
 import locales
-import logger
 import sql_worker
 import utils
 
@@ -13,40 +13,37 @@ ad_percent = 50
 
 
 def init_dialog_api(config):
-
     config.set("Polyglot", "enable-ad", "true")
     config.set("Polyglot", "ad-percent", "50")
     return config
 
 
 def ad_module_init(config):
-
     global enable_ad, ad_percent
 
     try:
         enable_ad_set = config["Polyglot"]["enable-ad"].lower()
     except KeyError:
-        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default\n"
-                         + traceback.format_exc())
+        logging.error("incorrect enable-ad configuration, ad module will be work by default\n"
+                      + traceback.format_exc())
         enable_ad_set = "true"
     if enable_ad_set == "true":
         pass
     elif enable_ad_set == "false":
         enable_ad = False
     else:
-        logger.write_log("ERR: incorrect enable-ad configuration, ad module will be work by default")
+        logging.error("incorrect enable-ad configuration, ad module will be work by default")
 
     try:
         ad_percent = int(config["Polyglot"]["ad-percent"])
     except (ValueError, KeyError):
-        logger.write_log("ERR: incorrect ad-percent configuration, reset to default (50%)\n"
-                         + traceback.format_exc())
+        logging.error("incorrect ad-percent configuration, reset to default (50%)\n"
+                      + traceback.format_exc())
     if ad_percent < 0 or ad_percent > 100:
-        logger.write_log("ERR: incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
+        logging.error("incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
 
 
 def force_premium(message, current_chat):
-
     if utils.user_admin_checker(message) is False:
         return
     if current_chat[0][3] == "no":
@@ -75,7 +72,6 @@ def force_premium(message, current_chat):
 
 
 def status_premium(message):
-
     if not enable_ad:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
         return
@@ -100,7 +96,7 @@ def status_premium(message):
     else:
         if current_chat[0][4] != 0:
             premium_status = locales.get_text(message.chat.id, "premiumStatusTime") + " " + \
-                         datetime.datetime.fromtimestamp(current_chat[0][4]).strftime("%d.%m.%Y %H:%M:%S")
+                             datetime.datetime.fromtimestamp(current_chat[0][4]).strftime("%d.%m.%Y %H:%M:%S")
         else:
             premium_status = locales.get_text(message.chat.id, "premiumStatusInfinity")
 
@@ -109,7 +105,6 @@ def status_premium(message):
 
 
 def module_add_task(message):
-
     if utils.user_admin_checker(message) is False:
         return
 
@@ -142,7 +137,6 @@ def module_add_task(message):
 
 
 def module_rem_task(message):
-
     if utils.user_admin_checker(message) is False:
         return
 

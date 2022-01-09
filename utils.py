@@ -1,6 +1,5 @@
+import logging
 import os
-import sys
-import time
 import traceback
 import telebot
 import configparser
@@ -26,7 +25,7 @@ def config_init():
     global proxy_port, proxy_type, bot, enable_auto
 
     if not os.path.isfile("polyglot.ini"):
-        logger.write_log("WARN: config file isn't created, trying to create it now")
+        logging.warning("config file isn't created, trying to create it now")
         print("Hello, mr. new user!")
         initdialog.init_dialog()
 
@@ -41,37 +40,24 @@ def config_init():
             config = interlayer.api_init(config)
             break
         except Exception as e:
-            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-            logger.write_log("ERR: incorrect config file! Trying to remake!")
+            logging.error(str(e) + "\n" + traceback.format_exc())
+            logging.error("incorrect config file! Trying to remake!")
             initdialog.init_dialog()
 
     try:
         enable_auto_set = config["Polyglot"]["enable-auto"].lower()
     except KeyError:
-        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default\n"
-                         + traceback.format_exc())
+        logging.error("incorrect enable-auto configuration, auto translate will be available by default\n"
+                      + traceback.format_exc())
         enable_auto_set = "true"
     if enable_auto_set == "true":
         pass
     elif enable_auto_set == "false":
         enable_auto = False
     else:
-        logger.write_log("ERR: incorrect enable-auto configuration, auto translate will be available by default")
+        logging.error("incorrect enable-auto configuration, auto translate will be available by default")
 
     bot = telebot.TeleBot(token)
-
-    for checker in range(3):
-        try:
-            bot.get_me()
-            break
-        except Exception as e:
-            if checker >= 2:
-                logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
-                logger.write_log("ERR: Telegram API isn't working correctly after three tries, bot will close! "
-                                 "Check your connection or API token")
-                sys.exit(1)
-            else:
-                time.sleep(5)
 
     return config
 
@@ -112,22 +98,22 @@ def download_clear_log(message, down_clear_check):
             f = open(logger.current_log, 'r', encoding="utf-8")
             bot.send_document(message.chat.id, f)
             f.close()
-            logger.write_log("INFO: log was downloaded successful by " + logger.username_parser(message))
+            logging.info("log was downloaded successful by " + logger.username_parser(message))
         except FileNotFoundError:
-            logger.write_log("INFO: user " + logger.username_parser(message)
-                             + " tried to download empty log\n" + traceback.format_exc())
+            logging.info("user " + logger.username_parser(message)
+                         + " tried to download empty log\n" + traceback.format_exc())
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logNotFound"))
         except IOError:
-            logger.write_log("ERR: user " + logger.username_parser(message) +
-                             " tried to download log, but something went wrong!\n" + traceback.format_exc())
+            logging.error("user " + logger.username_parser(message) +
+                          " tried to download log, but something went wrong!\n" + traceback.format_exc())
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logUploadError"))
     else:
         if logger.clear_log():
-            logger.write_log("INFO: log was cleared by user " + logger.username_parser(message) + ". Have fun!")
+            logging.info("log was cleared by user " + logger.username_parser(message) + ". Have fun!")
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logClearSuccess"))
         else:
-            logger.write_log("ERR: user " + logger.username_parser(message) +
-                             " tried to clear log, but something went wrong\n!")
+            logging.error("user " + logger.username_parser(message) +
+                          " tried to clear log, but something went wrong\n!")
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logClearError"))
 
 
@@ -146,10 +132,10 @@ def list_of_langs():
         file = open("langlist.txt", "w")
         file.write(output)
         file.close()
-        logger.write_log("INFO: langlist updated successful")
+        logging.info("langlist updated successful")
     except Exception as e:
-        logger.write_log("ERR: langlist file isn't available")
-        logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+        logging.error("langlist file isn't available")
+        logging.error(str(e) + "\n" + traceback.format_exc())
 
 
 def lang_autocorr(langstr, inline=False):
@@ -180,13 +166,13 @@ def whitelist_init():
         file = open("whitelist.txt", 'r', encoding="utf-8")
         whitelist = file.readlines()
     except FileNotFoundError:
-        logger.write_log("WARN: file \"whitelist.txt\" not found. Working without admin privileges.")
+        logging.warning("file \"whitelist.txt\" not found. Working without admin privileges.")
         return
     except IOError:
-        logger.write_log("ERR: file \"whitelist.txt\" isn't readable. Working without admin privileges.")
+        logging.error("file \"whitelist.txt\" isn't readable. Working without admin privileges.")
         return
     if not whitelist:
-        logger.write_log("WARN: whitelist is empty. Working without admin privileges.")
+        logging.warning("whitelist is empty. Working without admin privileges.")
 
 
 def user_admin_checker(message):

@@ -1,6 +1,7 @@
 import configparser
 import os
 import traceback
+import logging
 
 from telebot import types
 
@@ -20,14 +21,14 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.1"
-    build = "10"
+    version = "1.2"
+    build = "8"
 
-    if logger.clear_log():
-        logger.write_log("INFO: log was cleared successful")
+    if logger.logger_init():
+        logging.info("log was cleared successful")
 
     config = utils.config_init()
-    logger.logger_init(config)
+    logger.logger_config_init(config)
     ad_module_init(config)
     distort_init(config)
     utils.whitelist_init()
@@ -35,9 +36,9 @@ def pre_init():
     utils.list_of_langs()
     locales.locales_check_integrity(config)
     if locales.locale_data.get("version") != version:
-        logger.write_log("WARN: Polyglot and locale versions doesn't match! This can cause the bot to malfunction."
-                         "\nPlease, try to check updates for bot or locales file.")
-    logger.write_log("###POLYGLOT {} build {} HAS BEEN STARTED###".format(version, build))
+        logging.warning("Polyglot and locale versions doesn't match! This can cause the bot to malfunction."
+                        "\nPlease, try to check updates for bot or locales file.")
+    logging.info("###POLYGLOT {} build {} HAS BEEN STARTED###".format(version, build))
 
 
 pre_init()
@@ -58,8 +59,8 @@ def chat_settings_lang(message, auxiliary_text):
         try:
             locale_name = locales.locale_data.get(locale).get("fullName")
         except AttributeError as e:
-            logger.write_log("ERR: lang parsing failed!")
-            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            logging.error("lang parsing failed!")
+            logging.error(str(e) + "\n" + traceback.format_exc())
             continue
         buttons.add(types.InlineKeyboardButton(text=locale_name, callback_data=locale + " " + auxiliary_text))
     if auxiliary_text == "settings" and message.chat.type != "private":
@@ -79,25 +80,28 @@ def query_text(inline_query):
 
 @utils.bot.message_handler(commands=['qwerty', 'q'])
 def qwerty(message):
+
     if botname_checker(message):
         qwerty_main(message)
 
 
 @utils.bot.message_handler(commands=['d', 'distort'])
 def distort(message):
+
     if botname_checker(message):
         threading.Thread(target=distort_main, args=(message,)).start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])
 def translate(message):
+
     if botname_checker(message):
         inputtext = utils.textparser(message)
         if inputtext is None:
-            logger.write_log("none", message)
+            logger.write_log(message, "none")
             return
 
-        logger.write_log(inputtext, message)
+        logger.write_log(message, inputtext)
         src_lang = None
         message.text = utils.lang_autocorr(message.text)
 
@@ -129,15 +133,16 @@ def translate(message):
 
 @utils.bot.message_handler(commands=['detect'])
 def detect(message):
+
     if not botname_checker(message):
         return
 
     inputtext = utils.textparser(message)
     if inputtext is None:
-        logger.write_log("none", message)
+        logger.write_log(message, "none")
         return
 
-    logger.write_log(inputtext, message)
+    logger.write_log(message, inputtext)
     try:
         lang = interlayer.lang_list.get(interlayer.extract_lang(inputtext))
         if locales.get_chat_lang(message.chat.id) != "en":
@@ -151,8 +156,9 @@ def detect(message):
 
 @utils.bot.message_handler(commands=['start'])
 def send_welcome(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
         chat_info = sql_worker.get_chat_info(message.chat.id)
         if not chat_info:
             chat_settings_lang(message, "start")
@@ -162,8 +168,9 @@ def send_welcome(message):
 
 @utils.bot.message_handler(commands=['settings'])
 def send_welcome(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
         if message.chat.type == "private":
             chat_settings_lang(message, "settings")
         else:
@@ -181,22 +188,24 @@ def send_welcome(message):
 
 @utils.bot.message_handler(commands=['help', 'h'])
 def send_help(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "helpText"))
 
 
 @utils.bot.message_handler(commands=['langs', 'l'])
 def send_list(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
 
         try:
             file = open("langlist.txt", "r")
             utils.bot.send_document(message.chat.id, file, message.id,
                                     locales.get_text(message.chat.id, "langList"))
         except FileNotFoundError:
-            logger.write_log("WARN: trying to re-create removed langlist file")
+            logging.warning("trying to re-create removed langlist file")
             interlayer.list_of_langs()
 
             if not os.path.isfile("langlist.txt"):
@@ -207,31 +216,34 @@ def send_list(message):
             utils.bot.send_document(message.chat.id, file, message.id,
                                     locales.get_text(message.chat.id, "langList"))
         except Exception as e:
-            logger.write_log("ERR: langlist file isn't available")
-            logger.write_log("ERR: " + str(e) + "\n" + traceback.format_exc())
+            logging.error("langlist file isn't available")
+            logging.error(str(e) + "\n" + traceback.format_exc())
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "langListReadErr"))
 
 
 @utils.bot.message_handler(commands=['log'])
 def download_log(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
         utils.download_clear_log(message, True)
 
 
 @utils.bot.message_handler(commands=['clrlog'])
 def clear_log(message):
+
     if botname_checker(message):
-        logger.write_log(logger.BLOB_TEXT, message)
+        logger.write_log(message, logger.BLOB_TEXT)
         utils.download_clear_log(message, False)
 
 
 @utils.bot.message_handler(commands=['auto'])
 def auto_trans_set(message):
+
     if not botname_checker(message):
         return
 
-    logger.write_log(logger.BLOB_TEXT, message)
+    logger.write_log(message, logger.BLOB_TEXT)
 
     if not utils.enable_auto:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransDisabledConf"))
@@ -253,7 +265,7 @@ def premium(message):
     if not botname_checker(message):
         return
 
-    logger.write_log(logger.BLOB_TEXT, message)
+    logger.write_log(message, logger.BLOB_TEXT)
 
     status_premium(message)
 
@@ -264,22 +276,24 @@ def add_task(message):
     if not botname_checker(message):
         return
 
-    logger.write_log(logger.BLOB_TEXT, message)
+    logger.write_log(message, logger.BLOB_TEXT)
 
     module_add_task(message)
 
 
 @utils.bot.message_handler(commands=['remtask'])
 def rm_task(message):
+
     if not botname_checker(message):
         return
 
-    logger.write_log(logger.BLOB_TEXT, message)
+    logger.write_log(message, logger.BLOB_TEXT)
 
     module_rem_task(message)
 
 
 def btn_checker(message, who_id):
+
     chat_info = sql_worker.get_chat_info(message.chat.id)
     if chat_info:
         if chat_info[0][2] == "yes":
@@ -291,6 +305,7 @@ def btn_checker(message, who_id):
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "chooselang")
 def callback_inline_lang_list(call_msg):
+
     if btn_checker(call_msg.message, call_msg.from_user.id):
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
@@ -300,6 +315,7 @@ def callback_inline_lang_list(call_msg):
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "adminblock")
 def callback_inline_lang_list(call_msg):
+
     status = utils.bot.get_chat_member(call_msg.message.chat.id, call_msg.from_user.id).status
     if status != "administrator" and status != "owner" and status != "creator":
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
@@ -338,6 +354,7 @@ def callback_inline_lang_list(call_msg):
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "back")
 def callback_inline_back(call_msg):
+
     if btn_checker(call_msg.message, call_msg.from_user.id):
         utils.bot.answer_callback_query(callback_query_id=call_msg.id,
                                         text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
@@ -353,6 +370,7 @@ def callback_inline_back(call_msg):
 
 @utils.bot.callback_query_handler(func=lambda call: True)
 def callback_inline_lang_chosen(call_msg):
+
     if call_msg.data.split()[0] == "adminblock" or call_msg.data.split()[0] == "back" \
             or call_msg.data.split()[0] == "chooselang":
         return
