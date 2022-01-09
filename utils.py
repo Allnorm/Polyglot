@@ -1,7 +1,5 @@
 import logging
 import os
-import sys
-import time
 import traceback
 import telebot
 import configparser
@@ -60,22 +58,6 @@ def config_init():
         logging.error("incorrect enable-auto configuration, auto translate will be available by default")
 
     bot = telebot.TeleBot(token)
-
-    for checker in range(3):
-        try:
-            logging.info("Trying to check Internet connection, attempt " + str(checker + 1))
-            bot.get_me()
-            logging.info("...connect is OK")
-            break
-        except Exception as e:
-            if checker >= 2:
-                logging.error(str(e) + "\n" + traceback.format_exc())
-                logging.error("Telegram API isn't working correctly after three tries, bot will close! "
-                              "Check your connection or API token")
-                sys.exit(1)
-            else:
-                logging.warning("Internet isn't available, waiting 60 seconds")
-                time.sleep(60)
 
     return config
 
