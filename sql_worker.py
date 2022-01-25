@@ -27,7 +27,7 @@ def table_init():
                                     body TEXT NOT NULL,
                                     region TEXT NOT NULL,
                                     expire_time INTEGER,
-                                    chat_id TEXT NOT NULL);''')
+                                    chat_id TEXT NOT NULL);''')  # user_id - deprecated field
         sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logging.error("write mySQL DB failed!")
@@ -36,14 +36,11 @@ def table_init():
     sqlite_connection.close()
 
 
-def get_chat_info(chat_id, user_id=None):
+def get_chat_info(chat_id):
     sqlite_connection = sqlite3.connect(dbname)
     cursor = sqlite_connection.cursor()
     try:
-        if user_id is not None:
-            cursor.execute("""SELECT * FROM chats WHERE user_id = ?""", (user_id,))
-        else:
-            cursor.execute("""SELECT * FROM chats WHERE chat_id = ?""", (chat_id,))
+        cursor.execute("""SELECT * FROM chats WHERE chat_id = ?""", (chat_id,))
         record = cursor.fetchall()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logging.error("read mySQL DB failed!")

@@ -84,7 +84,7 @@ def get_text(chat_id, string_name):
 
 
 def get_text_inline(message, string_name):
-    chat_info = sql_worker.get_chat_info("", message.from_user.id)
+    chat_info = sql_worker.get_chat_info(message.from_user.id)
     if not chat_info:
         lang_code = "en"
     else:
