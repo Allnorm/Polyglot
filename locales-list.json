@@ -124,7 +124,7 @@
 		"forcePremium": "Premium is forcibly connected {}.",
 		"forceUnPremium": "Premium has been forcibly disabled {}.",
 		"premiumError": "Failed to get premium settings. Please check the bot logs.",
-		"premiumStatus": "The current premium status {} is:",
+		"premiumStatus": "The current premium status {}:",
 		"premiumStatusDisabled": "disabled",
 		"premiumStatusInfinity": "valid indefinitely",
 		"premiumStatusTime": "valid until",
