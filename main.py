@@ -22,7 +22,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.2.1"
-    build = "3"
+    build = "4"
 
     if logger.logger_init():
         logging.info("log was cleared successful")
@@ -380,8 +380,6 @@ def callback_inline_lang_chosen(call_msg):
         return
     try:
         sql_worker.write_chat_info(call_msg.message.chat.id, "lang", call_msg.data.split()[0])
-        if call_msg.message.chat.type == "private":
-            sql_worker.write_chat_info(call_msg.message.chat.id, "user_id", call_msg.from_user.id)
     except sql_worker.SQLWriteError:
         buttons = types.InlineKeyboardMarkup()
         if call_msg.message.chat.type != "private":

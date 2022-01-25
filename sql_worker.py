@@ -27,7 +27,7 @@ def table_init():
                                     body TEXT NOT NULL,
                                     region TEXT NOT NULL,
                                     expire_time INTEGER,
-                                    chat_id TEXT NOT NULL);''')  # user_id - legacy string
+                                    chat_id TEXT NOT NULL);''')  # user_id - deprecated field
         sqlite_connection.commit()
     except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
         logging.error("write mySQL DB failed!")
