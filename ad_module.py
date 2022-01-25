@@ -43,53 +43,36 @@ def ad_module_init(config):
         logging.error("incorrect ad-percent value, reset to default (50%). Should to be in range 0-100%")
 
 
-def force_premium(message, current_chat):
-    if utils.user_admin_checker(message) is False:
-        return
-    if current_chat[0][3] == "no":
-        timer = "0"
-        if utils.extract_arg(message.text, 2) is not None:
-            try:
-                timer = str(int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400)
-            except ValueError:
-                utils.bot.reply_to(message, locales.get_text(message.chat.id, "parseTimeError"))
-                return
-        try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "yes")
-            sql_worker.write_chat_info(message.chat.id, "expire_time", timer)
-        except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
-            return
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forcePremium"))
-    else:
-        try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "no")
-            sql_worker.write_chat_info(message.chat.id, "expire_time", "0")
-        except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
-            return
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forceUnPremium"))
-
-
 def status_premium(message):
     if not enable_ad:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "adDisabled"))
         return
 
-    sql_worker.actualize_chat_premium(message.chat.id)
-    current_chat = sql_worker.get_chat_info(message.chat.id)
+    chat_user_id = message.chat.id
+    is_user = False
+
+    if message.reply_to_message is not None:
+        chat_user_id = message.reply_to_message.from_user.id
+        is_user = True
+
+    sql_worker.actualize_chat_premium(chat_user_id)
+    current_chat = sql_worker.get_chat_info(chat_user_id)
     if not current_chat:
         try:
-            sql_worker.write_chat_info(message.chat.id, "premium", "no")
+            sql_worker.write_chat_info(chat_user_id, "premium", "no")
         except sql_worker.SQLWriteError:
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            utils.bot.reply_to(message, locales.get_text(chat_user_id, "premiumError"))
             return
-        current_chat = sql_worker.get_chat_info(message.chat.id)
+        current_chat = sql_worker.get_chat_info(chat_user_id)
 
     if utils.extract_arg(message.text, 1) == "force":
         # Usage: /premium force [time_in_hours (optional argument)]
-        force_premium(message, current_chat)
+        force_premium(message, current_chat, is_user)
         return
+
+    added_text = locales.get_text(message.chat.id, "premiumChat")
+    if is_user or message.chat.type == "private":
+        added_text = locales.get_text(message.chat.id, "premiumUser")
 
     if current_chat[0][3] == "no":
         premium_status = locales.get_text(message.chat.id, "premiumStatusDisabled")
@@ -100,8 +83,42 @@ def status_premium(message):
         else:
             premium_status = locales.get_text(message.chat.id, "premiumStatusInfinity")
 
-    utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumStatus") + " <b>" + premium_status + "</b>",
-                       parse_mode="html")
+    utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumStatus").format(added_text)
+                       + " <b>" + premium_status + "</b>", parse_mode="html")
+
+
+def force_premium(message, current_chat, is_user):
+
+    if utils.user_admin_checker(message) is False:
+        return
+
+    added_text = locales.get_text(message.chat.id, "premiumChat")
+    if is_user or message.chat.type == "private":
+        added_text = locales.get_text(message.chat.id, "premiumUser")
+
+    if current_chat[0][3] == "no":
+        timer = "0"
+        if utils.extract_arg(message.text, 2) is not None:
+            try:
+                timer = str(int(time.time()) + int(utils.extract_arg(message.text, 2)) * 86400)
+            except ValueError:
+                utils.bot.reply_to(message, locales.get_text(message.chat.id, "parseTimeError"))
+                return
+        try:
+            sql_worker.write_chat_info(current_chat[0][0], "premium", "yes")
+            sql_worker.write_chat_info(current_chat[0][0], "expire_time", timer)
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forcePremium").format(added_text))
+    else:
+        try:
+            sql_worker.write_chat_info(current_chat[0][0], "premium", "no")
+            sql_worker.write_chat_info(current_chat[0][0], "expire_time", "0")
+        except sql_worker.SQLWriteError:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "premiumError"))
+            return
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "forceUnPremium").format(added_text))
 
 
 def module_add_task(message):
@@ -163,7 +180,7 @@ def add_ad(chat_id, user_id=None):
     if user_id is None:
         chat_info = sql_worker.get_chat_info(chat_id)
     else:
-        chat_info = sql_worker.get_chat_info("", user_id)
+        chat_info = sql_worker.get_chat_info(user_id)
 
     if chat_info:
         if chat_info[0][3] == "yes":
