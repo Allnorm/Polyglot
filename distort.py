@@ -88,5 +88,4 @@ def distort_main(message):
             interlayer.BadTrgLangException):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortEndingError"))
 
-    utils.bot.edit_message_text(inputshiz + locales.get_text(message.chat.id, "usedDistortions")
-                                + ad_module.add_ad(idc), idc, idm)
+    utils.bot.edit_message_text(inputshiz + ad_module.add_ad(idc), idc, idm)
