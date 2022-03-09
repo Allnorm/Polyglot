@@ -50,8 +50,6 @@ def distort_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortWrongNumber").format(str(max_inits)))
         return
 
-    randlangs_list = ""
-
     if utils.extract_arg(message.text, 2) is not None:
         endlang = utils.extract_arg(utils.lang_autocorr(message.text), 2)
         if interlayer.lang_list.get(endlang) is None:
@@ -69,8 +67,6 @@ def distort_main(message):
     for i in range(counter):
         while randlang == lastlang:
             randlang = random.choice(list(interlayer.lang_list))
-
-        randlangs_list += randlang + "; "
 
         try:
             inputshiz = interlayer.get_translate(inputshiz, randlang, True)
@@ -93,4 +89,4 @@ def distort_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortEndingError"))
 
     utils.bot.edit_message_text(inputshiz + locales.get_text(message.chat.id, "usedDistortions")
-                                + randlangs_list + ad_module.add_ad(idc), idc, idm)
+                                + ad_module.add_ad(idc), idc, idm)

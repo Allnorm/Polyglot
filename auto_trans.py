@@ -61,7 +61,6 @@ def auto_enable(message):
 
 
 def auto_engine(message):
-
     chat_info = sql_worker.get_chat_info(message.chat.id)
     if not chat_info:
         return
@@ -78,6 +77,9 @@ def auto_engine(message):
         for option in message.poll.options:
             inputtext += "☑️ " + option.text + "\n"
     else:
+        return
+
+    if inputtext[0] == "/":  # I don't translate commands
         return
 
     if logger.logger_message is True:
