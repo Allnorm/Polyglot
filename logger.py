@@ -2,7 +2,7 @@ import os
 import sys
 import traceback
 import logging
-from imp import reload
+from importlib import reload
 
 import telebot
 
