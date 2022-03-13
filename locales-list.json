@@ -1,5 +1,5 @@
 {	
-	"version": "1.2.2",
+	"version": "1.3",
 	"localesList": [
 		"ru",
 		"en",
@@ -71,7 +71,11 @@
 		"autoTransLang": "перевод сообщений на язык ",
 		"autoTransSuccess": "Теперь будет выполняться автоматический перевод на язык ",
 		"autoTransDisabled": "Автоматические переводы отключены",
-		"autoTransDisabledConf": "Ошибка, хостер бота принудительно отключил автоматический перевод текста"
+		"autoTransDisabledConf": "Ошибка, хостер бота принудительно отключил автоматический перевод текста",
+		"photoDetectErr": "Ошибка распознания текста с картинки! Информация сохранена в логах бота.",
+		"pyTesseractDisabled": "Ошибка, хостер бота принудительно отключил функцию перевода с фотографии",
+		"photoNotFound": "В сообщении не обнаружена фотография.",
+		"scanStarted": "Фотография распознаётся, пожалуйста подождите..."
 	},
 	"en": {
 		"fullName": "English",
@@ -139,7 +143,11 @@
 		"autoTransLang": "translate messages into language",
 		"autoTransSuccess": "Automatic language translation will now be performed ",
 		"autoTransDisabled": "Automatic translations disabled",
-		"autoTransDisabledConf": "Error, the bot hoster forcibly disabled automatic text translation"
+		"autoTransDisabledConf": "Error, the bot hoster forcibly disabled automatic text translation",
+		"photoDetectErr": "Error recognizing text from image! Information saved in bot logs.",
+		"pyTesseractDisabled": "Error, the bot hoster forcibly disabled the photo translation feature",
+		"photoNotFound": "No photo found in message.",
+		"scanStarted": "Photo is recognized, please wait..."
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
@@ -207,7 +215,11 @@
     	"autoTransLang": "переклад повідомлень на мову",
     	"autoTransSuccess": "Тепер буде виконуватись автоматичний переклад на мову ",
     	"autoTransDisabled": "Автоматичні переклади вимкнуто",
-    	"autoTransDisabledConf": "Помилка, хостер бота примусово відключив автоматичний переклад тексту"
+    	"autoTransDisabledConf": "Помилка, хостер бота примусово відключив автоматичний переклад тексту",
+		"photoDetectErr": "Помилка розпізнавання тексту з зображення! Інформація збережена в логах бота.",
+		"pyTesseractDisabled": "Помилка, хостер бота примусово відключив функцію перекладу з фотографії",
+		"photoNotFound": "У повідомленні не знайдено фотографію.",
+		"scanStarted": "Фотографія розпізнається, будь ласка, зачекайте..."
 	},
 	"be": {
 		"fullName": "Belarusian (Беларуская)",

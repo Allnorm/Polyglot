@@ -10,6 +10,7 @@ json_key = ""
 project_name = ""
 translator: translate.TranslationServiceClient
 lang_list = {}
+len_limit = 0
 
 
 class BadTrgLangException(Exception):
@@ -41,15 +42,16 @@ def init_dialog_api(config):
     if keypath == "":
         keypath = "key.json"
     config.set("Polyglot", "keypath", keypath)
+    config.set("Polyglot", "len-limit", 0)
     return config
 
 
 def api_init(config):
-    global project_name, json_key
+    global project_name, json_key, len_limit
 
-    version = "1.0.1 for googleapi 3.6.1"
+    version = "1.0.2 for googleapi 3.6.1"
     build = "1"
-    version_polyglot = "1.2 alpha/beta/release"
+    version_polyglot = "1.3 alpha/beta/release"
     build_polyglot = "- any"
     logging.info("Interlayer version {}, build {}".format(version, build))
     logging.info("Compatible with version of Polyglot {}, build {}".format(version_polyglot, build_polyglot))
@@ -69,6 +71,13 @@ def api_init(config):
         logging.error("Project name isn't readable from JSON! Bot will close!")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
+
+    try:
+        len_limit = int(config["Polyglot"]["len-limit"])
+        if len_limit < 0 or len_limit > 4096:
+            len_limit = 0
+    except (KeyError, ValueError):
+        pass
 
     return config
 
@@ -100,6 +109,11 @@ def list_of_langs():
 
 
 def get_translate(input_text: str, target_lang: str, distorting=False, src_lang=None):
+    global len_limit
+
+    if 0 < len_limit < len(input_text):
+        raise TooLongMsg
+
     try:
         trans_result = translator.translate_text(parent=project_name, contents=[input_text],
                                                  target_language_code=target_lang, source_language_code=src_lang,

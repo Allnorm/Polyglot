@@ -20,9 +20,10 @@ def init_dialog():
     config.set("Polyglot", "locales-repository", LOCALES_REPO_DEFAULT)
     config.set("Polyglot", "msg-logging", "true")
     config.set("Polyglot", "enable-auto", "true")
+    config.set("Polyglot", "pytesseract", "")
     config = interlayer.init_dialog_api(config)
     config = ad_module.init_dialog_api(config)
-    # This is an default configuration of Polyglot bot
+    # This is a default configuration of Polyglot bot
     try:
         config.write(open("polyglot.ini", "w"))
         logging.info("new config file was created successful")

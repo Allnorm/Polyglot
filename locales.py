@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import shutil
 import sys
 import traceback
 
@@ -15,6 +16,21 @@ LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/newap
 
 def locales_check_integrity(config):
     global locale_data
+
+    try:
+        arg = sys.argv[1]
+    except IndexError:
+        arg = ""
+    if arg == "-l" or arg == "--localfile":
+        try:
+            locales_path = sys._MEIPASS + "/locales-list.json"
+            shutil.copy(locales_path, 'locales-list.json')
+            logging.info("Locales file successfully copied from internal path")
+        except Exception as e:
+            logging.error("impossible to copy locales file from internal path! Bot will close")
+            logging.error(str(e) + "\n" + traceback.format_exc())
+            sys.exit(1)
+
     if not os.path.isfile("locales-list.json"):
         logging.warning("locales-list is empty, trying to download it from repos")
         locales_download_list(config)
@@ -23,12 +39,14 @@ def locales_check_integrity(config):
             locale_data = json.load(read_file)
     except IOError as e:
         logging.error("impossible to read locales file! Bot will close\n"
-                      "Try to remove locales-list.json, it should to download automatically.")
+                      "Try to remove locales-list.json, it should to download automatically "
+                      "or use internal file (key -l/--localfile when starting the bot).")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     except json.decoder.JSONDecodeError as e:
         logging.error("impossible to parse locales file! Bot will close.\n"
-                      "Try to remove locales-list.json, it should to download automatically.")
+                      "Try to remove locales-list.json, it should to download automatically "
+                      "or use internal file (key -l/--localfile when starting the bot).")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     logging.info("locales loaded successful")
@@ -50,12 +68,13 @@ def locales_download_list(config):
         r = http.request('GET', locales_repo)
         logging.info("locales file downloaded successful from repository " + locales_repo)
     except Exception as e:
-        logging.error("impossible to download locales file! Bot will close. "
-                      "You can to try download it manually.")
+        logging.error("impossible to download locales file!\nYou can try download it manually "
+                      "or use internal file (key -l/--localfile when starting the bot). Bot will close")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     if r.status != 200:
-        logging.error("impossible to download locales file! You can try download it manually. Bot will close")
+        logging.error("impossible to download locales file!\nYou can try download it manually "
+                      "or use internal file (key -l/--localfile when starting the bot). Bot will close")
         sys.exit(1)
     try:
         f = open('locales-list.json', 'wb')
