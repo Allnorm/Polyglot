@@ -207,7 +207,7 @@ def send_list(message):
         logger.write_log(message, logger.BLOB_TEXT)
 
         try:
-            file = open("langlist.txt", "r")
+            file = open("langlist.txt", "r", encoding="UTF-8")
             utils.bot.send_document(message.chat.id, file, message.id,
                                     locales.get_text(message.chat.id, "langList"))
         except FileNotFoundError:
