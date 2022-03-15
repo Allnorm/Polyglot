@@ -17,7 +17,7 @@ def logger_init():
     reload(logging)
     logging.basicConfig(
         handlers=[
-            logging.FileHandler(current_log),
+            logging.FileHandler(current_log, 'w', 'utf-8'),
             logging.StreamHandler(sys.stdout)
         ],
         level=logging.INFO,
