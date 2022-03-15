@@ -23,7 +23,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.3 alpha"
-    build = "6"
+    build = "7"
 
     if logger.logger_init():
         logging.info("log was cleared successful")
@@ -406,4 +406,4 @@ def auto_translate(message):
     auto_engine(message)
 
 
-utils.bot.polling()
+utils.bot.infinity_polling()
