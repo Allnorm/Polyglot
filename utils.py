@@ -308,7 +308,7 @@ def list_of_langs():
         output = output + key + " "
 
     try:
-        file = open("langlist.txt", "w")
+        file = open("langlist.txt", "w", encoding="UTF-8")
         file.write(output)
         file.close()
         logging.info("langlist updated successful")
