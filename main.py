@@ -22,8 +22,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.3 alpha"
-    build = "8"
+    version = "1.3"
+    build = "9"
 
     if logger.logger_init():
         logging.info("log was cleared successful")
@@ -48,7 +48,9 @@ pre_init()
 
 def botname_checker(message):  # Crutch to prevent the bot from responding to other bots commands
 
-    if ("@" in message.text and "@" + utils.bot.get_me().username in message.text) or not ("@" in message.text):
+    cmd_text = message.text.split()[0]
+
+    if ("@" in cmd_text and "@" + utils.bot.get_me().username in cmd_text) or not ("@" in cmd_text):
         return True
     else:
         return False
