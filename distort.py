@@ -9,12 +9,15 @@ import utils
 
 MAX_INITS_DEFAULT = 10
 max_inits = MAX_INITS_DEFAULT
+lang_output = False
 
 
 def distort_init(config):
-    global max_inits
+    global max_inits, lang_output
     try:
         max_inits = int(config["Polyglot"]["max-inits"])
+        if config["Polyglot"]["distort-output"].lower() == "true":
+            lang_output = "True"
     except (ValueError, KeyError):
         logging.error("incorrect distort configuration, values will be set to defaults " + "\n"
                       + traceback.format_exc())
@@ -82,6 +85,9 @@ def distort_main(message):
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
     randlang = random.choice(list(utils.translator.lang_list))
+    randlang_list = ""
+    if lang_output:
+        randlang_list = locales.get_text(message.chat.id, "usedDistortions")
 
     for i in range(counter):
         while randlang == lastlang:
@@ -99,6 +105,8 @@ def distort_main(message):
             utils.bot.edit_message_text(locales.get_text(message.chat.id, "distortUnkTransException"), idc, idm)
             return
 
+        if lang_output:
+            randlang_list += randlang + "; "
         lastlang = randlang
 
     try:
@@ -108,4 +116,4 @@ def distort_main(message):
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "distortEndingError"), idc, idm)
         return
 
-    utils.bot.edit_message_text(inputshiz + ad_module.add_ad(idc), idc, idm)
+    utils.bot.edit_message_text(inputshiz + randlang_list + ad_module.add_ad(idc), idc, idm)

@@ -21,6 +21,7 @@ def init_dialog():
     config.set("Polyglot", "msg-logging", "true")
     config.set("Polyglot", "enable-auto", "true")
     config.set("Polyglot", "pytesseract", "")
+    config.set("Polyglot", "distort-output", "false")
     config = utils.translator.init_dialog_api(config)
     config = ad_module.init_dialog_api(config)
     # This is a default configuration of Polyglot bot
