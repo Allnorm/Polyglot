@@ -11,7 +11,7 @@ import urllib3
 import sql_worker
 
 locale_data: dict
-LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/newapi/locales-list.json"
+LOCALES_REPO_DEFAULT = "https://raw.githubusercontent.com/Allnorm/Polyglot/main/locales-list.json"
 
 
 def locales_check_integrity(config):
