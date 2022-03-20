@@ -3,7 +3,6 @@ import logging
 from telebot import types
 
 import ad_module
-import interlayer
 import locales
 import logger
 import utils
@@ -30,13 +29,13 @@ def translate_query(inline_query):
         return locales.get_text_inline(inline_query, "inlineInstructionTwo")
 
     try:
-        inputtext = interlayer.get_translate(inputtext, lang)
+        inputtext = utils.translator.get_translate(inputtext, lang)
         return inputtext
-    except interlayer.BadTrgLangException:
+    except utils.translator.BadTrgLangException:
         return locales.get_text_inline(inline_query, "badTrgLangException")
-    except interlayer.TooManyRequestException:
+    except utils.translator.TooManyRequestException:
         return locales.get_text_inline(inline_query, "tooManyRequestException")
-    except interlayer.UnkTransException:
+    except utils.translator.UnkTransException:
         return locales.get_text_inline(inline_query, "unkTransException")
 
 

@@ -2,7 +2,6 @@ import logging
 import traceback
 
 import ad_module
-import interlayer
 import locales
 import logger
 import utils
@@ -20,7 +19,17 @@ def qwerty_main(message):
     arg1, arg2 = utils.extract_arg(message.text, 1), utils.extract_arg(message.text, 2)
 
     if arg2 is None:
-        tab1 = utils.layouts.get(interlayer.extract_lang(text))
+        try:
+            tab1 = utils.layouts.get(utils.translator.extract_lang(text))
+        except utils.translator.UnkTransException:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
+            return
+        except utils.translator.TooLongMsg:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
+            return
+        except utils.translator.TooManyRequestException:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
+            return
         tab2 = utils.layouts.get(arg1)
     else:
         tab1 = utils.layouts.get(arg1)
@@ -28,8 +37,11 @@ def qwerty_main(message):
 
     if tab1 is None and arg2 is None:
         try:
-            recognized_lang = interlayer.get_translate(interlayer.lang_list.get(interlayer.extract_lang(text)), "ru")
-        except (interlayer.BadTrgLangException, interlayer.UnkTransException, interlayer.TooManyRequestException):
+            recognized_lang = utils.translator.get_translate(utils
+                                                             .translator.lang_list.get(utils.translator
+                                                                                       .extract_lang(text)), "ru")
+        except (utils.translator.BadTrgLangException, utils.translator.UnkTransException,
+                utils.translator.TooManyRequestException, utils.translator.TooLongMsg):
             recognized_lang = "Unknown"
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownSourceLang").format(recognized_lang))
         return

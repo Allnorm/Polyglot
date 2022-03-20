@@ -5,7 +5,6 @@ import traceback
 import PIL.Image
 from pytesseract import pytesseract
 
-import interlayer
 import locales
 import logger
 import utils
@@ -76,19 +75,19 @@ def photo_main(message):
         return
 
     try:
-        utils.bot.edit_message_text(interlayer.get_translate(text, trg_lang)
+        utils.bot.edit_message_text(utils.translator.get_translate(text, trg_lang)
                                     + add_ad(message.chat.id), idc, idm)
-    except interlayer.BadTrgLangException:
+    except utils.translator.BadTrgLangException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "badTrgLangException"), idc, idm)
-    except interlayer.BadSrcLangException:
+    except utils.translator.BadSrcLangException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "badSrcLangException"), idc, idm)
-    except interlayer.TooManyRequestException:
+    except utils.translator.TooManyRequestException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "tooManyRequestException"), idc, idm)
-    except interlayer.TooLongMsg:
+    except utils.translator.TooLongMsg:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "tooLongMsg"), idc, idm)
-    except interlayer.EqualLangsException:
+    except utils.translator.EqualLangsException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "equalLangsException"), idc, idm)
-    except interlayer.UnkTransException:
+    except utils.translator.UnkTransException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "unkTransException"), idc, idm)
 
 

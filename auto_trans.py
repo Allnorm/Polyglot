@@ -1,7 +1,6 @@
 import logging
 
 import ad_module
-import interlayer
 import locales
 import logger
 import sql_worker
@@ -21,13 +20,13 @@ def auto_status(message):
                            + locales.get_text(message.chat.id, "premiumStatusDisabled"))
         return
 
-    lang = interlayer.lang_list.get(chat_info[0][6])
+    lang = utils.translator.lang_list.get(chat_info[0][6])
     try:
         if locales.get_chat_lang(message.chat.id) != "en":
-            translated_lang = lang + " (" + interlayer.get_translate(lang, chat_info[0][1]) + ")"
+            translated_lang = lang + " (" + utils.translator.get_translate(lang, chat_info[0][1]) + ")"
         else:
             translated_lang = ""
-    except (interlayer.BadTrgLangException, interlayer.UnkTransException):
+    except (utils.translator.BadTrgLangException, utils.translator.UnkTransException):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
         return
 
@@ -37,7 +36,7 @@ def auto_status(message):
 
 def auto_enable(message):
     set_lang = utils.lang_autocorr(utils.extract_arg(message.text, 1))
-    if interlayer.lang_list.get(set_lang) is None and set_lang != "disable":
+    if utils.translator.lang_list.get(set_lang) is None and set_lang != "disable":
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortWrongLang"))
     else:
         try:
@@ -45,14 +44,15 @@ def auto_enable(message):
         except sql_worker.SQLWriteError:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "configFailed"))
         if set_lang != "disable":
-            lang = interlayer.lang_list.get(set_lang)
+            lang = utils.translator.lang_list.get(set_lang)
             try:
                 if locales.get_chat_lang(message.chat.id) != "en":
                     translated_lang = lang + " (" \
-                                      + interlayer.get_translate(lang, locales.get_chat_lang(message.chat.id)) + ")"
+                                      + utils.translator.get_translate(lang,
+                                                                       locales.get_chat_lang(message.chat.id)) + ")"
                 else:
                     translated_lang = lang
-            except (interlayer.BadTrgLangException, interlayer.UnkTransException):
+            except (utils.translator.BadTrgLangException, utils.translator.UnkTransException):
                 utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
                 return
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransSuccess") + translated_lang)
@@ -88,20 +88,26 @@ def auto_engine(message):
         logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message")
 
     try:
-        text_lang = interlayer.extract_lang(inputtext)
-    except interlayer.UnkTransException:
+        text_lang = utils.translator.extract_lang(inputtext)
+    except utils.translator.UnkTransException:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
+        return
+    except utils.translator.TooLongMsg:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
+        return
+    except utils.translator.TooManyRequestException:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
         return
 
     if text_lang != chat_info[0][6]:
         try:
-            utils.bot.reply_to(message, interlayer.get_translate(inputtext, chat_info[0][6])
+            utils.bot.reply_to(message, utils.translator.get_translate(inputtext, chat_info[0][6])
                                + ad_module.add_ad(message.chat.id))
-        except interlayer.BadTrgLangException:
+        except utils.translator.BadTrgLangException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "badTrgLangException"))
-        except interlayer.TooManyRequestException:
+        except utils.translator.TooManyRequestException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
-        except interlayer.TooLongMsg:
+        except utils.translator.TooLongMsg:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
-        except interlayer.UnkTransException:
+        except utils.translator.UnkTransException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "unkTransException"))

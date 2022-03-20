@@ -8,11 +8,12 @@ import configparser
 import initdialog
 import locales
 import logger
-import interlayer
+import yapi.interlayer as interlayer
 
 proxy_port = ""
 proxy_type = ""
 bot: telebot.TeleBot
+translator = interlayer.Interlayer()
 whitelist = []
 enable_auto = True
 
@@ -216,7 +217,7 @@ def config_init():
             token = config["Polyglot"]["token"]
             if token == "":
                 raise ValueError("Token is unknown!")
-            config = interlayer.api_init(config)
+            config = translator.api_init(config)
             break
         except Exception as e:
             logging.error(str(e) + "\n" + traceback.format_exc())
@@ -298,8 +299,8 @@ def download_clear_log(message, down_clear_check):
 
 def list_of_langs():
     output = "List of all codes and their corresponding languages:\n"
-    interlayer.list_of_langs()
-    for key, value in interlayer.lang_list.items():
+    translator.list_of_langs()
+    for key, value in translator.lang_list.items():
         output = output + value + " - " + key + "\n"
 
     output = output + "\nList of all available keyboard layouts: "
@@ -320,10 +321,10 @@ def list_of_langs():
 def lang_autocorr(langstr, inline=False):
     if inline is False:
         langstr = langstr.lower()
-        for key, value in interlayer.lang_list.items():
+        for key, value in translator.lang_list.items():
             langstr = langstr.replace(value.lower(), key)
     elif (extract_arg(langstr, 1)) is not None and inline is True:
-        for key, value in interlayer.lang_list.items():
+        for key, value in translator.lang_list.items():
             if (extract_arg(langstr, 0) + " " + extract_arg(langstr, 1)).lower() == value.lower():
                 args = extract_arg(langstr, 0) + " " + extract_arg(langstr, 1)
                 langstr = langstr.replace(args, args.lower(), 1)

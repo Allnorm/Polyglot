@@ -6,3 +6,6 @@ key.json
 /.idea
 /__pycache__
 /venv
+/interlayer
+/build
+/dist
