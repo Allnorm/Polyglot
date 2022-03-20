@@ -8,9 +8,9 @@ import configparser
 import initdialog
 import locales
 import logger
-# import interlayer.googleapi.googleapi as interlayer
-import interlayer.yapi.yapi as interlayer
-# import interlayer.googlefreeapi.googlefreeapi as interlayer
+# import interlayer.googleapi as interlayer
+import interlayer.yapi as interlayer
+# import interlayer.googlefreeapi as interlayer
 
 proxy_port = ""
 proxy_type = ""
@@ -18,6 +18,7 @@ bot: telebot.TeleBot
 translator = interlayer.Interlayer()
 whitelist = []
 enable_auto = True
+len_limit = 0
 
 layouts = {'en': "qwertyuiop[]asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?`~",
            'ru': "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,ёЁ",
@@ -204,7 +205,7 @@ iso = {'ab': 'abk',
 
 
 def config_init():
-    global proxy_port, proxy_type, bot, enable_auto
+    global proxy_port, proxy_type, bot, enable_auto, len_limit
 
     if not os.path.isfile("polyglot.ini"):
         logging.warning("config file isn't created, trying to create it now")
@@ -239,12 +240,21 @@ def config_init():
     else:
         logging.error("incorrect enable-auto configuration, auto translate will be available by default")
 
+    try:
+        len_limit = int(config["Polyglot"]["len-limit"])
+        if len_limit < 0 or len_limit > 4096:
+            logging.error("acceptable range for len-limit is from 0 to 4096, message length limit will be disabled")
+    except (KeyError, ValueError):
+        logging.error("incorrect len-limit configuration, message length limit will be disabled")
+
     bot = telebot.TeleBot(token)
 
     return config
 
 
 def textparser(message):
+    global len_limit
+
     if message.reply_to_message is None:
         bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
@@ -259,6 +269,10 @@ def textparser(message):
             inputtext += "☑️ " + option.text + "\n"
     else:
         bot.reply_to(message, locales.get_text(message.chat.id, "textNotFound"))
+        return
+
+    if 0 < len_limit < len(inputtext):
+        bot.reply_to(message, locales.get_text(message.chat.id, "maxLength").format(len_limit))
         return
 
     return inputtext

@@ -76,7 +76,8 @@
 		"photoDetectErr": "Ошибка распознания текста с картинки! Информация сохранена в логах бота.",
 		"pyTesseractDisabled": "Ошибка, хостер бота принудительно отключил функцию перевода с фотографии",
 		"photoNotFound": "В сообщении не обнаружена фотография.",
-		"scanStarted": "Фотография распознаётся, пожалуйста подождите..."
+		"scanStarted": "Фотография распознаётся, пожалуйста подождите...",
+		"maxLength": "Ошибка: хостер бота принудительно ограничил максимальную длину сообщения до {}."
 	},
 	"en": {
 		"fullName": "English",
@@ -149,7 +150,8 @@
 		"photoDetectErr": "Error recognizing text from image! Information saved in bot logs.",
 		"pyTesseractDisabled": "Error, the bot hoster forcibly disabled the photo translation feature",
 		"photoNotFound": "No photo found in message.",
-		"scanStarted": "Photo is recognized, please wait..."
+		"scanStarted": "Photo is recognized, please wait...",
+		"maxLength": "Error: The bot's hoster forcibly limited the maximum message length to {}."
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
@@ -222,7 +224,8 @@
 		"photoDetectErr": "Помилка розпізнавання тексту з зображення! Інформація збережена в логах бота.",
 		"pyTesseractDisabled": "Помилка, хостер бота примусово відключив функцію перекладу з фотографії",
 		"photoNotFound": "У повідомленні не знайдено фотографію.",
-		"scanStarted": "Фотографія розпізнається, будь ласка, зачекайте..."
+		"scanStarted": "Фотографія розпізнається, будь ласка, зачекайте...",
+		"maxLength": "Помилка: хостер бота примусово обмежив максимальну довжину повідомлення до {}."
 	},
 	"be": {
 		"fullName": "Belarusian (Беларуская)",

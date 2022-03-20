@@ -87,6 +87,10 @@ def auto_engine(message):
     elif logger.logger is True:
         logging.info("user " + logger.username_parser(message) + " sent an AUTO translated message")
 
+    if 0 < utils.len_limit < len(inputtext):
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "maxLength").format(utils.len_limit))
+        return
+
     try:
         text_lang = utils.translator.extract_lang(inputtext)
     except utils.translator.UnkTransException:

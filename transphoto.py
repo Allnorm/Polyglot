@@ -62,6 +62,10 @@ def photo_main(message):
     elif logger.logger is True:
         logging.info(logger.username_parser(message) + ": text from photo scanned successfully")
 
+    if 0 < utils.len_limit < len(text):
+        utils.bot.edit_message_text(locales.get_text(message.chat.id, "maxLength").format(utils.len_limit), idc, idm)
+        return
+
     if utils.extract_arg(message.text, 0) == '/scan':
         utils.bot.edit_message_text(text + add_ad(message.chat.id), idc, idm)
         return

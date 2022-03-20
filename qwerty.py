@@ -18,6 +18,10 @@ def qwerty_main(message):
     message.text = utils.lang_autocorr(message.text)
     arg1, arg2 = utils.extract_arg(message.text, 1), utils.extract_arg(message.text, 2)
 
+    if arg1 is None:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "specifyLang"))
+        return
+
     if arg2 is None:
         try:
             tab1 = utils.layouts.get(utils.translator.extract_lang(text))
