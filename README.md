@@ -2,14 +2,14 @@
 Telegram bot that use any API for translate messages
 # How to use as binary file
 1. Make any folder and place binary there
-2. Start the bot for initial configuration (more in the section about the config file)
+2. Start the bot for initial configuration. Bot will have to generate a configuration file automatically, taking into account the peculiarities of the functioning of Interlayer.
 # How to use as sorce code
 1. Make any folder and place sources there
 2. Create folder "interlayer" in project root
 3. Place one of your chosen interlayer files in this folder (ready-made assemblies are here: https://github.com/Allnorm/Polyglot-Interlayer)
 4. Uncomment string "import interlayer.%filename% as interlayer" in utils.py
 5. Install all need dependencies for main code and interlayer
-6. Launch main.py
+6. Launch main.py. Bot will have to generate a configuration file automatically, taking into account the peculiarities of the functioning of Interlayer.
 # How to build binary file
 We using Pyinstaller for project building (https://pyinstaller.readthedocs.io/en/stable/)
 You need to install all dependencies and launch command "pyinstaller --onefile -i icon.ico --add-data locales-list.json;. main.py"
