@@ -28,4 +28,4 @@ Some interlayers may have special features when assembling. This should be speci
 * len-limit - limit the length of the input message. 0 - disables the restriction. May be useful for some Interlayers.
 * enable-ad - boolean variable, enable or disable the ad engine
 * ad-percent - indicates the percentage of the ad display frequency
-* distort-output - a boolean variable, indicates whether to show the languages ​​in which the distortion occurred
+* distort-output - a boolean variable, indicates whether to show the languages in which the distortion occurred
