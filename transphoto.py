@@ -104,7 +104,7 @@ def transphoto_config_init(config):
         logging.warning("Pytesseract path isn't found. It's may be normal if you use Linux "
                         "or added Pytesseract in Path on Windows")
 
-    if path != "disable":
+    if path.lower() != "disable":
         if path != "" and path is not None:
             pytesseract.tesseract_cmd = path
     else:
