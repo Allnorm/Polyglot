@@ -18,7 +18,7 @@ Some interlayers may have special features when assembling. This should be speci
 1. PyTelegramBotApi https://github.com/eternnoir/pyTelegramBotAPI, GPL-2.0 License
 2. Pillow https://github.com/python-pillow/Pillow, HPND License
 3. Pytesseract https://github.com/madmaze/pytesseract, Apache-2.0 License
-# Possible obscure items in the configuration file without taking into account the items added by Interlayer
+# Possible obscure items in the configuration file without items added by Interlayer
 * token - Telegram bot's token
 * max-inits - sets the maximum amount of text distortion allowed. Can be from 0 (function disabled) to 100
 * locales-repository - the repository from which the localization file will be loaded. If you run the bot with the -l switch, it will copy its own localization file built into it.
