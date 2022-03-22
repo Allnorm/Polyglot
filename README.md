@@ -1,5 +1,5 @@
 # Polyglot
-Telegram bot that use Google Api for translate messages
+Telegram bot that use any API for translate messages
 # How to use as binary file
 1. Make any folder and place binary there
 2. Start the bot for initial configuration (more in the section about the config file)
