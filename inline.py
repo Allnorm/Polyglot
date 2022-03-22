@@ -17,6 +17,9 @@ def translate_query(inline_query):
     if len(inline_query.query) > 250:
         return locales.get_text_inline(inline_query, "tooLongInline")
 
+    if 0 < utils.len_limit < len(inline_query.query):
+        return locales.get_text_inline(inline_query, "maxLength").format(utils.len_limit)
+
     inline_query.query = utils.lang_autocorr(inline_query.query, True)
     lang = utils.extract_arg(inline_query.query, 0)
 
