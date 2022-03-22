@@ -24,7 +24,7 @@ Some interlayers may have special features when assembling. This should be speci
 * locales-repository - the repository from which the localization file will be loaded. If you run the bot with the -l switch, it will copy its own localization file built into it.
 * msg-logging - if true, the bot writes to the log who exactly used his commands. If debug is enabled - adds message content
 * enable-auto - enables and disables automatic translations
-* pytesseract - path to Tesseract-OCR executable library, usually needed for Windows
+* pytesseract - path to Tesseract-OCR executable library, usually needed for Windows. Set to "disable" to fully disable this function
 * len-limit - limit the length of the input message. 0 - disables the restriction. May be useful for some Interlayers.
 * enable-ad - boolean variable, enable or disable the ad engine
 * ad-percent - indicates the percentage of the ad display frequency
