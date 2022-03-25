@@ -9,7 +9,7 @@ import initdialog
 import locales
 import logger
 # import interlayer.googleapi as interlayer
-import interlayer.yapi as interlayer
+# import interlayer.yapi as interlayer
 # import interlayer.googlefreeapi as interlayer
 
 proxy_port = ""
