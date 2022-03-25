@@ -99,14 +99,16 @@ def transphoto_config_init(config):
     global pytesseract_func
     try:
         path = config["Polyglot"]["pytesseract"]
+        if path == "":
+            raise KeyError
     except KeyError:
-        path = None
         logging.warning("Pytesseract path isn't found. It's may be normal if you use Linux "
                         "or added Pytesseract in Path on Windows")
+        return
 
-    if path.lower() != "disable":
-        if path != "" and path is not None:
-            pytesseract.tesseract_cmd = path
-    else:
+    if path.lower() == "disable":
         logging.info("Pytesseract function disabled")
         pytesseract_func = False
+        return
+
+    pytesseract.tesseract_cmd = path

@@ -23,7 +23,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.3"
-    build = "18"
+    build = "19"
 
     if os.name == "nt":
         ctypes.windll.kernel32.SetConsoleTitleW("Polyglot {}".format(version))
