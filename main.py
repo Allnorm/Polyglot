@@ -26,7 +26,7 @@ def pre_init():
     build = "18"
 
     if os.name == "nt":
-        ctypes.windll.kernel32.SetConsoleTitleW("POLYGLOT {} build {}".format(version, build))
+        ctypes.windll.kernel32.SetConsoleTitleW("Polyglot {}".format(version))
 
     if logger.logger_init():
         logging.info("log was cleared successful")
