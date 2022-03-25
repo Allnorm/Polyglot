@@ -29,3 +29,15 @@ Some interlayers may have special features when assembling. This should be speci
 * enable-ad - boolean variable, enable or disable the ad engine
 * ad-percent - indicates the percentage of the ad display frequency
 * distort-output - a boolean variable, indicates whether to show the languages in which the distortion occurred
+# An example of a working systemd unit for autoloading
+[Unit]
+Description=Polyglot bot
+
+[Service]
+WorkingDirectory=/home/allnorm/polyglot
+ExecStart=/home/allnorm/polyglot/polyglot
+RestartSec=15s
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
