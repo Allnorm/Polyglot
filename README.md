@@ -31,13 +31,13 @@ Some interlayers may have special features when assembling. This should be speci
 * distort-output - a boolean variable, indicates whether to show the languages in which the distortion occurred
 # An example of a working systemd unit for autoloading
 [Unit]
-Description=Polyglot bot
-
-[Service]
-WorkingDirectory=/home/allnorm/polyglot
-ExecStart=/home/allnorm/polyglot/polyglot
-RestartSec=15s
-Restart=on-failure
-
-[Install]
-WantedBy=default.target
+Description=Polyglot bot<br>
+<br>
+[Service]<br>
+WorkingDirectory=/home/allnorm/polyglot<br>
+ExecStart=/home/allnorm/polyglot/polyglot<br>
+RestartSec=15s<br>
+Restart=on-failure<br>
+<br>
+[Install]<br>
+WantedBy=default.target<br>
