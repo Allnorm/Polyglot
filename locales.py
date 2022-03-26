@@ -26,6 +26,9 @@ def locales_check_integrity(config):
             locales_path = sys._MEIPASS + "/locales-list.json"
             shutil.copy(locales_path, 'locales-list.json')
             logging.info("Locales file successfully copied from internal path")
+        except AttributeError:
+            logging.error("impossible to copy locales file from internal path! sys._MEIPASS doesn't exist!\n"
+                          "Perhaps you ran the source code with an argument -l/--localfile?")
         except Exception as e:
             logging.error("impossible to copy locales file from internal path! Bot will close")
             logging.error(str(e) + "\n" + traceback.format_exc())
