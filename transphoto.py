@@ -24,10 +24,6 @@ def photo_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
 
-    if message.reply_to_message.content_type != "photo":
-        utils.bot.reply_to(message, locales.get_text(message.chat.id, "photoNotFound"))
-        return
-
     lang = "eng"
     if utils.extract_arg(message.text, 0) == '/scan' and utils.extract_arg(message.text, 1) is not None:
         lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
@@ -38,12 +34,30 @@ def photo_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "badSrcLangException"))
         return
 
+    if message.reply_to_message.photo is not None:
+        file_buffer = io.BytesIO(utils.bot.download_file
+                                 (utils.bot.get_file(message.reply_to_message.photo[-1].file_id).file_path))
+    elif message.reply_to_message.document is not None:
+        if not message.reply_to_message.document.mime_type == "image/png" and \
+                not message.reply_to_message.document.mime_type == "image/jpeg":
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "photoNotFound"))
+            return
+        file_buffer = io.BytesIO(utils.bot.download_file
+                                 (utils.bot.get_file(message.reply_to_message.document.file_id).file_path))
+    else:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "photoNotFound"))
+        return
+
+    try:
+        img = PIL.Image.open(file_buffer)
+    except Exception as e:
+        logging.error(str(e) + "\n" + traceback.format_exc())
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "photoDetectErr"))
+        return
+
     tmpmessage = utils.bot.reply_to(message, locales.get_text(message.chat.id, "scanStarted"))
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
-
-    img = PIL.Image.open(io.BytesIO(utils.bot.download_file
-                                    (utils.bot.get_file(message.reply_to_message.photo[-1].file_id).file_path)))
 
     try:
         text = pytesseract.image_to_string(img, lang=lang)
