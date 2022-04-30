@@ -77,7 +77,8 @@
 		"pyTesseractDisabled": "Ошибка, хостер бота принудительно отключил функцию перевода с фотографии",
 		"photoNotFound": "В сообщении не обнаружена фотография.",
 		"scanStarted": "Фотография распознаётся, пожалуйста подождите...",
-		"maxLength": "Ошибка: хостер бота принудительно ограничил максимальную длину сообщения до {}."
+		"maxLength": "Ошибка: хостер бота принудительно ограничил максимальную длину сообщения до {}.",
+		"unsupportedFileType": "Данный тип файла не поддерживается."
 	},
 	"en": {
 		"fullName": "English",
@@ -151,7 +152,8 @@
 		"pyTesseractDisabled": "Error, the bot hoster forcibly disabled the photo translation feature",
 		"photoNotFound": "No photo found in message.",
 		"scanStarted": "Photo is recognized, please wait...",
-		"maxLength": "Error: The bot's hoster forcibly limited the maximum message length to {}."
+		"maxLength": "Error: The bot's hoster forcibly limited the maximum message length to {}.",
+		"unsupportedFileType": "This file type is not supported."		
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
@@ -225,7 +227,8 @@
 		"pyTesseractDisabled": "Помилка, хостер бота примусово відключив функцію перекладу з фотографії",
 		"photoNotFound": "У повідомленні не знайдено фотографію.",
 		"scanStarted": "Фотографія розпізнається, будь ласка, зачекайте...",
-		"maxLength": "Помилка: хостер бота примусово обмежив максимальну довжину повідомлення до {}."
+		"maxLength": "Помилка: хостер бота примусово обмежив максимальну довжину повідомлення до {}.",
+		"unsupportedFileType": "Цей тип файлу не підтримується."
 	},
 	"be": {
 		"fullName": "Belarusian (Беларуская)",

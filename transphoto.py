@@ -37,10 +37,20 @@ def photo_main(message):
     if message.reply_to_message.photo is not None:
         file_buffer = io.BytesIO(utils.bot.download_file
                                  (utils.bot.get_file(message.reply_to_message.photo[-1].file_id).file_path))
+    elif message.reply_to_message.sticker is not None:
+        if message.reply_to_message.sticker.is_animated or message.reply_to_message.sticker.is_video:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "unsupportedFileType"))
+            return
+        file_buffer = io.BytesIO(utils.bot.download_file
+                                 (utils.bot.get_file(message.reply_to_message.sticker.file_id).file_path))
     elif message.reply_to_message.document is not None:
-        if not message.reply_to_message.document.mime_type == "image/png" and \
-                not message.reply_to_message.document.mime_type == "image/jpeg":
-            utils.bot.reply_to(message, locales.get_text(message.chat.id, "photoNotFound"))
+        mime_type = ("image/png", "image/jpeg", "image/gif", "image/bmp")
+        supported = False
+        for current_mime_type in mime_type:
+            if message.reply_to_message.document.mime_type == current_mime_type:
+                supported = True
+        if not supported:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "unsupportedFileType"))
             return
         file_buffer = io.BytesIO(utils.bot.download_file
                                  (utils.bot.get_file(message.reply_to_message.document.file_id).file_path))

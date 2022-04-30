@@ -13,7 +13,7 @@ def auto_status(message):
     if not chat_info:
         disabled = True
     if chat_info:
-        if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
+        if chat_info[0][6] == "disable" or chat_info[0][6] == "off" or chat_info[0][6] == "" or chat_info[0][6] is None:
             disabled = True
     if disabled:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "autoTransStatus")
@@ -36,14 +36,15 @@ def auto_status(message):
 
 def auto_enable(message):
     set_lang = utils.lang_autocorr(utils.extract_arg(message.text, 1))
-    if utils.translator.lang_list.get(set_lang) is None and set_lang != "disable":
+    if utils.translator.lang_list.get(set_lang) is None and set_lang != "disable" and set_lang != "off":
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "distortWrongLang"))
     else:
         try:
             sql_worker.write_chat_info(message.chat.id, "target_lang", set_lang)
         except sql_worker.SQLWriteError:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "configFailed"))
-        if set_lang != "disable":
+            return
+        if set_lang != "disable" and set_lang != "off":
             lang = utils.translator.lang_list.get(set_lang)
             try:
                 if locales.get_chat_lang(message.chat.id) != "en":
