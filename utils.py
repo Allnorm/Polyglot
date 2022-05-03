@@ -304,7 +304,7 @@ def download_clear_log(message, down_clear_check):
                           " tried to download log, but something went wrong!\n" + traceback.format_exc())
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logUploadError"))
     else:
-        if logger.clear_log():
+        if logger.logger_init():
             logging.info("log was cleared by user " + logger.username_parser(message) + ". Have fun!")
             bot.send_message(message.chat.id, locales.get_text(message.chat.id, "logClearSuccess"))
         else:

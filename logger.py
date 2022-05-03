@@ -1,4 +1,3 @@
-import os
 import sys
 import traceback
 import logging
@@ -13,18 +12,26 @@ logger_message = False
 
 
 def logger_init():
-    log_cleared = clear_log()
     reload(logging)
-    logging.basicConfig(
-        handlers=[
-            logging.FileHandler(current_log, 'w', 'utf-8'),
-            logging.StreamHandler(sys.stdout)
-        ],
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s: %(message)s',
-        datefmt="%d-%m-%Y %H:%M:%S")
 
-    return log_cleared
+    try:
+        logging.basicConfig(
+            handlers=[logging.FileHandler(current_log, 'w', 'utf-8'), logging.StreamHandler(sys.stdout)],
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s: %(message)s',
+            datefmt="%d-%m-%Y %H:%M:%S")
+    except Exception as e:
+        print("ERR: file " + current_log + " isn't writable!")
+        print(e)
+        traceback.print_exc()
+        logging.basicConfig(
+            handlers=[logging.StreamHandler(sys.stdout)],
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s: %(message)s',
+            datefmt="%d-%m-%Y %H:%M:%S")
+        return False
+
+    return True
 
 
 def logger_config_init(config):
@@ -72,16 +79,3 @@ def write_log(message: telebot.types.Message, text=BLOB_TEXT):
 
     logging.info("user " + username_parser(message) + " sent a command " + str(message.text)
                  + ". Reply message: " + text)
-
-
-def clear_log():
-    if os.path.isfile(current_log):
-        try:
-            os.remove(current_log)
-        except Exception as e:
-            print("ERR: file " + current_log + " wasn't removed")
-            print(e)
-            traceback.print_exc()
-            return False
-
-    return True
