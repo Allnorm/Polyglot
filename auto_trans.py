@@ -66,7 +66,7 @@ def auto_engine(message):
     if not chat_info:
         return
 
-    if chat_info[0][6] == "disable" or chat_info[0][6] == "" or chat_info[0][6] is None:
+    if chat_info[0][6] == "disable" or chat_info[0][6] == "off" or chat_info[0][6] == "" or chat_info[0][6] is None:
         return
 
     if message.text is not None:
