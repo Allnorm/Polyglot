@@ -18,6 +18,7 @@ Some interlayers may have special features when assembling. This should be speci
 1. PyTelegramBotApi https://github.com/eternnoir/pyTelegramBotAPI, GPL-2.0 License
 2. Pillow https://github.com/python-pillow/Pillow, HPND License
 3. Pytesseract https://github.com/madmaze/pytesseract, Apache-2.0 License
+4. Certifi https://github.com/certifi/python-certifi, Mozilla Public License v. 2.0
 # Possible obscure items in the configuration file without items added by Interlayer
 * token - Telegram bot's token
 * max-inits - sets the maximum amount of text distortion allowed. Can be from 0 (function disabled) to 100
