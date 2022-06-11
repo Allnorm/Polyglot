@@ -1,15 +1,15 @@
 #!/bin/bash
-cd "$(dirname "$(readlink -f "$0")")"
+cd "$(dirname "$(readlink -f "$0")")" || exit
 interlayer="googlefreeapi"
-cd src
+cd src || exit
 if ! [ -d interlayer ]; then
-    read -p  "Interlayer not installed. Please check if the installation is correct."
-	exit
+  read -pr  "Interlayer not installed. Please check if the installation is correct."
+  exit
 fi
 if ! [ -f ../first_launch ]; then
-    echo Installing requirements, please wait...
-    pip install -r requirements.txt
-	cd interlayer
+  echo Installing requirements, please wait...
+  pip install -r requirements.txt
+	cd interlayer || exit
 	pip install -r ${interlayer}.txt
 	cd ../
 	touch ../first_launch
