@@ -24,14 +24,12 @@ def locales_check_integrity(config):
             locale_data = json.load(read_file)
     except IOError as e:
         logging.error("impossible to read locales file! Bot will close\n"
-                      "Try to remove locales-list.json, it should to download automatically "
-                      "or use internal file (key -l/--localfile when starting the bot).")
+                      "Try to remove locales-list.json, it should to download automatically.")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     except json.decoder.JSONDecodeError as e:
         logging.error("impossible to parse locales file! Bot will close.\n"
-                      "Try to remove locales-list.json, it should to download automatically "
-                      "or use internal file (key -l/--localfile when starting the bot).")
+                      "Try to remove locales-list.json, it should to download automatically.")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     logging.info("locales loaded successful")
@@ -53,13 +51,11 @@ def locales_download_list(config):
         r = http.request('GET', locales_repo)
         logging.info("locales file downloaded successful from repository " + locales_repo)
     except Exception as e:
-        logging.error("impossible to download locales file!\nYou can try download it manually "
-                      "or use internal file (key -l/--localfile when starting the bot). Bot will close")
+        logging.error("impossible to download locales file!\nYou can try download it manually. Bot will close")
         logging.error(str(e) + "\n" + traceback.format_exc())
         sys.exit(1)
     if r.status != 200:
-        logging.error("impossible to download locales file!\nYou can try download it manually "
-                      "or use internal file (key -l/--localfile when starting the bot). Bot will close")
+        logging.error("impossible to download locales file!\nYou can try download it manually. Bot will close")
         sys.exit(1)
     try:
         f = open('../locales-list.json', 'wb')
