@@ -13,7 +13,7 @@ def init_dialog():
     while token == "":
         token = input("Please, write your bot token: ")
 
-    pytesseract_path = input("Please, write your Tesseract-OCR path (optional): ")
+    pytesseract_path = input("Please, write your Tesseract-OCR path of executable file (optional): ")
 
     config = configparser.ConfigParser()
     config.add_section("Polyglot")
