@@ -22,10 +22,7 @@ from inline import query_text_main
 def pre_init():
     config: configparser.ConfigParser
     version = "1.4"
-    build = "1"
-
-    if logger.logger_init():
-        logging.info("log was cleared successful")
+    build = "2"
 
     config = utils.config_init()
     transphoto_config_init(config)

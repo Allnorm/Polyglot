@@ -1,6 +1,8 @@
 import logging
 import os
+import sys
 import traceback
+import importlib
 
 import telebot
 import configparser
@@ -8,14 +10,21 @@ import configparser
 import initdialog
 import locales
 import logger
-# import interlayer.googleapi as interlayer
-import interlayer.yapi as interlayer
-# import interlayer.googlefreeapi as interlayer
 
 proxy_port = ""
 proxy_type = ""
 bot: telebot.TeleBot
-translator = interlayer.Interlayer()
+
+if logger.logger_init():
+    logging.info("log was cleared successful")
+
+try:
+    translator = importlib.import_module("interlayer." + sys.argv[1]).Interlayer()
+except (ModuleNotFoundError, IndexError):
+    logging.error("Failed to initialize Interlayer! Bot will be close!")
+    logging.error(traceback.format_exc())
+    sys.exit(-1)
+
 whitelist = []
 enable_auto = True
 len_limit = 0
