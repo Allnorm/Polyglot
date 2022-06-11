@@ -4,6 +4,7 @@ Telegram bot that use any API for translate messages
 1. Make any folder and place here "src" folder and launcher file (start.bat/start.sh) for your OS.
 2. Launch this file. Bot will install all dependencies and generate a configuration file automatically, taking into account the peculiarities of the functioning of Interlayer.
 3. To reinstall dependencies, delete the "first_launch" file.
+4. To change the interlayer, change the contents of the variable in the launcher to match the name of the interlayer file in the folder.
 # Dependencies for main code
 1. PyTelegramBotApi https://github.com/eternnoir/pyTelegramBotAPI, GPL-2.0 License
 2. Pillow https://github.com/python-pillow/Pillow, HPND License
