@@ -1,0 +1,4 @@
+pyTelegramBotApi
+Pillow
+pytesseract
+certifi
