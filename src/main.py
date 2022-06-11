@@ -21,7 +21,7 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.3.2"
+    version = "1.4"
     build = "1"
 
     if logger.logger_init():
