@@ -27,7 +27,7 @@ def init_dialog():
     config = ad_module.init_dialog_api(config)
     # This is a default configuration of Polyglot bot
     try:
-        config.write(open("polyglot.ini", "w"))
+        config.write(open("../polyglot.ini", "w"))
         logging.info("new config file was created successful")
     except IOError as e:
         logging.error("bot cannot write new config file and will close")

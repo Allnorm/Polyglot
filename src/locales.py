@@ -23,8 +23,8 @@ def locales_check_integrity(config):
         arg = ""
     if arg == "-l" or arg == "--localfile":
         try:
-            locales_path = sys._MEIPASS + "/locales-list.json"
-            shutil.copy(locales_path, 'locales-list.json')
+            locales_path = sys._MEIPASS + "/../locales-list.json"
+            shutil.copy(locales_path, '../locales-list.json')
             logging.info("Locales file successfully copied from internal path")
         except AttributeError:
             logging.error("impossible to copy locales file from internal path! sys._MEIPASS doesn't exist!\n"
@@ -34,11 +34,11 @@ def locales_check_integrity(config):
             logging.error(str(e) + "\n" + traceback.format_exc())
             sys.exit(1)
 
-    if not os.path.isfile("locales-list.json"):
+    if not os.path.isfile("../locales-list.json"):
         logging.warning("locales-list is empty, trying to download it from repos")
         locales_download_list(config)
     try:
-        with open("locales-list.json", "r", encoding='utf-8') as read_file:
+        with open("../locales-list.json", "r", encoding='utf-8') as read_file:
             locale_data = json.load(read_file)
     except IOError as e:
         logging.error("impossible to read locales file! Bot will close\n"
@@ -80,7 +80,7 @@ def locales_download_list(config):
                       "or use internal file (key -l/--localfile when starting the bot). Bot will close")
         sys.exit(1)
     try:
-        f = open('locales-list.json', 'wb')
+        f = open('../locales-list.json', 'wb')
         f.write(r.data)
     except IOError as e:
         logging.error("impossible to write new locales file! Bot will close")

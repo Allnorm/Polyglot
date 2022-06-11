@@ -3,7 +3,7 @@ import sqlite3
 import time
 import traceback
 
-dbname = "chatlist.db"
+dbname = "../chatlist.db"
 
 
 class SQLWriteError(Exception):
