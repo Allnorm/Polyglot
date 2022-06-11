@@ -13,6 +13,8 @@ def init_dialog():
     while token == "":
         token = input("Please, write your bot token: ")
 
+    pytesseract_path = input("Please, write your Tesseract-OCR path (optional): ")
+
     config = configparser.ConfigParser()
     config.add_section("Polyglot")
     config.set("Polyglot", "token", token)
@@ -20,7 +22,7 @@ def init_dialog():
     config.set("Polyglot", "locales-repository", LOCALES_REPO_DEFAULT)
     config.set("Polyglot", "msg-logging", "true")
     config.set("Polyglot", "enable-auto", "true")
-    config.set("Polyglot", "pytesseract", "")
+    config.set("Polyglot", "pytesseract", pytesseract_path)
     config.set("Polyglot", "distort-output", "false")
     config.set("Polyglot", "len-limit", "0")
     config = utils.translator.init_dialog_api(config)
