@@ -14,6 +14,7 @@ pytesseract_func = True
 
 
 def photo_main(message):
+
     if not pytesseract_func:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "pyTesseractDisabled"))
         return
@@ -24,8 +25,13 @@ def photo_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
 
+    scan_mode = False
+    if utils.extract_arg(message.text, 0) == '/scan' \
+            or utils.extract_arg(message.text, 0) == '/scan@' + utils.bot.get_me().username:
+        scan_mode = True
+
     lang = "eng"
-    if utils.extract_arg(message.text, 0) == '/scan' and utils.extract_arg(message.text, 1) is not None:
+    if scan_mode and utils.extract_arg(message.text, 1) is not None:
         lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
     elif utils.extract_arg(message.text, 2) is not None:
         lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
@@ -90,7 +96,7 @@ def photo_main(message):
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "maxLength").format(utils.len_limit), idc, idm)
         return
 
-    if utils.extract_arg(message.text, 0) == '/scan':
+    if scan_mode:
         utils.bot.edit_message_text(text + add_ad(message.chat.id), idc, idm)
         return
 

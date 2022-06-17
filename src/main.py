@@ -21,8 +21,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4"
-    build = "3"
+    version = "1.4.1"
+    build = "1"
 
     config = utils.config_init()
     transphoto_config_init(config)
