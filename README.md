@@ -1,7 +1,9 @@
 # Polyglot
 Telegram bot that use any API for translate messages
+# How to use source code
+You need to download the "src" folder, then create the "interlayer" folder in it and clone the neighboring repository into "interlayer" folder: https://github.com/Allnorm/Polyglot-Interlayer
 # How to launch
-1. Make any folder and place here "src" folder and launcher file (start.bat/start.sh) for your OS.
+1. Make any folder and place here "src" folder and launcher file (start.bat/start.sh) for your OS. Don't forget the folder "interlayer".
 2. Launch this file. Bot will install all dependencies and generate a configuration file automatically, taking into account the peculiarities of the functioning of Interlayer.
 3. To reinstall dependencies, delete the "first_launch" file.
 4. To change the interlayer, change the contents of the variable in the launcher to match the name of the interlayer file in the folder.
