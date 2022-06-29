@@ -21,7 +21,7 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4.1"
+    version = "1.4.2"
     build = "1"
 
     config = utils.config_init()
@@ -158,14 +158,14 @@ def detect(message):
         else:
             translated_lang = ""
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectedAs").format(lang, translated_lang))
-    except (utils.translator.BadTrgLangException, utils.translator.UnkTransException):
+    except (utils.translator.BadTrgLangException, utils.translator.LangDetectException):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
     except utils.translator.TooLongMsg:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
-        return
+    except utils.translator.UnknownLang:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownLang"))
     except utils.translator.TooManyRequestException:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooManyRequestException"))
-        return
 
 
 @utils.bot.message_handler(commands=['start'])

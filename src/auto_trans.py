@@ -94,8 +94,11 @@ def auto_engine(message):
 
     try:
         text_lang = utils.translator.extract_lang(inputtext)
-    except utils.translator.UnkTransException:
+    except utils.translator.LangDetectException:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
+        return
+    except utils.translator.UnknownLang:
+        utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownLang"))
         return
     except utils.translator.TooLongMsg:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))

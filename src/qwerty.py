@@ -25,8 +25,11 @@ def qwerty_main(message):
     if arg2 is None:
         try:
             tab1 = utils.layouts.get(utils.translator.extract_lang(text))
-        except utils.translator.UnkTransException:
+        except utils.translator.LangDetectException:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "langDetectErr"))
+            return
+        except utils.translator.UnknownLang:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownLang"))
             return
         except utils.translator.TooLongMsg:
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "tooLongMsg"))
@@ -39,13 +42,13 @@ def qwerty_main(message):
         tab1 = utils.layouts.get(arg1)
         tab2 = utils.layouts.get(arg2)
 
-    if tab1 is None and arg2 is None:
+    if tab1 is None and arg2 is None:  # Sends an exception message stating that the source language is not recognized
         try:
             recognized_lang = utils.translator.get_translate(utils
                                                              .translator.lang_list.get(utils.translator
                                                                                        .extract_lang(text)), "ru")
-        except (utils.translator.BadTrgLangException, utils.translator.UnkTransException,
-                utils.translator.TooManyRequestException, utils.translator.TooLongMsg):
+        except (utils.translator.BadTrgLangException, utils.translator.LangDetectException,
+                utils.translator.TooManyRequestException, utils.translator.TooLongMsg, utils.translator.UnknownLang):
             recognized_lang = "Unknown"
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "unknownSourceLang").format(recognized_lang))
         return
