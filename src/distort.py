@@ -88,9 +88,7 @@ def distort_main(message):
     idc = tmpmessage.chat.id
     idm = tmpmessage.message_id
     randlang = random.choice(list(utils.translator.lang_list))
-    randlang_list = ""
-    if lang_output:
-        randlang_list = locales.get_text(message.chat.id, "usedDistortions")
+    randlang_list = locales.get_text(message.chat.id, "usedDistortions") if lang_output else ""
 
     for i in range(counter):
         while randlang == lastlang:
