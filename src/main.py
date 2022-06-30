@@ -21,7 +21,7 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4.2"
+    version = "1.4.3"
     build = "1"
 
     config = utils.config_init()
@@ -153,6 +153,8 @@ def detect(message):
     logger.write_log(message, inputtext)
     try:
         lang = utils.translator.lang_list.get(utils.translator.extract_lang(inputtext))
+        if lang is None:
+            raise utils.translator.UnknownLang
         if locales.get_chat_lang(message.chat.id) != "en":
             translated_lang = " (" + utils.translator.get_translate(lang, locales.get_chat_lang(message.chat.id)) + ")"
         else:
