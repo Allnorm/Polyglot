@@ -21,8 +21,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4.3"
-    build = "2"
+    version = "1.4.4"
+    build_date = "04.12.2022"
 
     config = utils.config_init()
     transphoto_config_init(config)
@@ -36,7 +36,7 @@ def pre_init():
     if locales.locale_data.get("version") != version:
         logging.warning("Polyglot and locale versions doesn't match! This can cause the bot to malfunction."
                         "\nPlease, try to check updates for bot or locales file.")
-    logging.info("###POLYGLOT {} build {} HAS BEEN STARTED###".format(version, build))
+    logging.info("###POLYGLOT {} BUILD DATE {} HAS BEEN STARTED###".format(version, build_date))
 
 
 pre_init()
