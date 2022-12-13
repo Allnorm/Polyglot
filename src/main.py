@@ -21,8 +21,8 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4.4"
-    build_date = "04.12.2022"
+    version = "1.4.5"
+    build_date = "13.12.2022"
 
     config = utils.config_init()
     transphoto_config_init(config)
@@ -93,11 +93,18 @@ def distort(message):
         threading.Thread(target=distort_main, args=(message,)).start()
 
 
-@utils.bot.message_handler(commands=['scan', 'transphoto', 'tph'])
+@utils.bot.message_handler(commands=['scan'])
 def photo(message):
 
     if botname_checker(message):
-        threading.Thread(target=photo_main, args=(message,)).start()
+        threading.Thread(target=photo_main, args=(message, True,)).start()
+
+
+@utils.bot.message_handler(commands=['transphoto', 'tph'])
+def photo(message):
+
+    if botname_checker(message):
+        threading.Thread(target=photo_main, args=(message, False,)).start()
 
 
 @utils.bot.message_handler(commands=['translate', 'trans', 't'])

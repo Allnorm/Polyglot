@@ -13,7 +13,7 @@ from ad_module import add_ad
 pytesseract_func = True
 
 
-def photo_main(message):
+def photo_main(message, scan_mode):
 
     if not pytesseract_func:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "pyTesseractDisabled"))
@@ -25,18 +25,23 @@ def photo_main(message):
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "pleaseAnswer"))
         return
 
-    scan_mode = False
-    if utils.extract_arg(message.text, 0) == '/scan' \
-            or utils.extract_arg(message.text, 0) == '/scan@' + utils.bot.get_me().username:
-        scan_mode = True
-
-    lang = "eng"
+    src_lang = "eng"
     if scan_mode and utils.extract_arg(message.text, 1) is not None:
-        lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
+        src_lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
     elif utils.extract_arg(message.text, 2) is not None:
-        lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
+        src_lang = utils.iso.get(utils.lang_autocorr(utils.extract_arg(message.text, 1)))
 
-    if lang is None:
+    trg_lang = "eng"
+    if not scan_mode:
+        if utils.extract_arg(message.text, 2) is not None:
+            trg_lang = utils.extract_arg(message.text, 2)
+        elif utils.extract_arg(message.text, 1) is not None:
+            trg_lang = utils.extract_arg(message.text, 1)
+        else:
+            utils.bot.reply_to(message, locales.get_text(message.chat.id, "specifyLang"))
+            return
+
+    if src_lang is None:
         utils.bot.reply_to(message, locales.get_text(message.chat.id, "badSrcLangException"))
         return
 
@@ -76,7 +81,7 @@ def photo_main(message):
     idm = tmpmessage.message_id
 
     try:
-        text = pytesseract.image_to_string(img, lang=lang)
+        text = pytesseract.image_to_string(img, lang=src_lang)
     except Exception as e:
         logging.error(str(e) + "\n" + traceback.format_exc())
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "photoDetectErr"), idc, idm)
@@ -100,21 +105,11 @@ def photo_main(message):
         utils.bot.edit_message_text(text + add_ad(message.chat.id), idc, idm)
         return
 
-    if utils.extract_arg(message.text, 2) is not None:
-        trg_lang = utils.extract_arg(message.text, 2)
-    elif utils.extract_arg(message.text, 1) is not None:
-        trg_lang = utils.extract_arg(message.text, 1)
-    else:
-        utils.bot.edit_message_text(locales.get_text(message.chat.id, "badTrgLangException"), idc, idm)
-        return
-
     try:
         utils.bot.edit_message_text(utils.translator.get_translate(text, trg_lang)
                                     + add_ad(message.chat.id), idc, idm)
     except utils.translator.BadTrgLangException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "badTrgLangException"), idc, idm)
-    except utils.translator.BadSrcLangException:
-        utils.bot.edit_message_text(locales.get_text(message.chat.id, "badSrcLangException"), idc, idm)
     except utils.translator.TooManyRequestException:
         utils.bot.edit_message_text(locales.get_text(message.chat.id, "tooManyRequestException"), idc, idm)
     except utils.translator.TooLongMsg:
