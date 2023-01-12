@@ -1,5 +1,5 @@
 {	
-	"version": "1.4.4",
+	"version": "1.4.6",
 	"localesList": [
 		"ru",
 		"en",
@@ -79,7 +79,8 @@
 		"scanStarted": "Фотография распознаётся, пожалуйста подождите...",
 		"maxLength": "Ошибка: хостер бота принудительно ограничил максимальную длину сообщения до {}.",
 		"unsupportedFileType": "Данный тип файла не поддерживается.",
-		"unknownLang": "Исходный язык не распознан."
+		"unknownLang": "Исходный язык не распознан.",
+		"deleteBtn": "Удалить сообщение"
 	},
 	"en": {
 		"fullName": "English",
@@ -155,7 +156,8 @@
 		"scanStarted": "Photo is recognized, please wait...",
 		"maxLength": "Error: The bot's hoster forcibly limited the maximum message length to {}.",
 		"unsupportedFileType": "This file type is not supported.",
-		"unknownLang": "Source language not recognized."
+		"unknownLang": "Source language not recognized.",
+		"deleteBtn": "Remove message"
 	},
 	"uk": {
 		"fullName": "Ukrainian (Українська)",
@@ -231,7 +233,8 @@
 		"scanStarted": "Фотографія розпізнається, будь ласка, зачекайте...",
 		"maxLength": "Помилка: хостер бота примусово обмежив максимальну довжину повідомлення до {}.",
 		"unsupportedFileType": "Цей тип файлу не підтримується.",
-		"unknownLang": "Вихідна мова не розпізнана."
+		"unknownLang": "Вихідна мова не розпізнана.",
+		"deleteBtn": "Видалити повідомлення"
 	},
 	"be": {
 		"fullName": "Belarusian (Беларуская)",

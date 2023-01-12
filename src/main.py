@@ -21,7 +21,7 @@ from inline import query_text_main
 
 def pre_init():
     config: configparser.ConfigParser
-    version = "1.4.5"
+    version = "1.4.6"
     build_date = "13.12.2022"
 
     config = utils.config_init()
@@ -203,6 +203,8 @@ def send_welcome(message):
                                                    callback_data="chooselang"))
             buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "lockBtn"),
                                                    callback_data="adminblock"))
+            buttons.add(types.InlineKeyboardButton(text=locales.get_text(message.chat.id, "deleteBtn"),
+                                                   callback_data="delete"))
             utils.bot.reply_to(message, locales.get_text(message.chat.id, "settings"),
                                reply_markup=buttons, parse_mode='html')
 
@@ -314,6 +316,14 @@ def btn_checker(message, who_id):
                 return True
     return False
 
+@utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "delete")
+def callback_inline_lang_list(call_msg):
+    if btn_checker(call_msg.message, call_msg.from_user.id):
+        utils.bot.answer_callback_query(callback_query_id=call_msg.id,
+                                        text=locales.get_text(call_msg.message.chat.id, "adminsOnly"), show_alert=True)
+        return
+
+    utils.bot.delete_message(call_msg.message.chat.id, call_msg.message.id)
 
 @utils.bot.callback_query_handler(func=lambda call: call.data.split()[0] == "chooselang")
 def callback_inline_lang_list(call_msg):
@@ -373,6 +383,8 @@ def callback_inline_back(call_msg):
                                            callback_data="chooselang"))
     buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "lockBtn"),
                                            callback_data="adminblock"))
+    buttons.add(types.InlineKeyboardButton(text=locales.get_text(call_msg.message.chat.id, "deleteBtn"),
+                                           callback_data="delete"))
     utils.bot.edit_message_text(locales.get_text(call_msg.message.chat.id, "settings"),
                                 call_msg.message.chat.id, call_msg.message.id, reply_markup=buttons, parse_mode='html')
 
